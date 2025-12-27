@@ -1,0 +1,19 @@
+{
+  "extends": ["github>nuxt/renovate-config-nuxt"],
+  "labels": ["Scope: Dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["resolutions"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["@types/node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "postUpdateOptions": ["pnpmDedupe"]
+}

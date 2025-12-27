@@ -1,0 +1,34 @@
+name: Feature Request
+description: Suggest a new feature.
+title: '[Feature]: '
+labels: ['Status: Triage']
+type: 🏆 Feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Please read the following:
+        Thanks for taking the time to fill out this feature request!
+
+        Before submitting a feature request, please make sure you have searched through the existing issues and discussions to make sure your feature request is not a duplicate.
+
+        If your feature request is still valid, please change the title of this issue to reflect your feature request and fill out the fields below.
+  - type: textarea
+    id: desired-solution
+    attributes:
+      label: What would you like to see?
+      description: Be as detailed as possible!
+      placeholder: I would love it if ...
+      value: 'I would love it if '
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmations
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/mtdvlpr-org/jw-api/blob/main/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+        - label: I confirm that I have searched through the existing issues and discussions to make sure my feature request is not a duplicate.
+          required: true

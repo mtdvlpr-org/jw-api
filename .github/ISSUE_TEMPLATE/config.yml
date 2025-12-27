@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Just have a question?
+    url: https://github.com/mtdvlpr-org/jw-api/discussions
+    about: Please ask and answer questions in the discussions section.

@@ -1,0 +1,25 @@
+title: 'New translation in <language>'
+labels: ['Status: Triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Please read the following:
+        Thanks for taking the time to fill out this translations form!
+        Please change the title of this discussion to reflect your language and fill out the fields below.
+  - type: textarea
+    id: language
+    attributes:
+      label: What language do you speak?
+      description: |
+        Try to include the native name, English name and JW locale code.
+        For example: Nederlands/Dutch/O or Español/Spanish/S
+      placeholder: I would like to help translate the project into ...
+      value: I would like to help translate the project into ...
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Anything else you'd like to add?
