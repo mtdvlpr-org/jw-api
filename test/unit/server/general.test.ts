@@ -9,8 +9,11 @@ import {
   extractResolution,
   findBestFile,
   findBestImage,
+  formatIssue,
   generateMediaKey,
   generateVerseId,
+  getStudyWatchtowerIssue,
+  getWorkbookIssue,
   isJwLangCode,
   isMediaKey
 } from '../../../server/utils/general'
@@ -20,6 +23,7 @@ import { imageSizes, imageTypes } from '../../../shared/types/media.types'
 vi.stubGlobal('jwLangCodes', jwLangCodes)
 vi.stubGlobal('imageTypes', imageTypes)
 vi.stubGlobal('imageSizes', imageSizes)
+vi.stubGlobal('createBadRequestError', (message: string) => new Error(message))
 
 describe('jw general utils', () => {
   describe('isMediaKey', () => {
@@ -216,6 +220,80 @@ describe('jw general utils', () => {
       }
 
       expect(findBestImage(images)).toBe('lsr-sm')
+    })
+  })
+
+  describe('formatIssue', () => {
+    it('should format date with day', () => {
+      expect(formatIssue(2024, 1, 15)).toBe('20240115')
+    })
+
+    it('should format date without day', () => {
+      expect(formatIssue(2024, 1)).toBe('202401')
+    })
+
+    it('should pad month and day correctly', () => {
+      expect(formatIssue(2024, 5, 5)).toBe('20240505')
+      expect(formatIssue(2024, 5)).toBe('202405')
+    })
+  })
+
+  describe('getWorkbookIssue', () => {
+    it('should throw error for pre-2016 years', () => {
+      expect(() => getWorkbookIssue({ month: 1, year: 2015 })).toThrow(
+        'Workbooks are not available before 2016.'
+      )
+    })
+
+    it('should throw error for invalid months', () => {
+      expect(() => getWorkbookIssue({ month: 0, year: 2024 })).toThrow(
+        'Month must be between 1 and 12.'
+      )
+      expect(() => getWorkbookIssue({ month: 13, year: 2024 })).toThrow(
+        'Month must be between 1 and 12.'
+      )
+    })
+
+    it('should return monthly issue for pre-2021 years', () => {
+      expect(getWorkbookIssue({ month: 1, year: 2020 })).toBe('202001')
+      expect(getWorkbookIssue({ month: 12, year: 2016 })).toBe('201612')
+    })
+
+    it('should return bi-monthly issue for post-2021 years (odd month)', () => {
+      expect(getWorkbookIssue({ month: 1, year: 2021 })).toBe('202101')
+      expect(getWorkbookIssue({ month: 3, year: 2024 })).toBe('202403')
+    })
+
+    it('should return bi-monthly issue for post-2021 years (even month)', () => {
+      expect(getWorkbookIssue({ month: 2, year: 2021 })).toBe('202101')
+      expect(getWorkbookIssue({ month: 4, year: 2024 })).toBe('202403')
+    })
+  })
+
+  describe('getStudyWatchtowerIssue', () => {
+    it('should throw error for pre-2008 years', () => {
+      expect(() => getStudyWatchtowerIssue({ month: 1, year: 2007 })).toThrow(
+        'Study watchtower is not available before 2008.'
+      )
+    })
+
+    it('should throw error for invalid months', () => {
+      expect(() => getStudyWatchtowerIssue({ month: 0, year: 2024 })).toThrow(
+        'Month must be between 1 and 12.'
+      )
+      expect(() => getStudyWatchtowerIssue({ month: 13, year: 2024 })).toThrow(
+        'Month must be between 1 and 12.'
+      )
+    })
+
+    it('should return 15th issue for pre-2016 years', () => {
+      expect(getStudyWatchtowerIssue({ month: 1, year: 2015 })).toBe('20150115')
+      expect(getStudyWatchtowerIssue({ month: 12, year: 2008 })).toBe('20081215')
+    })
+
+    it('should return monthly issue for post-2016 years', () => {
+      expect(getStudyWatchtowerIssue({ month: 1, year: 2016 })).toBe('201601')
+      expect(getStudyWatchtowerIssue({ month: 12, year: 2024 })).toBe('202412')
     })
   })
 })

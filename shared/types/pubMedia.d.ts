@@ -52,7 +52,7 @@ export interface PublicationDocFetcher {
 export interface PublicationFetcher {
   docid?: undefined
   fileformat?: PublicationFileFormat
-  issue?: number
+  issue?: `${number}` | number
   langwritten: JwLangCode
   pub: string
   track?: number
@@ -80,12 +80,12 @@ export interface PublicationFile {
     mepsLanguageSpoken: JwLangCode
     mepsLanguageWritten: JwLangCode
     documentId: number
-    type: string
+    type: 'publication' | string
     markers: {
       duration: `${number}:${number}:${number}.${number}`
       startTime: `${number}:${number}:${number}.${number}`
-      label: string
-      endTransitionDuration: `${number}:${number}:${number}.${number}`
+      label?: string
+      endTransitionDuration?: `${number}:${number}:${number}.${number}`
       mepsParagraphId: number
     }[]
     hash: string

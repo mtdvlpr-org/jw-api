@@ -107,3 +107,44 @@ export const findBestImage = (images: MediaItem['images']) => {
   }
   return null
 }
+
+export const formatIssue = (year: number, month: number, day?: number) =>
+  `${year}${month.toString().padStart(2, '0')}${day?.toString().padStart(2, '0') ?? ''}` as `${number}`
+
+export const getWorkbookIssue = (date?: { month: number; year: number }): `${number}` => {
+  const year = date?.year ?? new Date().getFullYear()
+  const month = date?.month ?? new Date().getMonth() + 1
+
+  if (year < 2016) {
+    throw createBadRequestError('Workbooks are not available before 2016.')
+  }
+
+  if (month < 1 || month > 12) {
+    throw createBadRequestError('Month must be between 1 and 12.')
+  }
+
+  // Workbooks before 2021 are published every month.
+  if (year <= 2020) return formatIssue(year, month)
+
+  // Workbooks after 2021 are published every other month.
+  return month % 2 === 0 ? formatIssue(year, month - 1) : formatIssue(year, month)
+}
+
+export const getStudyWatchtowerIssue = (date?: { month: number; year: number }): `${number}` => {
+  const year = date?.year ?? new Date().getFullYear()
+  const month = date?.month ?? new Date().getMonth() + 1
+
+  if (year < 2008) {
+    throw createBadRequestError('Study watchtower is not available before 2008.')
+  }
+
+  if (month < 1 || month > 12) {
+    throw createBadRequestError('Month must be between 1 and 12.')
+  }
+
+  // Study watchtowers before 2016 are published on the 15th of the month.
+  if (year <= 2015) return formatIssue(year, month, 15)
+
+  // Study watchtowers after 2016 are published monthly.
+  return formatIssue(year, month)
+}
