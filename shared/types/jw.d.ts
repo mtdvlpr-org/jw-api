@@ -1,4 +1,4 @@
-import type { JwLangCode, JwLangSymbol, JwLangScript } from './lang.types'
+import type { JwLangCode, JwLangScript, JwLangSymbol } from './lang.types'
 
 export interface JwLanguage {
   altSpellings: string[]

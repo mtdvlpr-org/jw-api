@@ -4,7 +4,7 @@ const getMediaWithSubtitles = async (
   publication:
     | PublicationDocFetcher
     | PublicationFetcher
-    | { id: MediaKey; langwritten: JwLangCode }
+    | { key: MediaKey; langwritten: JwLangCode }
 ) => {
   const video = await mediatorRepository.fetchMediaItem(publication)
 
@@ -21,7 +21,7 @@ export const mediatorService = {
     return categories
   },
   getCategory: async (
-    key: CategoryKey,
+    key: string,
     {
       locale = 'E',
       query
@@ -34,7 +34,7 @@ export const mediatorService = {
     return category
   },
   getDetailedCategory: async (
-    key: CategoryKey,
+    key: string,
     {
       locale = 'E',
       query
@@ -64,7 +64,7 @@ export const mediatorService = {
     publication:
       | PublicationDocFetcher
       | PublicationFetcher
-      | { id: MediaKey; langwritten: JwLangCode }
+      | { key: MediaKey; langwritten: JwLangCode }
   ) => {
     const { bestMatch, video } = await getMediaWithSubtitles(publication)
 

@@ -14,6 +14,7 @@ export const bibleService = {
     chapter: number
     locale?: JwLangSymbol
   }) => {
+    console.log('getChapter', book, chapter, locale)
     const result = await bibleRepository.fetchBibleChapter(locale, book, chapter)
     return result
   },
@@ -28,6 +29,7 @@ export const bibleService = {
     locale?: JwLangSymbol
     verse: number
   }) => {
+    console.log('getVerse', book, chapter, verse, locale)
     const result = await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
     return result
   }

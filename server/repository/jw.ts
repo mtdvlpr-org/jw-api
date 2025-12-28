@@ -6,6 +6,7 @@ const defaultFetchOptions = {
 
 export const jwRepository = {
   fetchLanguages: async (locale: JwLangSymbol) => {
+    console.log('fetchLanguages', locale)
     const result = await $fetch<JwLanguageResult>(`/${locale}/languages/`, {
       ...defaultFetchOptions
     })

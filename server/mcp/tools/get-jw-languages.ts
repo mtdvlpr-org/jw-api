@@ -5,7 +5,7 @@ export default defineMcpTool({
     openWorldHint: true,
     readOnlyHint: true
   },
-  cache: '4w',
+  //cache: '4w',
   description: 'Get the JW Languages resource.',
   handler: async () => {
     try {

@@ -8,5 +8,5 @@ const routeSchema = z.object({
 export default defineLoggedEventHandler(async (event) => {
   const { key, langcode: locale } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await mediatorService.getDetailedCategory(key as unknown as CategoryKey, { locale })
+  return await mediatorService.getDetailedCategory(key as unknown as string, { locale })
 })

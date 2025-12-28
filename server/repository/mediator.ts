@@ -13,7 +13,7 @@ export const mediatorRepository = {
 
     return result.categories
   },
-  fetchCategory: async (locale: JwLangCode, key: CategoryKey, query?: MediatorCategoryQuery) => {
+  fetchCategory: async (locale: JwLangCode, key: string, query?: MediatorCategoryQuery) => {
     const result = await $fetch<CategoryResult>(`/categories/${locale}/${key}`, {
       ...defaultFetchOptions,
       query
@@ -23,10 +23,10 @@ export const mediatorRepository = {
   },
   fetchCategoryDetails: async (
     locale: JwLangCode,
-    key: CategoryKey,
+    key: string,
     query?: MediatorCategoryDetailedQuery
   ) => {
-    const result = await $fetch<CategoryDetailedResult>(`/categories/${locale}/${key}`, {
+    const result = await $fetch<CategoryResultDetailed>(`/categories/${locale}/${key}`, {
       ...defaultFetchOptions,
       query: { ...query, detailed: 1 }
     })
