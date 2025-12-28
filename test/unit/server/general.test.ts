@@ -15,8 +15,11 @@ import {
   isMediaKey
 } from '../../../server/utils/general'
 import { jwLangCodes } from '../../../shared/types/lang.types'
+import { imageSizes, imageTypes } from '../../../shared/types/media.types'
 
 vi.stubGlobal('jwLangCodes', jwLangCodes)
+vi.stubGlobal('imageTypes', imageTypes)
+vi.stubGlobal('imageSizes', imageSizes)
 
 describe('jw general utils', () => {
   describe('isMediaKey', () => {
