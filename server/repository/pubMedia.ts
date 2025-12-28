@@ -6,7 +6,6 @@ const defaultFetchOptions = {
 
 export const pubMediaRepository = {
   fetchPublication: async (publication: PubFetcher) => {
-    console.log('fetchPublication', publication)
     return await $fetch<Publication>('/GETPUBMEDIALINKS', {
       ...defaultFetchOptions,
       query: { ...publication, alllangs: '0', output: 'json', txtCMSLang: 'E' }

@@ -9,7 +9,6 @@ const defaultFetchOptions = {
 } satisfies FetchOptions
 
 const fetchYeartextResult = async (wtlocale: JwLangCode, year: number) => {
-  console.log('fetchYeartextResult', wtlocale, year)
   const result = await $fetch<YeartextResult>(`/wol/finder`, {
     ...defaultFetchOptions,
     query: { docid: `110${year}800`, format: 'json', snip: 'yes', wtlocale }

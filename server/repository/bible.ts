@@ -1,6 +1,5 @@
 export const bibleRepository = {
   fetchBibleChapter: async (book: number, chapter: number, locale: JwLangSymbol) => {
-    console.log('fetchBibleChapter', book, chapter, locale)
     const url = await scrapeBibleDataUrl(locale)
 
     const startVerseId = generateVerseId(book, chapter, 1)
@@ -18,7 +17,6 @@ export const bibleRepository = {
     return chapterData
   },
   fetchBibleData: async (locale: JwLangSymbol) => {
-    console.log('fetchBibleData', locale)
     const url = await scrapeBibleDataUrl(locale)
 
     const result = await $fetch<BibleResultEmpty>(url)
@@ -31,7 +29,6 @@ export const bibleRepository = {
     verseNumber: number,
     locale: JwLangSymbol
   ) => {
-    console.log('fetchBibleVerse', book, chapter, verseNumber, locale)
     const url = await scrapeBibleDataUrl(locale)
 
     const verseId = generateVerseId(book, chapter, verseNumber)
