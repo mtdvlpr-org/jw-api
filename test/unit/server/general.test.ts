@@ -4,6 +4,7 @@ import type { MediaItemFile } from '../../../shared/types/mediator'
 import type { PublicationFetcher } from '../../../shared/types/pubMedia'
 
 import {
+  extractDateFromTitle,
   extractLangCode,
   extractMediaKey,
   extractResolution,
@@ -95,6 +96,10 @@ describe('jw general utils', () => {
       expect(extractLangCode('E')).toBe('E')
     })
 
+    it('should extract from lang param', () => {
+      expect(extractLangCode('https://mediator.jw.org/finder?lang=E')).toBe('E')
+    })
+
     it('should extract from wtlocale param', () => {
       expect(extractLangCode('https://jw.org/finder?wtlocale=E')).toBe('E')
     })
@@ -115,6 +120,10 @@ describe('jw general utils', () => {
   describe('extractMediaKey', () => {
     it('should return input if it is a valid id', () => {
       expect(extractMediaKey('pub-jw')).toBe('pub-jw')
+    })
+
+    it('should extract from item param', () => {
+      expect(extractMediaKey('https://mediator.jw.org/finder?item=pub-jwban')).toBe('pub-jwban')
     })
 
     it('should extract from lank param', () => {
@@ -220,6 +229,122 @@ describe('jw general utils', () => {
       }
 
       expect(findBestImage(images)).toBe('lsr-sm')
+    })
+  })
+
+  describe('extractDateFromTitle', () => {
+    // 1. "Title (StartDay-EndDay Month)"
+    it('should extract date from title with format "Title (StartDay-EndDay Month)"', () => {
+      expect(extractDateFromTitle('Some title (1-7 January)')).toEqual({
+        endDay: '7',
+        endMonth: 'January',
+        startDay: '1',
+        startMonth: 'January'
+      })
+    })
+
+    // 2. "Title (StartDay StartMonth-EndDay EndMonth)"
+    it('should extract date from title with format "Title (StartDay StartMonth-EndDay EndMonth)"', () => {
+      expect(extractDateFromTitle('Meeting (29 January-4 February)')).toEqual({
+        endDay: '4',
+        endMonth: 'February',
+        startDay: '29',
+        startMonth: 'January'
+      })
+    })
+
+    // 3. "Title (Month StartDay-EndDay)"
+    it('should extract date from title with format "Title (Month StartDay-EndDay)"', () => {
+      expect(extractDateFromTitle('Meeting (January 1-7)')).toEqual({
+        endDay: '7',
+        endMonth: 'January',
+        startDay: '1',
+        startMonth: 'January'
+      })
+    })
+
+    // 4. "Title (StartMonth StartDay-EndMonth EndDay)"
+    it('should extract date from title with format "Title (StartMonth StartDay-EndMonth EndDay)"', () => {
+      expect(extractDateFromTitle('Meeting (January 29-February 4)')).toEqual({
+        endDay: '4',
+        endMonth: 'February',
+        startDay: '29',
+        startMonth: 'January'
+      })
+    })
+
+    it('should return null if no parentheses', () => {
+      expect(extractDateFromTitle('Some title')).toBe(null)
+    })
+
+    it('should return null if parentheses are not at the end', () => {
+      expect(extractDateFromTitle('(1-7 January) Some title')).toBe(null)
+    })
+
+    // 5. "Month StartDay-EndDay, Year: Title"
+    it('should extract date from title with format "Month StartDay-EndDay, Year: Title"', () => {
+      expect(extractDateFromTitle('January 10-12, 2024: Some Title')).toEqual({
+        endDay: '12',
+        endMonth: 'January',
+        startDay: '10',
+        startMonth: 'January',
+        year: '2024'
+      })
+    })
+
+    // 5b. "Month StartDay-EndDay Year: Title" (Optional comma)
+    it('should extract date from title with format "Month StartDay-EndDay Year: Title"', () => {
+      expect(extractDateFromTitle('January 10-12 2024: Some Title')).toEqual({
+        endDay: '12',
+        endMonth: 'January',
+        startDay: '10',
+        startMonth: 'January',
+        year: '2024'
+      })
+    })
+
+    // 6. "StartMonth StartDay-EndMonth EndDay, Year: Title"
+    it('should extract date from title with format "StartMonth StartDay-EndMonth EndDay, Year: Title"', () => {
+      expect(extractDateFromTitle('January 30-February 2, 2024: Some Title')).toEqual({
+        endDay: '2',
+        endMonth: 'February',
+        startDay: '30',
+        startMonth: 'January',
+        year: '2024'
+      })
+    })
+
+    // 6b. "StartMonth StartDay-EndMonth EndDay Year: Title" (Optional comma)
+    it('should extract date from title with format "StartMonth StartDay-EndMonth EndDay Year: Title"', () => {
+      expect(extractDateFromTitle('January 30-February 2 2024: Some Title')).toEqual({
+        endDay: '2',
+        endMonth: 'February',
+        startDay: '30',
+        startMonth: 'January',
+        year: '2024'
+      })
+    })
+
+    // 7. "StartDay-EndDay Month Year: Title"
+    it('should extract date from title with format "StartDay-EndDay Month Year: Title"', () => {
+      expect(extractDateFromTitle('10-12 January 2024: Some Title')).toEqual({
+        endDay: '12',
+        endMonth: 'January',
+        startDay: '10',
+        startMonth: 'January',
+        year: '2024'
+      })
+    })
+
+    // 8. "StartDay StartMonth-EndDay EndMonth Year: Title"
+    it('should extract date from title with format "StartDay StartMonth-EndDay EndMonth Year: Title"', () => {
+      expect(extractDateFromTitle('30 January-2 February 2024: Some Title')).toEqual({
+        endDay: '2',
+        endMonth: 'February',
+        startDay: '30',
+        startMonth: 'January',
+        year: '2024'
+      })
     })
   })
 

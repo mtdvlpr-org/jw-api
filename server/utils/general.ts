@@ -34,6 +34,9 @@ export const extractLangCode = (input: string): JwLangCode | null => {
   try {
     const url = new URL(input)
 
+    const lang = url.searchParams.get('lang')
+    if (lang && isJwLangCode(lang)) return lang
+
     const wtlocale = url.searchParams.get('wtlocale')
     if (wtlocale && isJwLangCode(wtlocale)) return wtlocale
 
@@ -51,6 +54,9 @@ export const extractMediaKey = (input: string): MediaKey | null => {
 
   try {
     const url = new URL(input)
+
+    const item = url.searchParams.get('item')
+    if (item && isMediaKey(item)) return item
 
     const lank = url.searchParams.get('lank')
     if (lank && isMediaKey(lank)) return lank
@@ -147,4 +153,78 @@ export const getStudyWatchtowerIssue = (date?: { month: number; year: number }):
 
   // Study watchtowers after 2016 are published monthly.
   return formatIssue(year, month)
+}
+
+export const extractDateFromTitle = (
+  title: string
+): null | {
+  endDay: string
+  endMonth: string
+  startDay: string
+  startMonth: string
+  year?: string
+} => {
+  const match = title.match(
+    /\((?:(\d+)(?:\s+([^-]+))?-(\d+)\s+([A-Za-z]+)|([A-Za-z]+)\s+(\d+)(?:-([A-Za-z]+)\s+(\d+)|-(\d+)))\)$/
+  )
+
+  if (match) {
+    if (match[1]) {
+      // Format: (StartDay[-StartMonth]-EndDay EndMonth)
+      // Groups: 1=StartDay, 2=StartMonth?, 3=EndDay, 4=EndMonth
+      const [, startDay, startMonth, endDay, endMonth] = match
+      return {
+        endDay: endDay!,
+        endMonth: endMonth!,
+        startDay: startDay!,
+        startMonth: startMonth ?? endMonth!
+      }
+    } else {
+      // Format: (StartMonth StartDay-[EndMonth] EndDay)
+      // Groups: 5=StartMonth, 6=StartDay, 7=EndMonth?, 8=EndDay(with month), 9=EndDay(no month)
+      const [, , , , , startMonth, startDay, endMonth, endDayWithMonth, endDayNoMonth] = match
+      const endDay = endDayWithMonth ?? endDayNoMonth
+      return {
+        endDay: endDay!,
+        endMonth: endMonth ?? startMonth!,
+        startDay: startDay!,
+        startMonth: startMonth!
+      }
+    }
+  }
+
+  // Matches "January 10-12, 2024: Title" or "10-12 January 2024: Title"
+  const match2 = title.match(
+    /^(?:([A-Za-z]+)\s+(\d+)(?:-([A-Za-z]+)\s+(\d+)|-(\d+))|(\d+)(?:\s+([A-Za-z]+))?-(\d+)\s+([A-Za-z]+)),?\s+(\d{4}):/
+  )
+
+  if (match2) {
+    if (match2[1]) {
+      // Format: Month StartDay-[EndMonth] EndDay
+      // Groups: 1=StartMonth, 2=StartDay, 3=EndMonth?, 4=EndDay(with month), 5=EndDay(no month), 10=Year
+      const [, startMonth, startDay, endMonth, endDayWithMonth, endDayNoMonth, , , , , year] =
+        match2
+      const endDay = endDayWithMonth ?? endDayNoMonth
+      return {
+        endDay: endDay!,
+        endMonth: endMonth ?? startMonth!,
+        startDay: startDay!,
+        startMonth: startMonth!,
+        year: year!
+      }
+    } else {
+      // Format: StartDay [StartMonth]-EndDay EndMonth
+      // Groups: 6=StartDay, 7=StartMonth?, 8=EndDay, 9=EndMonth, 10=Year
+      const [, , , , , , startDay, startMonth, endDay, endMonth, year] = match2
+      return {
+        endDay: endDay!,
+        endMonth: endMonth!,
+        startDay: startDay!,
+        startMonth: startMonth ?? endMonth!,
+        year: year!
+      }
+    }
+  }
+
+  return null
 }
