@@ -11,7 +11,9 @@ export const bibleRepository = {
 
     const chapterData = result.ranges?.[range]
 
-    if (!chapterData) throw new Error('Chapter not found')
+    if (!chapterData) {
+      throw createNotFoundError('Could not find chapter data.', { book, chapter, locale })
+    }
 
     return chapterData
   },
@@ -38,7 +40,14 @@ export const bibleRepository = {
 
     const verse = result.ranges?.[verseId]?.verses?.[0]
 
-    if (!verse) throw new Error('Verse not found')
+    if (!verse) {
+      throw createNotFoundError('Could not find verse data.', {
+        book,
+        chapter,
+        locale,
+        verseNumber
+      })
+    }
 
     return verse
   }

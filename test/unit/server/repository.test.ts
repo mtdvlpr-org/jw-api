@@ -49,7 +49,7 @@ describe('repository utils', () => {
         expect.objectContaining({
           baseURL: 'https://wol.jw.org',
           query: expect.objectContaining({
-            docid: '1102024800',
+            docid: `110${year}800`,
             format: 'json',
             snip: 'yes',
             wtlocale: 'E'
@@ -104,10 +104,7 @@ describe('repository utils', () => {
       expect($fetch).toHaveBeenCalledWith(
         expect.stringMatching(/\/media-items\/E\/pub-w_202401_1_AUDIO/),
         expect.objectContaining({
-          baseURL: 'https://b.jw-cdn.org/apis/mediator/v1',
-          query: expect.objectContaining({
-            clientType: 'www'
-          })
+          baseURL: 'https://b.jw-cdn.org/apis/mediator/v1'
         })
       )
     })

@@ -1,5 +1,3 @@
-import type { JwLangCode, JwLangSymbol } from './lang.types'
-
 export interface JwLanguage {
   altSpellings: string[]
   direction: 'ltr' | 'rtl'

@@ -1,5 +1,3 @@
-import type { JwLangCode, JwLangSymbol } from './lang.types'
-
 export type PubFetcher = PublicationBookFetcher | PublicationDocFetcher | PublicationFetcher
 
 /* eslint-disable perfectionist/sort-interfaces */
@@ -118,17 +116,3 @@ export interface PublicationFile {
 }
 /* eslint-enable perfectionist/sort-interfaces */
 /* eslint-enable perfectionist/sort-object-types */
-
-export type PublicationFileFormat =
-  | '3GP'
-  | 'AAC'
-  | 'BRL'
-  | 'DAISY'
-  | 'EPUB'
-  | 'JWPUB'
-  | 'M4V'
-  | 'MP3'
-  | 'MP4'
-  | 'PDF'
-  | 'RTF'
-  | 'ZIP'

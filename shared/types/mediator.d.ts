@@ -1,5 +1,3 @@
-import type { JwLangCode, JwLangSymbol } from './lang.types'
-
 export interface CategoriesResult {
   categories: CategoryParent[]
   language: MediatorResultLanguage
@@ -13,13 +11,15 @@ export interface CategoryDetailed extends Category {
   subcategories?: CategorySub[]
 }
 
+export type CategoryKey = CategoryContainerKey | CategoryOnDemandKey
+
 export interface CategoryParent {
   description: string
   images: ImagesObject
-  key: string
+  key: CategoryKey
   name: string
   tags: CategoryTag[]
-  type: string
+  type: CategoryType
 }
 
 export interface CategoryResult {
@@ -36,20 +36,10 @@ export interface CategorySub extends CategoryParent {
   media?: MediaItem[]
 }
 
-export type ClientType =
-  | 'appletv'
-  | 'firetv'
-  | 'JWORG'
-  | 'none'
-  | 'roku'
-  | 'rwls'
-  | 'satellite'
-  | 'www'
-
-export type ImageSize = 'lg' | 'md' | 'sm' | 'xl' | 'xs'
+export type CategoryType = 'container' | 'ondemand'
 
 export type ImagesObject = Partial<Record<ImageType, Partial<Record<ImageSize, string>>>>
-export type ImageType = 'cvr' | 'lsr' | 'lss' | 'pnr' | 'sqr' | 'sqs' | 'wsr' | 'wss'
+
 export interface MediaDataResult {
   language: MediatorResultLanguage
   media: MediaItem[]
@@ -66,14 +56,14 @@ export interface MediaItem {
   languageAgnosticNaturalKey: MediaKey
   naturalKey: string
   type: string
-  primaryCategory: string
+  primaryCategory: CategoryKey
   title: string
   description: string
   firstPublished: `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`
   duration: number
   durationFormattedHHMM: `${number}:${number}`
   durationFormattedMinSec: `${number}m ${number}s`
-  tags: string[]
+  tags: MediaTag[]
   files: MediaItemFile[]
   images: ImagesObject
   availableLanguages: JwLangCode[]
@@ -145,5 +135,3 @@ export interface MediatorResultLanguage {
   locale: JwLangSymbol
   script: string
 }
-
-export type string = 'container' | 'ondemand'

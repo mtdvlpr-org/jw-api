@@ -16,7 +16,7 @@ export const mediatorService = {
     return categories
   },
   getCategory: async (
-    key: string,
+    key: CategoryKey,
     {
       locale = 'E',
       query
@@ -29,14 +29,14 @@ export const mediatorService = {
     return category
   },
   getDetailedCategory: async (
-    key: string,
+    key: CategoryKey,
     {
       locale = 'E',
       query
     }: {
       locale?: JwLangCode
       query?: MediatorCategoryDetailedQuery
-    }
+    } = {}
   ) => {
     const category = await mediatorRepository.fetchCategoryDetails(locale, key, query)
     return category
@@ -45,8 +45,8 @@ export const mediatorService = {
     const languages = await mediatorRepository.fetchLanguages(locale)
     return languages
   },
-  getMediaItem: async (publication: MediaFetcher) => {
-    const mediaItem = await mediatorRepository.fetchMediaItem(publication)
+  getMediaItem: async (publication: MediaFetcher, clientType: ClientType = 'www') => {
+    const mediaItem = await mediatorRepository.fetchMediaItem(publication, clientType)
     return mediaItem
   },
   getMediaWithSubtitles,

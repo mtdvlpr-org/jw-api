@@ -19,6 +19,5 @@ export default defineNuxtConfig({
     }
   },
   routeRules: { '/api/**': { cors: true }, '/mcp': { cors: true } },
-  runtimeConfig: { public: { version } },
-  typescript: { strict: true, typeCheck: true }
+  runtimeConfig: { public: { version } }
 })

@@ -1,6 +1,3 @@
-import type { JwLangSymbol } from './lang'
-import type { ImageType } from './media'
-
 /* eslint-disable perfectionist/sort-interfaces */
 export interface BibleBook {
   chapterCount: `${number}`

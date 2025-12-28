@@ -99,11 +99,8 @@ export const findBestFile = (
 }
 
 export const findBestImage = (images: MediaItem['images']) => {
-  const sizeOrder: ImageSize[] = ['xl', 'lg', 'md', 'sm', 'xs'] as const
-  const typeOrder: ImageType[] = ['wsr', 'wss', 'lsr', 'lss', 'pnr', 'sqr', 'sqs', 'cvr'] as const
-
-  for (const type of typeOrder) {
-    for (const size of sizeOrder) {
+  for (const type of imageTypes) {
+    for (const size of imageSizes) {
       const image = images[type]?.[size]
       if (image) return image
     }
