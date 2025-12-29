@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { asyncLocalStorage } from '../../../server/utils/async-storage'
 import { defineLoggedEventHandler } from '../../../server/utils/handler'
@@ -9,6 +9,10 @@ vi.stubGlobal('defineEventHandler', (handler: unknown) => handler)
 vi.stubGlobal('asyncLocalStorage', asyncLocalStorage)
 
 describe('handler utils', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
   describe('defineLoggedEventHandler', () => {
     it('should run handler within asyncLocalStorage context', async () => {
       const mockHandler = vi.fn().mockResolvedValue('success')
@@ -59,6 +63,34 @@ describe('handler utils', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await expect(wrappedHandler(mockEvent as any)).rejects.toThrow('Test error')
       expect(mockLogger.error).toHaveBeenCalledWith(mockError)
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Request completed in'))
+    })
+
+    it('should handle non-Error objects in catch', async () => {
+      const mockLogger = {
+        debug: vi.fn(),
+        error: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn()
+      }
+      const mockEvent = {
+        node: {
+          req: {
+            log: mockLogger,
+            url: '/test-error-string'
+          }
+        }
+      }
+      const error = 'string error'
+      const handler = vi.fn().mockRejectedValue(error)
+
+      const wrapped = defineLoggedEventHandler(handler)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await expect(wrapped(mockEvent as any)).rejects.toBe('string error')
+
+      expect(mockLogger.info).toHaveBeenCalledWith('Request received: /test-error-string')
+      expect(mockLogger.error).toHaveBeenCalledWith(error)
       expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Request completed in'))
     })
   })

@@ -46,6 +46,26 @@ describe('mcp utils', () => {
     })
   })
 
+  describe('jsonResourceReference', () => {
+    it('should create json resource reference', () => {
+      const uri = 'https://example.com'
+      const data = { key: 'value' }
+      const result = mcpService.jsonResourceReference(uri, data)
+      expect(result).toEqual({
+        content: [
+          {
+            resource: {
+              mimeType: 'application/json',
+              text: JSON.stringify(data, null, 2),
+              uri: 'https://example.com'
+            },
+            type: 'resource'
+          }
+        ]
+      })
+    })
+  })
+
   describe('assistantPrompt', () => {
     it('should create assistant prompt', () => {
       const result = mcpService.assistantPrompt('hello')
@@ -96,6 +116,12 @@ describe('mcp utils', () => {
       const result = mcpService.toolError(error)
       expect(result.isError).toBe(true)
       expect(result.content[0].text).toContain('Error: fail')
+    })
+
+    it('should handle non-error objects', () => {
+      const result = mcpService.toolError('fail string')
+      expect(result.isError).toBe(true)
+      expect(result.content[0].text).toContain('Error: fail string')
     })
   })
 

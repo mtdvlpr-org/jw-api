@@ -25,6 +25,12 @@ describe('logging utils', () => {
 
       logger.error('test error')
       expect(consoleSpy.error).toHaveBeenCalledWith('test error')
+
+      logger.debug('test debug')
+      expect(consoleSpy.debug).toHaveBeenCalledWith('test debug')
+
+      logger.warn('test warn')
+      expect(consoleSpy.warn).toHaveBeenCalledWith('test warn')
     })
 
     it('should use store logger when available', () => {
@@ -40,6 +46,15 @@ describe('logging utils', () => {
         logger.info('store info')
         expect(mockLogger.info).toHaveBeenCalledWith('store info')
         expect(consoleSpy.info).not.toHaveBeenCalledWith('store info')
+
+        logger.debug('store debug')
+        expect(mockLogger.debug).toHaveBeenCalledWith('store debug')
+
+        logger.warn('store warn')
+        expect(mockLogger.warn).toHaveBeenCalledWith('store warn')
+
+        logger.error('store error')
+        expect(mockLogger.error).toHaveBeenCalledWith('store error')
       })
     })
   })
