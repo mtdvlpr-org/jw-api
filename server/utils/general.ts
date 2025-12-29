@@ -156,13 +156,12 @@ export const findBestFile = (
   withSubtitles = false
 ): MediaItemFile | null => {
   if (media.length === 0) return null
-  if (media.length === 1) return media[0]!
 
   // Sort the media item files by resolution, descending.
   const sorted = [...media].sort((a, b) => extractResolution(b) - extractResolution(a))
 
   // If subtitles are requested, return the first file with subtitles. Otherwise, return the highest resolution file.
-  return withSubtitles ? (sorted.find((file) => file.subtitles) ?? sorted[0]!) : sorted[0]!
+  return withSubtitles ? (sorted.find((file) => file.subtitles) ?? null) : sorted[0]!
 }
 
 /**
@@ -177,10 +176,12 @@ export const findBestImage = (images: MediaItem['images']) => {
       if (image) return image
     }
   }
+
   return null
 }
 
 /**
+ * Finds the best image from a list of images.
  * Formats an issue number for a given year, month, and day.
  * @param year The year.
  * @param month The month.

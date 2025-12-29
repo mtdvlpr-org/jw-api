@@ -230,8 +230,8 @@ describe('jw general utils', () => {
       expect(findBestFile(media, true)).toEqual(media[0]) // 480p has subtitles
     })
 
-    it('should fallback to highest resolution if no subtitles', () => {
-      expect(findBestFile(media.slice(1), true)).toEqual(media[1])
+    it('should return null if subtitles requested but not found', () => {
+      expect(findBestFile(media.slice(1), true)).toBe(null)
     })
   })
 
