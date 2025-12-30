@@ -20,10 +20,10 @@ export default defineLoggedEventHandler(async (event) => {
     throw createBadRequestError('Month and year must be provided together or not at all.')
   }
 
-  const result = await pubMediaService.getMeetingWorkbook(
-    langwritten,
-    year && month ? { month, year } : undefined
-  )
+  const result = await pubMediaService.getMeetingWorkbook({
+    date: year && month ? { month, year } : undefined,
+    langwritten
+  })
 
   return result
 })

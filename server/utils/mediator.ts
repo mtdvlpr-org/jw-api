@@ -1,3 +1,4 @@
+import { downloadRepository } from '#server/repository/download'
 import { mediatorRepository } from '#server/repository/mediator'
 
 /**
@@ -96,7 +97,7 @@ const getSubtitles = async (publication: MediaFetcher) => {
 
   if (!bestMatch?.subtitles) throw createNotFoundError('No subtitles found.')
 
-  const subtitles = await $fetch<string>(bestMatch.subtitles.url, { responseType: 'text' })
+  const subtitles = await downloadRepository.text(bestMatch.subtitles.url)
 
   return { bestMatch, subtitles, video }
 }

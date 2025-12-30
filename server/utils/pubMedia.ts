@@ -1,17 +1,24 @@
+import { downloadRepository } from '#server/repository/download'
 import { pubMediaRepository } from '#server/repository/pubMedia'
 
 /**
  * Gets a meeting workbook.
  * @param langwritten The language to get the meeting workbook for. Defaults to English.
  * @param date The date to get the meeting workbook for. Defaults to the current month and year.
+ * @param fileformat The file format to get the meeting workbook for. Defaults to all.
  * @returns The meeting workbook.
  */
-const getMeetingWorkbook = async (
-  langwritten: JwLangCode = 'E',
+const getMeetingWorkbook = async ({
+  date,
+  fileformat,
+  langwritten = 'E'
+}: {
   date?: { month: number; year: number }
-) => {
+  fileformat?: PublicationFileFormat
+  langwritten: JwLangCode
+}) => {
   const issue = getWorkbookIssue(date)
-  return await pubMediaRepository.fetchPublication({ issue, langwritten, pub: 'mwb' })
+  return await pubMediaRepository.fetchPublication({ fileformat, issue, langwritten, pub: 'mwb' })
 }
 
 /**
@@ -27,17 +34,44 @@ const getPublication = async (publication: PubFetcher) => {
  * Gets a study watchtower.
  * @param langwritten The language to get the study watchtower for. Defaults to English.
  * @param date The date to get the study watchtower for. Defaults to the current month and year.
+ * @param fileformat The file format to get the study watchtower for. Defaults to all.
  * @returns The study watchtower.
  */
-const getStudyWatchtower = async (
+const getStudyWatchtower = async ({
+  date,
+  fileformat,
+  langwritten = 'E'
+}: {
+  date?: { month: number; year: number }
+  fileformat?: PublicationFileFormat
+  langwritten: JwLangCode
+}) => {
+  const issue = getStudyWatchtowerIssue(date)
+  return await pubMediaRepository.fetchPublication({ fileformat, issue, langwritten, pub: 'w' })
+}
+
+const getWatchtowerArticles = async (
   langwritten: JwLangCode = 'E',
   date?: { month: number; year: number }
 ) => {
-  const issue = getStudyWatchtowerIssue(date)
-  return await pubMediaRepository.fetchPublication({ issue, langwritten, pub: 'w' })
+  const publication = await getStudyWatchtower({ date, fileformat: 'RTF', langwritten })
+  return publication.files[langwritten]?.RTF?.filter((a) => a.mimetype === 'application/rtf').map(
+    ({ file, title }) => ({ file, title })
+  )
+}
+
+const getWatchtowerArticleContent = async (url: string) => {
+  const article = await downloadRepository.text(url)
+  return parseRTF(article)
 }
 
 /**
  * A service wrapping the publication media repository.
  */
-export const pubMediaService = { getMeetingWorkbook, getPublication, getStudyWatchtower }
+export const pubMediaService = {
+  getMeetingWorkbook,
+  getPublication,
+  getStudyWatchtower,
+  getWatchtowerArticleContent,
+  getWatchtowerArticles
+}

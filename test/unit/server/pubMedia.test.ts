@@ -42,7 +42,7 @@ describe('pubMedia utils', () => {
       const mockResult = { issue, pub: 'w' }
       vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue(mockResult)
 
-      const result = await pubMediaService.getStudyWatchtower(langwritten, date)
+      const result = await pubMediaService.getStudyWatchtower({ date, langwritten })
 
       expect(result).toEqual(mockResult)
       expect(getStudyWatchtowerIssueMock).toHaveBeenCalledWith(date)
@@ -65,7 +65,7 @@ describe('pubMedia utils', () => {
       const mockResult = { issue, pub: 'mwb' }
       vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue(mockResult)
 
-      const result = await pubMediaService.getMeetingWorkbook(langwritten, date)
+      const result = await pubMediaService.getMeetingWorkbook({ date, langwritten })
 
       expect(result).toEqual(mockResult)
       expect(getWorkbookIssueMock).toHaveBeenCalledWith(date)
