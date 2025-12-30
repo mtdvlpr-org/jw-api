@@ -29,7 +29,7 @@
     "postinstall": "pnpm prepare:husky && pnpm prepare:nuxt"
   },
   "dependencies": {
-    "@nuxtjs/mcp-toolkit": "0.6.0",
+    "@nuxtjs/mcp-toolkit": "^0.6.1",
     "node-html-parser": "^7.0.1",
     "nuxt": "^4.2.2",
     "pino": "^10.1.0",

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@nuxtjs/mcp-toolkit':
-        specifier: 0.6.0
-        version: 0.6.0(hono@4.11.1)(magicast@0.5.1)(zod@4.2.1)
+        specifier: ^0.6.1
+        version: 0.6.1(hono@4.11.1)(magicast@0.5.1)(zod@4.2.1)
       node-html-parser:
         specifier: ^7.0.1
         version: 7.0.1
@@ -969,10 +969,10 @@ packages:
       rolldown:
         optional: true
 
-  '@nuxtjs/mcp-toolkit@0.6.0':
-    resolution: {integrity: sha512-ozoPO+y7BjzU0K//WhzkOgZDtyf3oWnJ3ZXZwBOik+H+zbN5G8+TNex43Vo4T7243I2+au5ouXqZ9lYk+LwOIw==}
+  '@nuxtjs/mcp-toolkit@0.6.1':
+    resolution: {integrity: sha512-pcHpOW/NYSuXIfu/PJNNVqxvVc3qLwqCvAWTmJ+WDu3TMTixb0barzaF2lV6rg8IYg9wi3Y2Hs2JRpVEaLYXOg==}
     peerDependencies:
-      agents: '>=0.2.32'
+      agents: '>=0.3.3'
       zod: ^4.1.13
     peerDependenciesMeta:
       agents:
@@ -6719,7 +6719,7 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxtjs/mcp-toolkit@0.6.0(hono@4.11.1)(magicast@0.5.1)(zod@4.2.1)':
+  '@nuxtjs/mcp-toolkit@0.6.1(hono@4.11.1)(magicast@0.5.1)(zod@4.2.1)':
     dependencies:
       '@clack/prompts': 0.11.0
       '@modelcontextprotocol/sdk': 1.25.1(hono@4.11.1)(zod@4.2.1)
