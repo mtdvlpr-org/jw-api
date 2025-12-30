@@ -1,55 +1,57 @@
 import { bibleRepository } from '#server/repository/bible'
 
 /**
+ * Gets the books of the Bible for a given locale.
+ * @param locale The locale to get the books of the Bible for. Defaults to English.
+ * @returns The books of the Bible.
+ */
+const getBooks = async (locale: JwLangSymbol = 'en') => {
+  const result = await bibleRepository.fetchBibleData(locale)
+  return result.editionData.books
+}
+
+/**
+ * Gets a chapter of the Bible for a given locale.
+ * @param book The book of the Bible to get the chapter for.
+ * @param chapter The chapter of the Bible to get.
+ * @param locale The locale to get the chapter for. Defaults to English.
+ * @returns The chapter of the Bible.
+ */
+const getChapter = async ({
+  book,
+  chapter,
+  locale = 'en'
+}: {
+  book: number
+  chapter: number
+  locale?: JwLangSymbol
+}) => {
+  return await bibleRepository.fetchBibleChapter(book, chapter, locale)
+}
+
+/**
+ * Gets a verse of the Bible for a given locale.
+ * @param book The book of the Bible to get the verse for.
+ * @param chapter The chapter of the Bible to get the verse for.
+ * @param locale The locale to get the verse for. Defaults to English.
+ * @param verse The verse of the Bible to get.
+ * @returns The verse of the Bible.
+ */
+const getVerse = async ({
+  book,
+  chapter,
+  locale = 'en',
+  verse
+}: {
+  book: number
+  chapter: number
+  locale?: JwLangSymbol
+  verse: number
+}) => {
+  return await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
+}
+
+/**
  * A service wrapping the bible repository.
  */
-export const bibleService = {
-  /**
-   * Gets the books of the Bible for a given locale.
-   * @param locale The locale to get the books of the Bible for. Defaults to English.
-   * @returns The books of the Bible.
-   */
-  getBooks: async (locale: JwLangSymbol = 'en') => {
-    const result = await bibleRepository.fetchBibleData(locale)
-    return result.editionData.books
-  },
-  /**
-   * Gets a chapter of the Bible for a given locale.
-   * @param book The book of the Bible to get the chapter for.
-   * @param chapter The chapter of the Bible to get.
-   * @param locale The locale to get the chapter for. Defaults to English.
-   * @returns The chapter of the Bible.
-   */
-  getChapter: async ({
-    book,
-    chapter,
-    locale = 'en'
-  }: {
-    book: number
-    chapter: number
-    locale?: JwLangSymbol
-  }) => {
-    return await bibleRepository.fetchBibleChapter(book, chapter, locale)
-  },
-  /**
-   * Gets a verse of the Bible for a given locale.
-   * @param book The book of the Bible to get the verse for.
-   * @param chapter The chapter of the Bible to get the verse for.
-   * @param locale The locale to get the verse for. Defaults to English.
-   * @param verse The verse of the Bible to get.
-   * @returns The verse of the Bible.
-   */
-  getVerse: async ({
-    book,
-    chapter,
-    locale = 'en',
-    verse
-  }: {
-    book: number
-    chapter: number
-    locale?: JwLangSymbol
-    verse: number
-  }) => {
-    return await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
-  }
-}
+export const bibleService = { getBooks, getChapter, getVerse }

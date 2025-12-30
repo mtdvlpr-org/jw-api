@@ -76,26 +76,21 @@ const getCatalog = async (refresh = false) => {
 }
 
 /**
- * A service wrapping the catalog repository.
+ * Gets a publication for a given date.
+ * @param pub The publication to get.
+ * @param langwritten The language to get the publication for. Defaults to English.
+ * @param date The date to get the publication for. Defaults to the current date.
+ * @returns The publication.
  */
-export const catalogService = {
-  getCatalog,
-  /**
-   * Gets a publication for a given date.
-   * @param pub The publication to get.
-   * @param langwritten The language to get the publication for. Defaults to English.
-   * @param date The date to get the publication for. Defaults to the current date.
-   * @returns The publication.
-   */
-  getPublicationForDate: async (
-    pub: string,
-    langwritten: JwLangCode = 'E',
-    date?: Date
-  ): Promise<PublicationFetcher> => {
-    const langId = langCodeToMepsId(langwritten)
-    const dateString = formatDate(date)
+const getPublicationForDate = async (
+  pub: string,
+  langwritten: JwLangCode = 'E',
+  date?: Date
+): Promise<PublicationFetcher> => {
+  const langId = langCodeToMepsId(langwritten)
+  const dateString = formatDate(date)
 
-    const { IssueTagNumber } = await querySingle<{ IssueTagNumber: number }>`
+  const { IssueTagNumber } = await querySingle<{ IssueTagNumber: number }>`
       SELECT IssueTagNumber 
       FROM Publication p
         JOIN DatedText dt ON p.Id = dt.PublicationId
@@ -104,12 +99,16 @@ export const catalogService = {
         AND ${dateString} >= dt.Start 
         AND ${dateString} <= dt.End`
 
-    const issue = IssueTagNumber.toString() as `${number}`
+  const issue = IssueTagNumber.toString() as `${number}`
 
-    return {
-      issue: issue.endsWith('00') ? (issue.slice(0, -2) as `${number}`) : issue,
-      langwritten,
-      pub
-    }
+  return {
+    issue: issue.endsWith('00') ? (issue.slice(0, -2) as `${number}`) : issue,
+    langwritten,
+    pub
   }
 }
+
+/**
+ * A service wrapping the catalog repository.
+ */
+export const catalogService = { getCatalog, getPublicationForDate }
