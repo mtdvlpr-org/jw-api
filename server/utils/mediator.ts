@@ -121,6 +121,7 @@ export const mediatorService = {
   getDetailedCategory,
   getLanguages,
   getMediaItem,
+  getMediaWithSubtitles,
   getSubtitles,
   getTranslations
 }

@@ -7,49 +7,6 @@ const CATALOG_FOLDER = './.data'
 const CATALOG_PATH = CATALOG_FOLDER + '/catalog.sqlite'
 const CATALOG_VERSION_KEY = 'catalog_version'
 
-type Primitive = boolean | null | number | string | undefined
-
-/**
- * Queries the database.
- * @param strings The strings to query.
- * @param values The values to query.
- * @returns The result of the query.
- */
-const query = async <T = unknown>(
-  strings: TemplateStringsArray,
-  ...values: Primitive[]
-): Promise<T[]> => {
-  logger.debug(
-    strings.reduce((query, str, i) => {
-      return query + str.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ') + (values[i] ?? '')
-    }, '')
-  )
-
-  const result = await useDatabase().sql(strings, ...values)
-  logger.debug(JSON.stringify(result))
-
-  if (result.error || !result.success || !result.rows) {
-    throw createInternalServerError('SQL query failed.', result.error)
-  }
-
-  return result.rows as T[]
-}
-
-/**
- * Queries the database for a single row.
- * @param strings The strings to query.
- * @param values The values to query.
- * @returns The result of the query.
- */
-const querySingle = async <T = unknown>(
-  strings: TemplateStringsArray,
-  ...values: Primitive[]
-): Promise<T> => {
-  const [row] = await query<T>(strings, ...values)
-  if (!row) throw createNotFoundError('SQL query returned no rows.')
-  return row
-}
-
 /**
  * Gets the catalog.
  * @param refresh Whether to force a refresh of the catalog. Defaults to false.
@@ -82,16 +39,17 @@ const getCatalog = async (refresh = false) => {
  * @param date The date to get the publication for. Defaults to the current date.
  * @returns The publication.
  */
-const getPublicationForDate = async (
-  pub: string,
-  langwritten: JwLangCode = 'E',
-  date?: Date
-): Promise<PublicationFetcher> => {
+const getPublicationForDate = async (pub: string, langwritten: JwLangCode = 'E', date?: Date) => {
   const langId = langCodeToMepsId(langwritten)
   const dateString = formatDate(date)
+  const db = getDatabase('catalog')
 
-  const { IssueTagNumber } = await querySingle<{ IssueTagNumber: number }>`
-      SELECT IssueTagNumber 
+  const { End, IssueTagNumber, Start } = await db.querySingle<{
+    End: `${number}-${number}-${number}`
+    IssueTagNumber: number
+    Start: `${number}-${number}-${number}`
+  }>`
+      SELECT p.IssueTagNumber, dt.Start, dt.End
       FROM Publication p
         JOIN DatedText dt ON p.Id = dt.PublicationId
       WHERE p.KeySymbol = ${pub} 
@@ -102,9 +60,11 @@ const getPublicationForDate = async (
   const issue = IssueTagNumber.toString() as `${number}`
 
   return {
+    end: End,
     issue: issue.endsWith('00') ? (issue.slice(0, -2) as `${number}`) : issue,
     langwritten,
-    pub
+    pub,
+    start: Start
   }
 }
 

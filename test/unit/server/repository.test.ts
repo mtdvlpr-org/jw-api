@@ -9,15 +9,21 @@ import { wolRepository } from '../../../server/repository/wol'
 import { generateMediaKey, generateVerseId } from '../../../server/utils/general'
 
 // Mock globals for tests since they are auto-imported in Nuxt but not here
-const $fetch = vi.fn()
-const scrapeBibleDataUrl = vi.fn()
-const createNotFoundError = vi.fn((msg) => new Error(msg))
+const { $fetch, createNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
+  const $fetch = vi.fn()
+  const scrapeBibleDataUrl = vi.fn()
+  const createNotFoundError = vi.fn((msg) => new Error(msg))
 
-vi.stubGlobal('$fetch', $fetch)
+  vi.stubGlobal('$fetch', $fetch)
+  vi.stubGlobal('scrapeBibleDataUrl', scrapeBibleDataUrl)
+  vi.stubGlobal('createNotFoundError', createNotFoundError)
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+
+  return { $fetch, createNotFoundError, scrapeBibleDataUrl }
+})
+
 vi.stubGlobal('generateVerseId', generateVerseId)
 vi.stubGlobal('generateMediaKey', generateMediaKey)
-vi.stubGlobal('scrapeBibleDataUrl', scrapeBibleDataUrl)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
 
 describe('repository utils', () => {
   beforeEach(() => {

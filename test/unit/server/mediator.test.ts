@@ -3,16 +3,21 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mediatorRepository } from '../../../server/repository/mediator'
 import { mediatorService } from '../../../server/utils/mediator'
 
-// Mock dependencies
+// Mock dependencies BEFORE importing anything that uses them
+const { $fetch, findBestFile } = vi.hoisted(() => {
+  const $fetch = vi.fn()
+  const findBestFile = vi.fn()
+  const createNotFoundError = vi.fn((msg) => new Error(msg))
+
+  vi.stubGlobal('$fetch', $fetch)
+  vi.stubGlobal('findBestFile', findBestFile)
+  vi.stubGlobal('createNotFoundError', createNotFoundError)
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+
+  return { $fetch, createNotFoundError, findBestFile }
+})
+
 vi.mock('../../../server/repository/mediator')
-
-const $fetch = vi.fn()
-const findBestFile = vi.fn()
-const createNotFoundError = vi.fn((msg) => new Error(msg))
-
-vi.stubGlobal('$fetch', $fetch)
-vi.stubGlobal('findBestFile', findBestFile)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
 
 describe('mediator utils', () => {
   beforeEach(() => {

@@ -1,5 +1,4 @@
 import { wolRepository } from '#server/repository/wol'
-import { parse } from 'node-html-parser'
 
 /**
  * Gets the yeartext for a given locale and year.
@@ -22,7 +21,7 @@ const getYeartextDetails = async (locale: JwLangCode = 'E', year?: number) => {
 
   const result = await wolRepository.fetchYeartextDetails(locale, usedYear)
 
-  const html = parse(result.title)
+  const html = parseHtml(result.title)
 
   return { parsedTitle: html.innerText, result, year: usedYear }
 }

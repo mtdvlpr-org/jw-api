@@ -21,20 +21,21 @@ vi.mock('node:stream', async () => {
 const logger = { debug: vi.fn() }
 const decompressGzip = vi.fn()
 const useStorage = vi.fn()
-const useDatabase = vi.fn()
 const createInternalServerError = vi.fn((msg) => new Error(msg))
 const createNotFoundError = vi.fn((msg) => new Error(msg))
 const formatDate = vi.fn()
 const langCodeToMepsId = vi.fn()
+const querySingleMock = vi.fn()
+const getDatabase = vi.fn(() => ({ querySingle: querySingleMock }))
 
 vi.stubGlobal('logger', logger)
 vi.stubGlobal('decompressGzip', decompressGzip)
 vi.stubGlobal('useStorage', useStorage)
-vi.stubGlobal('useDatabase', useDatabase)
 vi.stubGlobal('createInternalServerError', createInternalServerError)
 vi.stubGlobal('createNotFoundError', createNotFoundError)
 vi.stubGlobal('formatDate', formatDate)
 vi.stubGlobal('langCodeToMepsId', langCodeToMepsId)
+vi.stubGlobal('getDatabase', getDatabase)
 
 describe('catalog utils', () => {
   beforeEach(() => {
@@ -80,53 +81,55 @@ describe('catalog utils', () => {
       langCodeToMepsId.mockReturnValue(123)
       formatDate.mockReturnValue('2024-01-01')
 
-      const mockSql = vi.fn().mockResolvedValue({
-        rows: [{ IssueTagNumber: 20240100 }],
-        success: true
+      querySingleMock.mockResolvedValue({
+        End: '2024-12-31',
+        IssueTagNumber: 20240100,
+        Start: '2024-01-01'
       })
-      useDatabase.mockReturnValue({ sql: mockSql })
 
       const result = await catalogService.getPublicationForDate('w', 'E')
 
       expect(result).toEqual({
+        end: '2024-12-31',
         issue: '202401',
         langwritten: 'E',
-        pub: 'w'
+        pub: 'w',
+        start: '2024-01-01'
       })
 
-      expect(mockSql).toHaveBeenCalled()
+      expect(getDatabase).toHaveBeenCalledWith('catalog')
+      expect(querySingleMock).toHaveBeenCalled()
     })
 
     it('should return full issue number if it does not end in 00', async () => {
       langCodeToMepsId.mockReturnValue(123)
       formatDate.mockReturnValue('2024-01-01')
 
-      const mockSql = vi.fn().mockResolvedValue({
-        rows: [{ IssueTagNumber: 20240115 }],
-        success: true
+      querySingleMock.mockResolvedValue({
+        End: '2024-12-31',
+        IssueTagNumber: 20240115,
+        Start: '2024-01-01'
       })
-      useDatabase.mockReturnValue({ sql: mockSql })
 
       const result = await catalogService.getPublicationForDate('w', 'E')
 
       expect(result).toEqual({
+        end: '2024-12-31',
         issue: '20240115',
         langwritten: 'E',
-        pub: 'w'
+        pub: 'w',
+        start: '2024-01-01'
       })
 
-      expect(mockSql).toHaveBeenCalled()
+      expect(getDatabase).toHaveBeenCalledWith('catalog')
+      expect(querySingleMock).toHaveBeenCalled()
     })
 
     it('should throw error if query fails', async () => {
       langCodeToMepsId.mockReturnValue(123)
       formatDate.mockReturnValue('2024-01-01')
 
-      const mockSql = vi.fn().mockResolvedValue({
-        error: 'DB Error',
-        success: false
-      })
-      useDatabase.mockReturnValue({ sql: mockSql })
+      querySingleMock.mockRejectedValue(new Error('SQL query failed.'))
 
       await expect(catalogService.getPublicationForDate('w')).rejects.toThrow('SQL query failed.')
     })
@@ -135,11 +138,7 @@ describe('catalog utils', () => {
       langCodeToMepsId.mockReturnValue(123)
       formatDate.mockReturnValue('2024-01-01')
 
-      const mockSql = vi.fn().mockResolvedValue({
-        rows: [],
-        success: true
-      })
-      useDatabase.mockReturnValue({ sql: mockSql })
+      querySingleMock.mockRejectedValue(new Error('SQL query returned no rows.'))
 
       await expect(catalogService.getPublicationForDate('w')).rejects.toThrow(
         'SQL query returned no rows.'

@@ -3,6 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { wolRepository } from '../../../server/repository/wol'
 import { wolService } from '../../../server/utils/wol'
 
+// Mock globals BEFORE importing anything that uses them
+vi.hoisted(() => {
+  const parseHtml = vi.fn((html: string) => {
+    // Simple mock that strips HTML tags
+    const text = html.replace(/<[^>]*>/g, '')
+    return { innerText: text }
+  })
+
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+  vi.stubGlobal('parseHtml', parseHtml)
+})
+
 vi.mock('../../../server/repository/wol')
 
 describe('wol utils', () => {

@@ -3,6 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { jwRepository } from '../../../server/repository/jw'
 import { jwService } from '../../../server/utils/jw'
 
+// Mock defineCachedFunction BEFORE importing anything that uses it
+vi.hoisted(() => {
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+})
+
 vi.mock('../../../server/repository/jw')
 
 describe('jw service', () => {

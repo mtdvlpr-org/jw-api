@@ -48,7 +48,10 @@ export const getWeekOfYear = (date?: { day: number; month: number; year: number 
  * @param format - The format to use. Defaults to 'YYYY-MM-DD'.
  * @returns The formatted date.
  */
-export const formatDate = (date?: Date, format: 'YYYY-MM-DD' = 'YYYY-MM-DD'): string => {
+export const formatDate = (
+  date?: Date,
+  format: 'YYYY-MM-DD' | 'YYYYMMDD' = 'YYYY-MM-DD'
+): string => {
   if (!date) date = new Date()
   const year = date.getFullYear()
   const day = pad(date.getDate()) // 01 - 31
@@ -57,6 +60,8 @@ export const formatDate = (date?: Date, format: 'YYYY-MM-DD' = 'YYYY-MM-DD'): st
   switch (format) {
     case 'YYYY-MM-DD':
       return `${year}-${month}-${day}`
+    case 'YYYYMMDD':
+      return `${year}${month}${day}`
     default:
       throw createInternalServerError(`Unsupported date format: ${format}`)
   }

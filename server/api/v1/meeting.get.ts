@@ -1,6 +1,11 @@
 import { z } from 'zod'
 
 const querySchema = z.object({
+  langwritten: z
+    .enum(jwLangCodes)
+    .optional()
+    .default('E')
+    .describe('The language to get the meeting for.'),
   week: z.coerce
     .number<string>()
     .min(1)
@@ -15,11 +20,11 @@ const querySchema = z.object({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { week, year } = await getValidatedQuery(event, querySchema.parse)
+  const { langwritten, week, year } = await getValidatedQuery(event, querySchema.parse)
 
   if (!!week !== !!year) {
     throw createBadRequestError('Week and year must be provided together or not at all.')
   }
 
-  return meetingService.getMeetingPublications(week && year ? { week, year } : undefined)
+  return meetingService.getMeetingArticles(langwritten, week && year ? { week, year } : undefined)
 })

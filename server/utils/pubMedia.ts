@@ -50,14 +50,19 @@ const getStudyWatchtower = async ({
   return await pubMediaRepository.fetchPublication({ fileformat, issue, langwritten, pub: 'w' })
 }
 
-const getWatchtowerArticles = async (
-  langwritten: JwLangCode = 'E',
+const getWatchtowerArticles = async ({
+  date,
+  langwritten = 'E'
+}: {
   date?: { month: number; year: number }
-) => {
+  langwritten: JwLangCode
+}) => {
   const publication = await getStudyWatchtower({ date, fileformat: 'RTF', langwritten })
-  return publication.files[langwritten]?.RTF?.filter((a) => a.mimetype === 'application/rtf').map(
-    ({ file, title }) => ({ file, title })
-  )
+  const articles = publication.files[langwritten]!.RTF!.filter(
+    (a) => a.mimetype === 'application/rtf'
+  ).map(({ file, title }) => ({ file, title }))
+
+  return { articles, issue: publication.issue }
 }
 
 const getWatchtowerArticleContent = async (url: string) => {

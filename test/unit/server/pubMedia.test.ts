@@ -5,6 +5,11 @@ import type { PublicationFetcher } from '../../../shared/types/pubMedia'
 import { pubMediaRepository } from '../../../server/repository/pubMedia'
 import { pubMediaService } from '../../../server/utils/pubMedia'
 
+// Mock defineCachedFunction BEFORE importing anything that uses it
+vi.hoisted(() => {
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+})
+
 vi.mock('../../../server/repository/pubMedia')
 
 const getStudyWatchtowerIssueMock = vi.fn()

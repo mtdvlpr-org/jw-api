@@ -3,6 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { bibleRepository } from '../../../server/repository/bible'
 import { bibleService } from '../../../server/utils/bible'
 
+// Mock defineCachedFunction BEFORE importing anything that uses it
+vi.hoisted(() => {
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+})
+
 vi.mock('../../../server/repository/bible')
 
 describe('bible utils', () => {

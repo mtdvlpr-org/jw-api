@@ -8,7 +8,13 @@ import {
   createUnauthorizedError
 } from '../../../server/utils/error'
 
-vi.stubGlobal('createError', (error: unknown) => error)
+// Mock globals BEFORE importing anything that uses them
+vi.hoisted(() => {
+  const logger = { error: vi.fn() }
+
+  vi.stubGlobal('createError', (error: unknown) => error)
+  vi.stubGlobal('logger', logger)
+})
 
 describe('error utils', () => {
   describe('createNotFoundError', () => {
