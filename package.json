@@ -45,7 +45,7 @@
     "@nuxt/test-utils": "^3.21.0",
     "@types/node": "^22.19.3",
     "@types/unzipper": "^0.10.11",
-    "@vitest/coverage-v8": "3.2.4",
+    "@vitest/coverage-v8": "4.0.16",
     "@vitest/eslint-plugin": "^1.6.4",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^9.39.2",
@@ -59,7 +59,7 @@
     "prettier": "^3.7.4",
     "sass-embedded": "^1.97.1",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4",
+    "vitest": "^4.0.16",
     "vue-tsc": "^3.2.1",
     "zod-openapi": "^5.4.5"
   },
