@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { bibleRepository } from '../../../server/repository/bible'
 import { catalogRepository } from '../../../server/repository/catalog'
+import { downloadRepository } from '../../../server/repository/download'
 import { jwRepository } from '../../../server/repository/jw'
 import { mediatorRepository } from '../../../server/repository/mediator'
 import { pubMediaRepository } from '../../../server/repository/pubMedia'
@@ -28,6 +29,60 @@ vi.stubGlobal('generateMediaKey', generateMediaKey)
 describe('repository utils', () => {
   beforeEach(() => {
     vi.resetAllMocks()
+  })
+
+  describe('downloadRepository', () => {
+    describe('arrayBuffer', () => {
+      it('should download as arrayBuffer', async () => {
+        const url = 'http://example.com/file'
+        const mockData = new ArrayBuffer(8)
+        vi.mocked($fetch).mockResolvedValue(mockData)
+
+        const result = await downloadRepository.arrayBuffer(url)
+
+        expect(result).toBe(mockData)
+        expect($fetch).toHaveBeenCalledWith(url, { responseType: 'arrayBuffer' })
+      })
+    })
+
+    describe('blob', () => {
+      it('should download as blob', async () => {
+        const url = 'http://example.com/file'
+        const mockData = new Blob(['test'])
+        vi.mocked($fetch).mockResolvedValue(mockData)
+
+        const result = await downloadRepository.blob(url)
+
+        expect(result).toBe(mockData)
+        expect($fetch).toHaveBeenCalledWith(url, { responseType: 'blob' })
+      })
+    })
+
+    describe('stream', () => {
+      it('should download as stream', async () => {
+        const url = 'http://example.com/file'
+        const mockData = {} // Mock stream object
+        vi.mocked($fetch).mockResolvedValue(mockData)
+
+        const result = await downloadRepository.stream(url)
+
+        expect(result).toBe(mockData)
+        expect($fetch).toHaveBeenCalledWith(url, { responseType: 'stream' })
+      })
+    })
+
+    describe('text', () => {
+      it('should download as text', async () => {
+        const url = 'http://example.com/file'
+        const mockData = 'test content'
+        vi.mocked($fetch).mockResolvedValue(mockData)
+
+        const result = await downloadRepository.text(url)
+
+        expect(result).toBe(mockData)
+        expect($fetch).toHaveBeenCalledWith(url, { responseType: 'text' })
+      })
+    })
   })
 
   describe('catalogRepository.fetchCatalog', () => {
