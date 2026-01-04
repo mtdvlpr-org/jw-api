@@ -1,6 +1,12 @@
 import { fileURLToPath } from 'node:url'
 
+import type { DbKey } from './shared/types/db'
+
 import { description, version } from './package.json'
+
+const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }> = {
+  catalog: { connector: 'sqlite', options: { name: 'catalog' } }
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -11,12 +17,7 @@ export default defineNuxtConfig({
   mcp: { name: 'JW MCP', version },
   modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit'],
   nitro: {
-    database: {
-      catalog: { connector: 'sqlite', options: { name: 'catalog' } },
-      jwpub: { connector: 'sqlite', options: { name: 'jwpub' } },
-      mwb: { connector: 'sqlite', options: { name: 'mwb' } },
-      wt: { connector: 'sqlite', options: { name: 'wt' } }
-    },
+    database,
     experimental: { database: true, openAPI: true },
     openAPI: {
       meta: { description, title: 'JW API', version },

@@ -1,1 +1,1 @@
-export type DbName = 'catalog' | 'jwpub' | 'mwb' | 'wt'
+export type DbKey = 'catalog'

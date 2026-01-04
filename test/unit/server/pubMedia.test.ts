@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PublicationFetcher } from '../../../shared/types/pubMedia'
 
+import { downloadRepository } from '../../../server/repository/download'
 import { pubMediaRepository } from '../../../server/repository/pubMedia'
 import { pubMediaService } from '../../../server/utils/pubMedia'
 
@@ -11,12 +12,15 @@ vi.hoisted(() => {
 })
 
 vi.mock('../../../server/repository/pubMedia')
+vi.mock('../../../server/repository/download')
 
 const getStudyWatchtowerIssueMock = vi.fn()
 const getWorkbookIssueMock = vi.fn()
+const parseRTF = vi.fn()
 
 vi.stubGlobal('getStudyWatchtowerIssue', getStudyWatchtowerIssueMock)
 vi.stubGlobal('getWorkbookIssue', getWorkbookIssueMock)
+vi.stubGlobal('parseRTF', parseRTF)
 
 describe('pubMedia utils', () => {
   beforeEach(() => {
@@ -79,6 +83,53 @@ describe('pubMedia utils', () => {
         langwritten,
         pub: 'mwb'
       })
+    })
+  })
+
+  describe('getWatchtowerArticles', () => {
+    it('should fetch RTF files and extract articles', async () => {
+      const date = { month: 1, year: 2024 }
+      const langwritten = 'E'
+      const issue = '202401'
+
+      getStudyWatchtowerIssueMock.mockReturnValue(issue)
+
+      const mockPub = {
+        files: {
+          E: {
+            RTF: [
+              { file: { url: 'article1.rtf' }, mimetype: 'application/rtf', title: 'Article 1' },
+              { file: { url: 'other.txt' }, mimetype: 'text/plain', title: 'Ignored' }
+            ]
+          }
+        },
+        issue
+      }
+      vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue(mockPub)
+
+      const result = await pubMediaService.getWatchtowerArticles({ date, langwritten })
+
+      expect(result).toEqual({
+        articles: [{ file: { url: 'article1.rtf' }, title: 'Article 1' }],
+        issue
+      })
+    })
+  })
+
+  describe('getWatchtowerArticleContent', () => {
+    it('should download text and parse RTF', async () => {
+      const url = 'http://example.com/article.rtf'
+      const rtfContent = '{\\rtf1...}'
+      const parsedContent = 'Parsed Text'
+
+      vi.mocked(downloadRepository.text).mockResolvedValue(rtfContent)
+      parseRTF.mockReturnValue(parsedContent)
+
+      const result = await pubMediaService.getWatchtowerArticleContent(url)
+
+      expect(downloadRepository.text).toHaveBeenCalledWith(url)
+      expect(parseRTF).toHaveBeenCalledWith(rtfContent)
+      expect(result).toBe(parsedContent)
     })
   })
 })

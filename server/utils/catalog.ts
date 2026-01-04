@@ -42,9 +42,9 @@ const getCatalog = async (refresh = false) => {
 const getPublicationForDate = async (pub: string, langwritten: JwLangCode = 'E', date?: Date) => {
   const langId = langCodeToMepsId(langwritten)
   const dateString = formatDate(date)
-  const db = getDatabase('catalog')
+  const { querySingle } = useDb('catalog')
 
-  const { End, IssueTagNumber, Start } = await db.querySingle<{
+  const { End, IssueTagNumber, Start } = await querySingle<{
     End: `${number}-${number}-${number}`
     IssueTagNumber: number
     Start: `${number}-${number}-${number}`

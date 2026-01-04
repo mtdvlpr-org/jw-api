@@ -1,60 +1,61 @@
+import type { Database } from 'sql.js'
+
 import { downloadRepository } from '#server/repository/download'
-import { Readable } from 'node:stream'
 
 /**
  * Extracts the database from a remote JWPUB file.
  *
- * @param db The database to extract.
- * @param url The URL of the publication zip file.
- * @returns The path to the extracted database file.
+ * @param url The URL of the publication JWPUB file.
+ * @returns The loaded database.
  */
-const getJwpubDatabase = async (url: string, db: DbName = 'jwpub'): Promise<string> => {
-  const outputPath = getDbPath(db)
+const getDatabase = async (url: string): Promise<Database> => {
+  const blob = await downloadRepository.blob(url)
+  const outerZip = await extractZipFiles(blob)
+  const innerZip = await extractZipFiles(await outerZip.files['contents'].async('uint8array'))
 
-  // Fetch the outer zip as a stream
-  const outerZipStream = await downloadRepository.stream(url)
+  const dbFile = Object.keys(innerZip.files).find((file) => file.endsWith('.db'))
+  if (!dbFile) throw createNotFoundError('No database file found in the JWPUB file.')
 
-  // Extract the database file from the nested contents zip
-  await extractFromNestedZip(Readable.fromWeb(outerZipStream), 'contents', '*.db', outputPath)
+  const sqlDb = await innerZip.files[dbFile].async('uint8array')
 
-  return outputPath
+  return loadDatabase(sqlDb)
 }
 
 /**
- * Gets a publication for a given date.
- * @param pub The publication to get.
- * @param langwritten The language to get the publication for. Defaults to English.
- * @param date The date to get the publication for. Defaults to the current date.
- * @returns The publication.
+ * Gets a Watchtower article for a given date.
+ * @param url The URL of the publication JWPUB file.
+ * @param date The date to get the article for. Defaults to the current date.
+ * @returns The article.
  */
 const getWtArticleForDate = async (url: string, date?: Date) => {
-  await getJwpubDatabase(url, 'wt')
+  const db = await getDatabase(url)
   const dateString = formatDate(date, 'YYYYMMDD')
-  const { querySingle } = getDatabase('wt')
   const {
     BeginParagraphOrdinal,
     DocumentId,
     EndParagraphOrdinal,
     FirstDateOffset,
     LastDateOffset
-  } = await querySingle<{
+  } = queryDatabaseSingle<{
     BeginParagraphOrdinal: number
     DocumentId: number
     EndParagraphOrdinal: number
     FirstDateOffset: string
     LastDateOffset: string
-  }>`
-    SELECT DocumentId, BeginParagraphOrdinal, EndParagraphOrdinal, FirstDateOffset, LastDateOffset
+  }>(
+    db,
+    `SELECT DocumentId, BeginParagraphOrdinal, EndParagraphOrdinal, FirstDateOffset, LastDateOffset
     FROM DatedText dt
-    WHERE dt.FirstDateOffset <= ${dateString} AND dt.LastDateOffset >= ${dateString}
-  `
+    WHERE dt.FirstDateOffset <= ${dateString} AND dt.LastDateOffset >= ${dateString}`
+  )
 
-  const { Caption } = await querySingle<{ Caption: string }>`
-  SELECT Caption
-  FROM InternalLink il
-  JOIN DocumentInternalLink dil ON dil.InternalLinkId = il.InternalLinkId
-  WHERE dil.DocumentId = ${DocumentId} AND dil.BeginParagraphOrdinal >= ${BeginParagraphOrdinal} AND dil.EndParagraphOrdinal <= ${EndParagraphOrdinal}
-  `
+  const { Caption } = queryDatabaseSingle<{ Caption: string }>(
+    db,
+    `SELECT Caption
+    FROM InternalLink il
+      JOIN DocumentInternalLink dil ON dil.InternalLinkId = il.InternalLinkId
+    WHERE dil.DocumentId = ${DocumentId} AND dil.BeginParagraphOrdinal >= ${BeginParagraphOrdinal} AND dil.EndParagraphOrdinal <= ${EndParagraphOrdinal}`
+  )
 
   const html = parseHtml(Caption)
   const title = html.querySelector('span.etitle')?.innerText ?? html.innerText
@@ -63,25 +64,24 @@ const getWtArticleForDate = async (url: string, date?: Date) => {
 }
 
 /**
- * Gets a publication for a given date.
- * @param pub The publication to get.
- * @param langwritten The language to get the publication for. Defaults to English.
- * @param date The date to get the publication for. Defaults to the current date.
- * @returns The publication.
+ * Gets a Meeting Workbook article for a given date.
+ * @param url The URL of the publication JWPUB file.
+ * @param date The date to get the article for. Defaults to the current date.
+ * @returns The article.
  */
 const getMwbArticleForDate = async (url: string, date?: Date) => {
-  await getJwpubDatabase(url, 'mwb')
+  const db = await getDatabase(url)
   const dateString = formatDate(date, 'YYYYMMDD')
-  const { querySingle } = getDatabase('mwb')
-  const { Caption, FirstDateOffset, LastDateOffset } = await querySingle<{
+  const { Caption, FirstDateOffset, LastDateOffset } = queryDatabaseSingle<{
     Caption: string
     FirstDateOffset: string
     LastDateOffset: string
-  }>`
-    SELECT Caption, FirstDateOffset, LastDateOffset
+  }>(
+    db,
+    `SELECT Caption, FirstDateOffset, LastDateOffset
     FROM DatedText dt
-    WHERE dt.FirstDateOffset <= ${dateString} AND dt.LastDateOffset >= ${dateString}
-  `
+    WHERE dt.FirstDateOffset <= ${dateString} AND dt.LastDateOffset >= ${dateString}`
+  )
 
   const html = parseHtml(Caption)
   const title = html.querySelector('span.etitle')?.innerText ?? html.innerText

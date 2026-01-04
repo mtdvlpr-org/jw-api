@@ -1,0 +1,39 @@
+import initSqlJs, { type Database } from 'sql.js'
+
+export const loadDatabase = async (data: ArrayLike<number> | Buffer): Promise<Database> => {
+  const SQL = await initSqlJs()
+  const db = new SQL.Database(data)
+  return db
+}
+
+export const queryDatabase = <T extends Record<string, unknown>>(
+  db: Database,
+  query: string
+): T[] => {
+  try {
+    const result = db.exec(query)
+    return result.flatMap((execResult) => {
+      return execResult.values.map((rowValues) => {
+        const object: T = {} as T
+        execResult.columns.forEach((col, i) => {
+          object[col as keyof T] = rowValues[i] as T[keyof T]
+        })
+        return object
+      })
+    })
+  } catch (e) {
+    throw createInternalServerError('SQL query failed.', {
+      message: e instanceof Error ? e.message : String(e),
+      query
+    })
+  }
+}
+
+export const queryDatabaseSingle = <T extends Record<string, unknown>>(
+  db: Database,
+  query: string
+): T => {
+  const result = queryDatabase<T>(db, query)
+  if (result.length === 0) throw createNotFoundError('No result found for query.', { query })
+  return result[0]
+}

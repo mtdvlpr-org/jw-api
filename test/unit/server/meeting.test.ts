@@ -8,9 +8,19 @@ const catalogService = {
   getPublicationForDate: vi.fn()
 }
 const getMondayOfWeek = vi.fn()
+const pubMediaService = {
+  getMeetingWorkbook: vi.fn(),
+  getStudyWatchtower: vi.fn()
+}
+const jwpubService = {
+  getMwbArticleForDate: vi.fn(),
+  getWtArticleForDate: vi.fn()
+}
 
 vi.stubGlobal('catalogService', catalogService)
 vi.stubGlobal('getMondayOfWeek', getMondayOfWeek)
+vi.stubGlobal('pubMediaService', pubMediaService)
+vi.stubGlobal('jwpubService', jwpubService)
 
 describe('meeting utils', () => {
   beforeEach(() => {
@@ -45,6 +55,79 @@ describe('meeting utils', () => {
       catalogService.getPublicationForDate.mockRejectedValue(new Error('Failed'))
 
       const result = await meetingService.getMeetingPublications()
+
+      expect(result).toEqual({
+        watchtower: null,
+        workbook: null
+      })
+    })
+  })
+
+  describe('getMeetingArticles', () => {
+    it('should fetch and process meeting articles', async () => {
+      const date = { week: 1, year: 2024 }
+      const langwritten = 'E'
+      const monday = new Date('2024-01-01')
+      getMondayOfWeek.mockReturnValue(monday)
+
+      // Mock getMeetingPublications result indirectly via catalogService
+      catalogService.getPublicationForDate.mockImplementation((pub) => {
+        if (pub === 'w') return Promise.resolve({ issue: '202401' })
+        if (pub === 'mwb') return Promise.resolve({ issue: '202401' })
+        return Promise.resolve(null)
+      })
+
+      // Mock pubMediaService
+      pubMediaService.getStudyWatchtower.mockResolvedValue({
+        files: {
+          E: {
+            JWPUB: [{ file: { url: 'wt-url' } }]
+          }
+        }
+      })
+      pubMediaService.getMeetingWorkbook.mockResolvedValue({
+        files: {
+          E: {
+            JWPUB: [{ file: { url: 'mwb-url' } }]
+          }
+        }
+      })
+
+      // Mock jwpubService
+      jwpubService.getWtArticleForDate.mockResolvedValue({ title: 'WT Article' })
+      jwpubService.getMwbArticleForDate.mockResolvedValue({ title: 'MWB Article' })
+
+      const result = await meetingService.getMeetingArticles(langwritten, date)
+
+      expect(catalogService.getPublicationForDate).toHaveBeenCalled()
+      expect(pubMediaService.getStudyWatchtower).toHaveBeenCalledWith({
+        date: { month: 1, year: 2024 },
+        fileformat: 'JWPUB',
+        langwritten
+      })
+      expect(pubMediaService.getMeetingWorkbook).toHaveBeenCalledWith({
+        date: { month: 1, year: 2024 },
+        fileformat: 'JWPUB',
+        langwritten
+      })
+      expect(jwpubService.getWtArticleForDate).toHaveBeenCalledWith('wt-url', monday)
+      expect(jwpubService.getMwbArticleForDate).toHaveBeenCalledWith('mwb-url', monday)
+
+      expect(result).toEqual({
+        watchtower: { title: 'WT Article' },
+        workbook: { title: 'MWB Article' }
+      })
+    })
+
+    it('should handle missing publications or files', async () => {
+      const date = { week: 1, year: 2024 }
+      const langwritten = 'E'
+      getMondayOfWeek.mockReturnValue(new Date())
+
+      // Mock getMeetingPublications to return nulls
+      catalogService.getPublicationForDate.mockResolvedValue(null)
+
+      const result = await meetingService.getMeetingArticles(langwritten, date)
 
       expect(result).toEqual({
         watchtower: null,

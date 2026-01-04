@@ -26,7 +26,8 @@ const createNotFoundError = vi.fn((msg) => new Error(msg))
 const formatDate = vi.fn()
 const langCodeToMepsId = vi.fn()
 const querySingleMock = vi.fn()
-const getDatabase = vi.fn(() => ({ querySingle: querySingleMock }))
+const queryMock = vi.fn()
+const useDb = vi.fn(() => ({ query: queryMock, querySingle: querySingleMock }))
 
 vi.stubGlobal('logger', logger)
 vi.stubGlobal('decompressGzip', decompressGzip)
@@ -35,7 +36,7 @@ vi.stubGlobal('createInternalServerError', createInternalServerError)
 vi.stubGlobal('createNotFoundError', createNotFoundError)
 vi.stubGlobal('formatDate', formatDate)
 vi.stubGlobal('langCodeToMepsId', langCodeToMepsId)
-vi.stubGlobal('getDatabase', getDatabase)
+vi.stubGlobal('useDb', useDb)
 
 describe('catalog utils', () => {
   beforeEach(() => {
@@ -97,7 +98,7 @@ describe('catalog utils', () => {
         start: '2024-01-01'
       })
 
-      expect(getDatabase).toHaveBeenCalledWith('catalog')
+      expect(useDb).toHaveBeenCalledWith('catalog')
       expect(querySingleMock).toHaveBeenCalled()
     })
 
@@ -121,7 +122,7 @@ describe('catalog utils', () => {
         start: '2024-01-01'
       })
 
-      expect(getDatabase).toHaveBeenCalledWith('catalog')
+      expect(useDb).toHaveBeenCalledWith('catalog')
       expect(querySingleMock).toHaveBeenCalled()
     })
 
