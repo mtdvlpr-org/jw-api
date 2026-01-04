@@ -4,12 +4,9 @@ export const downloadRepository = {
   arrayBuffer: async (url: string) => {
     return await $fetch<ArrayBuffer>(url, { responseType: 'arrayBuffer' })
   },
-  blob: defineCachedFunction(
-    async (url: string) => {
-      return await $fetch<Blob>(url, { responseType: 'blob' })
-    },
-    { maxAge: 60 * 60 * 24 * 30, name: 'downloadRepository.blob' }
-  ),
+  blob: async (url: string) => {
+    return await $fetch<Blob>(url, { responseType: 'blob' })
+  },
   stream: async (url: string) => {
     return await $fetch<ReadableStream>(url, { responseType: 'stream' })
   },
@@ -17,6 +14,6 @@ export const downloadRepository = {
     async (url: string) => {
       return await $fetch<string>(url, { responseType: 'text' })
     },
-    { maxAge: 60 * 60 * 24 * 30, name: 'downloadRepository.text' }
+    { maxAge: 60 * 60 * 24, name: 'downloadRepository.text' }
   )
 }

@@ -35,7 +35,7 @@ const queryDb =
  * Queries the database for a single row.
  * @param strings The strings to query.
  * @param values The values to query.
- * @returns The result of the query.
+ * @returns The single row of the query.
  */
 const queryDbSingle =
   (db: DbKey) =>

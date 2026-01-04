@@ -25,7 +25,7 @@
     "test:e2e": "vitest run --project e2e",
     "test:nuxt": "vitest run --project nuxt",
     "test:coverage": "vitest run --coverage --exclude test/nuxt/server/integration.test.ts",
-    "test": "vitest",
+    "test": "vitest --exclude test/nuxt/server/integration.test.ts",
     "postinstall": "pnpm prepare:husky && pnpm prepare:nuxt"
   },
   "dependencies": {

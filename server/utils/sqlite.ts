@@ -1,11 +1,22 @@
 import initSqlJs, { type Database } from 'sql.js'
 
+/**
+ * Loads the database from the data.
+ * @param data The data to load the database from.
+ * @returns The loaded database.
+ */
 export const loadDatabase = async (data: ArrayLike<number> | Buffer): Promise<Database> => {
   const SQL = await initSqlJs()
   const db = new SQL.Database(data)
   return db
 }
 
+/**
+ * Queries the database for multiple rows.
+ * @param db The database to query.
+ * @param query The query to execute.
+ * @returns The multiple rows of the query.
+ */
 export const queryDatabase = <T extends Record<string, unknown>>(
   db: Database,
   query: string
@@ -29,6 +40,12 @@ export const queryDatabase = <T extends Record<string, unknown>>(
   }
 }
 
+/**
+ * Queries the database for a single row.
+ * @param db The database to query.
+ * @param query The query to execute.
+ * @returns The single row of the query.
+ */
 export const queryDatabaseSingle = <T extends Record<string, unknown>>(
   db: Database,
   query: string

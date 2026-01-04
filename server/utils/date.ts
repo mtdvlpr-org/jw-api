@@ -50,7 +50,7 @@ export const getWeekOfYear = (date?: { day: number; month: number; year: number 
  */
 export const formatDate = (
   date?: Date,
-  format: 'YYYY-MM-DD' | 'YYYYMMDD' = 'YYYY-MM-DD'
+  format: 'YYYY-MM-DD' | 'YYYY/MM/DD' | 'YYYYMMDD' = 'YYYY-MM-DD'
 ): string => {
   if (!date) date = new Date()
   const year = date.getFullYear()
@@ -60,6 +60,8 @@ export const formatDate = (
   switch (format) {
     case 'YYYY-MM-DD':
       return `${year}-${month}-${day}`
+    case 'YYYY/MM/DD':
+      return `${year}/${month}/${day}`
     case 'YYYYMMDD':
       return `${year}${month}${day}`
     default:

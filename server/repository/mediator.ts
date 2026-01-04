@@ -23,7 +23,7 @@ export const mediatorRepository = {
 
       return result.categories
     },
-    { maxAge: 60 * 60 * 24, name: 'mediatorRepository.fetchCategories' }
+    { maxAge: 60 * 60 * 24 * 30, name: 'mediatorRepository.fetchCategories' }
   ),
 
   /**

@@ -65,9 +65,19 @@ describe('date utils', () => {
       expect(formatDate()).toBe('2024-12-31')
     })
 
+    it('should format date as YYYY/MM/DD', () => {
+      const date = new Date(Date.UTC(2024, 0, 1))
+      expect(formatDate(date, 'YYYY/MM/DD')).toBe('2024/01/01')
+    })
+
+    it('should format date as YYYYMMDD', () => {
+      const date = new Date(Date.UTC(2024, 0, 1))
+      expect(formatDate(date, 'YYYYMMDD')).toBe('20240101')
+    })
+
     it('should throw error for unsupported format', () => {
-      expect(() => formatDate(new Date(), 'DD-MM-YYYY' as 'YYYY-MM-DD')).toThrow(
-        'Unsupported date format: DD-MM-YYYY'
+      expect(() => formatDate(new Date(), 'unsupported' as 'YYYY-MM-DD')).toThrow(
+        'Unsupported date format: unsupported'
       )
     })
   })
