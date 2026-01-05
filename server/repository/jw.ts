@@ -15,6 +15,22 @@ const defaultFetchOptions = {
  */
 export const jwRepository = {
   /**
+   * Fetches the homepage HTML for a given locale.
+   * @param locale The language of the homepage.
+   * @returns The homepage HTML.
+   */
+  fetchHomepage: defineCachedFunction(
+    async (locale: JwLangSymbol) => {
+      const result = await $fetch<string>(`/${locale}/`, {
+        ...defaultFetchOptions,
+        responseType: 'text'
+      })
+
+      return result
+    },
+    { maxAge: 60 * 60 * 24 * 30, name: 'jwRepository.fetchHomepage' }
+  ),
+  /**
    * Fetches the available languages on JW.org.
    * @param locale The language of the languages.
    * @returns A list of languages.

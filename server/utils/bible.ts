@@ -1,6 +1,16 @@
 import { bibleRepository } from '#server/repository/bible'
 
 /**
+ * Gets the Bible data for a given locale.
+ * @param locale The locale to get the Bible data for. Defaults to English.
+ * @returns The Bible data.
+ */
+const getBibleData = async (locale: JwLangSymbol = 'en') => {
+  const result = await bibleRepository.fetchBibleData(locale)
+  return result
+}
+
+/**
  * Gets the books of the Bible for a given locale.
  * @param locale The locale to get the books of the Bible for. Defaults to English.
  * @returns The books of the Bible.
@@ -54,4 +64,4 @@ const getVerse = async ({
 /**
  * A service wrapping the bible repository.
  */
-export const bibleService = { getBooks, getChapter, getVerse }
+export const bibleService = { getBibleData, getBooks, getChapter, getVerse }
