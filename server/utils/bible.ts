@@ -21,6 +21,16 @@ const getBooks = async (locale: JwLangSymbol = 'en') => {
 }
 
 /**
+ * Gets a book of the Bible for a given locale.
+ * @param book The book of the Bible to get.
+ * @param locale The locale to get the book for. Defaults to English.
+ * @returns The book of the Bible.
+ */
+const getBook = async ({ book, locale = 'en' }: { book: number; locale?: JwLangSymbol }) => {
+  return await bibleRepository.fetchBibleBook(book, locale)
+}
+
+/**
  * Gets a chapter of the Bible for a given locale.
  * @param book The book of the Bible to get the chapter for.
  * @param chapter The chapter of the Bible to get.
@@ -64,4 +74,4 @@ const getVerse = async ({
 /**
  * A service wrapping the bible repository.
  */
-export const bibleService = { getBibleData, getBooks, getChapter, getVerse }
+export const bibleService = { getBibleData, getBook, getBooks, getChapter, getVerse }

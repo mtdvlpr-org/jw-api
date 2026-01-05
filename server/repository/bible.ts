@@ -14,6 +14,32 @@ const defaultFetchOptions = {
  */
 export const bibleRepository = {
   /**
+   * Fetches a book of the Bible.
+   * @param book The book number.
+   * @param locale The language of the Bible.
+   * @returns The book data.
+   */
+  fetchBibleBook: defineCachedFunction(
+    async (book: number, locale: JwLangSymbol) => {
+      const url = await scrapeBibleDataUrl(locale)
+      const startVerseId = generateVerseId(book, 1, 1)
+      const endVerseId = generateVerseId(book, 999, 999)
+      const range: `${number}-${number}` = `${startVerseId}-${endVerseId}`
+
+      const result = await $fetch<BibleResult>(`${url}/${range}`, { ...defaultFetchOptions })
+
+      const rangesData = Object.values(result.ranges ?? {})[0] ?? null
+
+      if (!rangesData) {
+        throw createNotFoundError('Could not find book data.', { book, locale })
+      }
+
+      return { book: result.editionData.books[book], range: rangesData }
+    },
+    { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleBook' }
+  ),
+
+  /**
    * Fetches a chapter of the Bible.
    * @param book The book number.
    * @param chapter The chapter number.

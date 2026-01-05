@@ -37,6 +37,28 @@ describe('bible utils', () => {
     })
   })
 
+  describe('getBook', () => {
+    it('should call fetchBibleBook with default locale', async () => {
+      const mockResult = { book: { title: 'Genesis' }, range: {} }
+      vi.mocked(bibleRepository.fetchBibleBook).mockResolvedValue(mockResult)
+
+      const result = await bibleService.getBook({ book: 1 })
+
+      expect(result).toEqual(mockResult)
+      expect(bibleRepository.fetchBibleBook).toHaveBeenCalledWith(1, 'en')
+    })
+
+    it('should call fetchBibleBook with provided locale', async () => {
+      const mockResult = { book: { title: 'Genesis' }, range: {} }
+      vi.mocked(bibleRepository.fetchBibleBook).mockResolvedValue(mockResult)
+
+      const result = await bibleService.getBook({ book: 1, locale: 'es' })
+
+      expect(result).toEqual(mockResult)
+      expect(bibleRepository.fetchBibleBook).toHaveBeenCalledWith(1, 'es')
+    })
+  })
+
   describe('getChapter', () => {
     it('should call fetchBibleChapter', async () => {
       const mockResult = { verses: [] }

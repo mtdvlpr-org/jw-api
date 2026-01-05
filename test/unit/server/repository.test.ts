@@ -480,6 +480,67 @@ describe('repository utils', () => {
     })
   })
 
+  describe('bibleRepository.fetchBibleBook', () => {
+    it('should fetch book data successfully', async () => {
+      const locale = 'en'
+      const book = 1
+      const url = 'https://example.com/api'
+      const mockResult = {
+        editionData: {
+          books: {
+            1: { title: 'Genesis' }
+          }
+        },
+        ranges: {
+          '1001001-1017002': { someData: 'test' }
+        }
+      }
+
+      vi.mocked(scrapeBibleDataUrl).mockResolvedValue(url)
+      vi.mocked($fetch).mockResolvedValue(mockResult)
+
+      const result = await bibleRepository.fetchBibleBook(book, locale)
+
+      expect(scrapeBibleDataUrl).toHaveBeenCalledWith(locale)
+      expect($fetch).toHaveBeenCalledWith(
+        expect.stringContaining(url),
+        expect.objectContaining({
+          retry: 2
+        })
+      )
+      expect(result).toEqual({
+        book: { title: 'Genesis' },
+        range: { someData: 'test' }
+      })
+    })
+
+    it('should throw error if book data not found', async () => {
+      const locale = 'en'
+      const book = 1
+      const url = 'https://example.com/api'
+      const mockResult = {
+        editionData: {
+          books: {
+            1: { title: 'Genesis' }
+          }
+        },
+        ranges: {} // Empty ranges
+      }
+
+      vi.mocked(scrapeBibleDataUrl).mockResolvedValue(url)
+      vi.mocked($fetch).mockResolvedValue(mockResult)
+
+      await expect(bibleRepository.fetchBibleBook(book, locale)).rejects.toThrow(
+        'Could not find book data.'
+      )
+
+      expect(createNotFoundError).toHaveBeenCalledWith('Could not find book data.', {
+        book,
+        locale
+      })
+    })
+  })
+
   describe('bibleRepository.fetchBibleChapter', () => {
     it('should fetch bible chapter', async () => {
       const book = 1
@@ -503,7 +564,14 @@ describe('repository utils', () => {
 
       expect(result).toEqual(mockChapter)
       expect(scrapeBibleDataUrl).toHaveBeenCalledWith(locale)
-      expect($fetch).toHaveBeenCalledWith(`${mockUrl}/${range}`, {})
+      expect($fetch).toHaveBeenCalledWith(`${mockUrl}/${range}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
+        },
+        retry: 2,
+        retryDelay: 1000,
+        timeout: 30000
+      })
     })
 
     it('should throw error if chapter data is not found', async () => {
@@ -540,7 +608,14 @@ describe('repository utils', () => {
 
       expect(result).toEqual(mockResult)
       expect(scrapeBibleDataUrl).toHaveBeenCalledWith(locale)
-      expect($fetch).toHaveBeenCalledWith(mockUrl)
+      expect($fetch).toHaveBeenCalledWith(mockUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
+        },
+        retry: 2,
+        retryDelay: 1000,
+        timeout: 30000
+      })
     })
   })
 
@@ -567,7 +642,14 @@ describe('repository utils', () => {
       const result = await bibleRepository.fetchBibleVerse(book, chapter, verseNumber, locale)
 
       expect(result).toEqual(mockVerse)
-      expect($fetch).toHaveBeenCalledWith(`${mockUrl}/${verseId}`, {})
+      expect($fetch).toHaveBeenCalledWith(`${mockUrl}/${verseId}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
+        },
+        retry: 2,
+        retryDelay: 1000,
+        timeout: 30000
+      })
     })
 
     it('should throw error if verse data is not found', async () => {

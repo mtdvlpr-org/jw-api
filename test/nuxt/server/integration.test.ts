@@ -7,6 +7,11 @@ import { generateMediaKey, generateVerseId } from '#server/utils/general'
 import { scrapeBibleDataUrl } from '#server/utils/scraper'
 import { describe, expect, it, vi } from 'vitest'
 
+// Stub globals that might be missing in test environment
+vi.hoisted(() => {
+  vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+})
+
 // Stub globals for auto-imports that aren't present in test env for imported modules
 vi.stubGlobal('generateMediaKey', generateMediaKey)
 vi.stubGlobal('generateVerseId', generateVerseId)
