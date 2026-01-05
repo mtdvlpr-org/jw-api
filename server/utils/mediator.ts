@@ -11,7 +11,7 @@ const getMediaWithSubtitles = async (publication: MediaFetcher) => {
 
   const bestMatch = findBestFile(video.files, true)
 
-  if (!bestMatch) throw createNotFoundError('No media file with subtitles found.')
+  if (!bestMatch) throw createNotFoundError('No media file with subtitles found.', publication)
 
   return { bestMatch, video }
 }
@@ -95,7 +95,7 @@ const getMediaItem = async (publication: MediaFetcher, clientType: ClientType = 
 const getSubtitles = async (publication: MediaFetcher) => {
   const { bestMatch, video } = await getMediaWithSubtitles(publication)
 
-  if (!bestMatch?.subtitles) throw createNotFoundError('No subtitles found.')
+  if (!bestMatch?.subtitles) throw createNotFoundError('No subtitles found.', publication)
 
   const subtitles = await downloadRepository.text(bestMatch.subtitles.url)
 

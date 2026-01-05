@@ -1,3 +1,4 @@
+import { downloadRepository } from '#server/repository/download'
 import { parse } from 'node-html-parser'
 
 const bibleDataUrls = new Map<JwLangSymbol, string>()
@@ -18,7 +19,14 @@ export const scrapeBibleDataUrl = async (locale: JwLangSymbol = 'en'): Promise<s
   if (bibleDataUrls.has(locale)) return bibleDataUrls.get(locale)!
 
   // Fetch the HTML from the English URL
-  const html = await $fetch<string>(enUrl)
+  const html = await downloadRepository.text(enUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
+    },
+    retry: 2,
+    retryDelay: 1000,
+    timeout: 30000
+  })
 
   // Parse the HTML
   const root = parse(html)
@@ -29,7 +37,7 @@ export const scrapeBibleDataUrl = async (locale: JwLangSymbol = 'en'): Promise<s
     ?.getAttribute('href')
 
   // If no alternate URL is found, throw an error
-  if (!base) throw createNotFoundError('Failed to find alternate url.', { locale })
+  if (!base) throw createNotFoundError('Failed to find alternate url.', locale)
 
   // Construct the URL
   const url = base + bibleDataPath

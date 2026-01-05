@@ -51,6 +51,6 @@ export const queryDatabaseSingle = <T extends Record<string, unknown>>(
   query: string
 ): T => {
   const result = queryDatabase<T>(db, query)
-  if (result.length === 0) throw createNotFoundError('No result found for query.', { query })
-  return result[0]
+  if (result.length === 0) throw createNotFoundError('No result found for query.', query)
+  return result[0]!
 }

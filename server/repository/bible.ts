@@ -1,6 +1,13 @@
 import type { FetchOptions } from 'ofetch'
 
-const defaultFetchOptions = {} satisfies FetchOptions
+const defaultFetchOptions = {
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
+  },
+  retry: 2,
+  retryDelay: 1000,
+  timeout: 30000
+} satisfies FetchOptions
 
 /**
  * Repository for Bible resources.
@@ -41,7 +48,7 @@ export const bibleRepository = {
   fetchBibleData: defineCachedFunction(
     async (locale: JwLangSymbol) => {
       const url = await scrapeBibleDataUrl(locale)
-      return await $fetch<BibleResultEmpty>(url)
+      return await $fetch<BibleResultEmpty>(url, { ...defaultFetchOptions })
     },
     { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleData' }
   ),

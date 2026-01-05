@@ -11,12 +11,16 @@ import { downloadRepository } from '#server/repository/download'
 const getDatabase = async (url: string): Promise<Database> => {
   const blob = await downloadRepository.blob(url)
   const outerZip = await extractZipFiles(blob)
-  const innerZip = await extractZipFiles(await outerZip.files['contents'].async('uint8array'))
+  if (!outerZip.files['contents']) {
+    throw createNotFoundError('No contents file found in the JWPUB file.', url)
+  }
+
+  const innerZip = await extractZipFiles(await outerZip.files['contents']!.async('uint8array'))
 
   const dbFile = Object.keys(innerZip.files).find((file) => file.endsWith('.db'))
-  if (!dbFile) throw createNotFoundError('No database file found in the JWPUB file.')
+  if (!dbFile) throw createNotFoundError('No database file found in the JWPUB file.', url)
 
-  const sqlDb = await innerZip.files[dbFile].async('uint8array')
+  const sqlDb = await innerZip.files[dbFile]!.async('uint8array')
 
   return loadDatabase(sqlDb)
 }
