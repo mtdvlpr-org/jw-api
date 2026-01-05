@@ -1,3 +1,19 @@
+export interface BibleAdditionalPage extends BibleAdditionalPageChild {
+  children?: BibleAdditionalPageChild[]
+}
+
+export interface BibleAdditionalPageChild {
+  abbreviatedTitle: string
+  articleCSSClassNames: string
+  docClass: `${number}`
+  mepsTitle: string
+  openLinksInReadingPane?: boolean
+  pageCSSClassNames: string
+  pageID: string
+  title: string
+  url: string
+}
+
 /* eslint-disable perfectionist/sort-interfaces */
 export interface BibleBook {
   chapterCount: `${number}`
@@ -18,7 +34,7 @@ export interface BibleBook {
   hasMultimedia: boolean
   hasStudyNotes: boolean
   hasPublicationReferences: boolean
-  additionalPages: unknown[]
+  additionalPages: BibleBookAdditionalPage[]
   images: {
     altText: string
     caption: null | string
@@ -28,12 +44,27 @@ export interface BibleBook {
 }
 /* eslint-enable perfectionist/sort-interfaces */
 
+export interface BibleBookAdditionalPage extends BibleAdditionalPageChild {
+  type: 'introduction' | 'outline'
+}
+
 export interface BibleChapterOutline {
   content: string
   id: number
   source: string
   title: string
   type: string
+}
+
+export interface BibleCommentary {
+  content: string
+  id: number
+  label: string
+  source: `${number}`
+}
+
+export interface BibleCopyrightPage extends BibleAdditionalPage {
+  galleryDisclaimer: string
 }
 
 export interface BibleCrossReference {
@@ -51,21 +82,49 @@ export interface BibleFootnote {
   anchor: string
   content: string
   id: number
-  source: `${number}`
+  source: string
+}
+
+export interface BibleMultimediaItem {
+  caption: null | string
+  docID: `${number}`
+  id: number
+  keyframe: null | { sizes: Record<ImageSize, string>; src: string; zoom: string }
+  label: string
+  pictureCredit: null | string
+  resource: { src: (string | { pub: string; style: string; track: `${number}` })[] }
+  source: string
+  sourceStandardCitations: {
+    abbreviatedCitation: string
+    link: string
+    standardCitation: string
+    vs: `${number}`
+  }[]
+  thumbnail: { sizes: Record<ImageSize, string>; src: string; zoom: string }
+  type: 'image' | 'video'
+}
+
+export interface BiblePubReference {
+  content: string
+  id: number
+  source: string
+  thumbnail: { sizes: Record<ImageSize, string>; src: string; zoom: string }
+  type: 'video'
+  url: string
 }
 
 export interface BibleRange {
   chapterOutlines: BibleChapterOutline[]
   citation: string
   citationVerseRange: `${number}:${number}-${number}:${number}` | `${number}:${number}-${number}`
-  commentaries: unknown[]
+  commentaries: BibleCommentary[]
   crossReferences: BibleCrossReference[]
   footnotes: BibleFootnote[]
   html: string
   link: string
-  multimedia: unknown[]
-  pubReferences: unknown[]
-  superscriptions: unknown[]
+  multimedia: BibleMultimediaItem[]
+  pubReferences: BiblePubReference[]
+  superscriptions: BibleSuperscription[]
   validRange: `${`${number}`}-${`${number}`}`
   verses: BibleVerse[]
 }
@@ -75,7 +134,7 @@ export interface BibleRangeSingle extends Omit<BibleRange, 'citationVerseRange'>
 }
 
 export interface BibleResult {
-  additionalPages: unknown[]
+  additionalPages: BibleAdditionalPage[]
   currentLocale: JwLangSymbol
   editionData: {
     bookCount: `${number}`
@@ -92,12 +151,20 @@ export interface BibleResult {
 }
 
 export interface BibleResultEmpty extends Omit<BibleResult, 'ranges'> {
-  copyrightPage: unknown
+  copyrightPage: BibleCopyrightPage
   ranges: []
 }
 
 export interface BibleResultSingle extends Omit<BibleResult, 'ranges'> {
   ranges: Partial<Record<`${number}`, BibleRangeSingle>>
+}
+
+export interface BibleSuperscription {
+  abbreviatedCitation: string
+  content: string
+  id: number
+  source: string
+  standardCitation: string
 }
 
 export interface BibleVerse {
