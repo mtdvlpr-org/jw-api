@@ -18,7 +18,7 @@ export default defineMcpTool({
         verse: verseNumber
       })
 
-      return mcpService.toolResult(verse.content)
+      return mcpService.toolResult(verse.parsedContent, verse as unknown as Record<string, unknown>)
     } catch (e) {
       return mcpService.toolError(e)
     }

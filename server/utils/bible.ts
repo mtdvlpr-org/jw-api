@@ -68,7 +68,9 @@ const getVerse = async ({
   locale?: JwLangSymbol
   verse: number
 }) => {
-  return await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
+  const result = await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
+  const html = parseHtml(result.content)
+  return { parsedContent: html.innerText, result }
 }
 
 /**

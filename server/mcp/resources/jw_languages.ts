@@ -11,5 +11,5 @@ export default defineMcpResource({
   },
   metadata: { mimeType: 'application/json' },
   title: 'JW Languages',
-  uri: 'file:///jw/languages.json'
+  uri: 'file:///jw/en/languages.json'
 })

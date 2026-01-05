@@ -9,8 +9,8 @@ export default defineMcpTool({
   description: 'Get information about the different books of the Bible.',
   handler: async ({ symbol }) => {
     try {
-      const books = await bibleService.getBooks(symbol as JwLangSymbol)
-      return mcpService.jsonResourceReference(`file:///bible/${symbol}/books.json`, books)
+      const books = await bibleService.getBooks(symbol)
+      return mcpService.toolResult(JSON.stringify(books, null, 2), books)
     } catch (e) {
       return mcpService.toolError(e)
     }
@@ -20,6 +20,7 @@ export default defineMcpTool({
       .describe(
         'The language for the bible books. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list.'
       )
+      .optional()
       .default('en')
   }
 })
