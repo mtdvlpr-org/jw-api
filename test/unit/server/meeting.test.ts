@@ -10,7 +10,9 @@ const catalogService = {
 const getMondayOfWeek = vi.fn()
 const pubMediaService = {
   getMeetingWorkbook: vi.fn(),
-  getStudyWatchtower: vi.fn()
+  getMwbJwpub: vi.fn(),
+  getStudyWatchtower: vi.fn(),
+  getWtJwpub: vi.fn()
 }
 const jwpubService = {
   getMwbArticleForDate: vi.fn(),
@@ -132,6 +134,38 @@ describe('meeting utils', () => {
       expect(result).toEqual({
         watchtower: null,
         workbook: null
+      })
+    })
+  })
+
+  describe('getMeetingSchedule', () => {
+    it('should fetch and process meeting schedule', async () => {
+      const date = { week: 1, year: 2024 }
+      const langwritten = 'E'
+      const monday = new Date('2024-01-01')
+      getMondayOfWeek.mockReturnValue(monday)
+
+      vi.stubGlobal('formatDate', (_d: Date) => '2024/01/01')
+      vi.stubGlobal('getPublicationSchedule', (pub: unknown, type: string) => {
+        if (type === 'wt') return [{ w_study_date: '2024/01/01' }]
+        if (type === 'mwb') return [{ mwb_week_date: '2024/01/01' }]
+        return []
+      })
+
+      catalogService.getPublicationForDate.mockResolvedValue({ issue: '202401' })
+
+      pubMediaService.getWtJwpub.mockResolvedValue({
+        issue: 202401
+      })
+      pubMediaService.getMwbJwpub.mockResolvedValue({
+        issue: 202401
+      })
+
+      const result = await meetingService.getMeetingSchedule(langwritten, date)
+
+      expect(result).toEqual({
+        watchtower: { w_study_date: '2024/01/01' },
+        workbook: { mwb_week_date: '2024/01/01' }
       })
     })
   })

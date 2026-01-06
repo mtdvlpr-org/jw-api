@@ -6,6 +6,7 @@ import { bibleService } from '../../../server/utils/bible'
 // Mock defineCachedFunction BEFORE importing anything that uses it
 vi.hoisted(() => {
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+  vi.stubGlobal('parseHtml', (html: string) => ({ innerText: html }))
 })
 
 vi.mock('../../../server/repository/bible')
@@ -33,6 +34,18 @@ describe('bible utils', () => {
       const result = await bibleService.getBooks('es')
 
       expect(result).toEqual([])
+      expect(bibleRepository.fetchBibleData).toHaveBeenCalledWith('es')
+    })
+  })
+
+  describe('getBibleData', () => {
+    it('should call fetchBibleData', async () => {
+      const mockResult = { editionData: { books: [] } }
+      vi.mocked(bibleRepository.fetchBibleData).mockResolvedValue(mockResult)
+
+      const result = await bibleService.getBibleData('es')
+
+      expect(result).toEqual(mockResult)
       expect(bibleRepository.fetchBibleData).toHaveBeenCalledWith('es')
     })
   })
@@ -87,7 +100,7 @@ describe('bible utils', () => {
 
       const result = await bibleService.getVerse({ book: 1, chapter: 1, locale: 'de', verse: 1 })
 
-      expect(result).toEqual(mockResult)
+      expect(result).toEqual({ parsedContent: 'test', result: mockResult })
       expect(bibleRepository.fetchBibleVerse).toHaveBeenCalledWith(1, 1, 1, 'de')
     })
 

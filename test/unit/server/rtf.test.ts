@@ -44,5 +44,12 @@ describe('rtf utils', () => {
       const result = parseRTF(rtf)
       expect(result).toContain('é')
     })
+
+    it('should remove picture groups', () => {
+      // \bin4 followed by 4 bytes (ABCD)
+      const rtf = '{\\rtf1\\ansi Text before {\\pict\\bin4 ABCD} Text after}'
+      const result = parseRTF(rtf)
+      expect(result).toBe('Text before Text after')
+    })
   })
 })

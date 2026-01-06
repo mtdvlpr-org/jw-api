@@ -4,6 +4,7 @@ import { z } from 'zod'
 // Stub globals before import
 vi.stubGlobal('jwLangCodes', ['E', 'S'])
 vi.stubGlobal('jwLangSymbols', ['en', 'es'])
+vi.stubGlobal('publicationFileFormats', ['MP3', 'PDF', 'MP4'])
 
 describe('schemas utils', () => {
   let schemas: typeof import('../../../server/utils/schemas')
@@ -21,7 +22,7 @@ describe('schemas utils', () => {
     })
 
     it('should reject invalid codes', () => {
-      expect(() => schemas.jwLangCodeSchema.parse('X')).toThrow()
+      expect(() => schemas.jwLangCodeSchema.parse('INVALID_CODE')).toThrow()
     })
   })
 
@@ -32,7 +33,55 @@ describe('schemas utils', () => {
     })
 
     it('should reject invalid symbols', () => {
-      expect(() => schemas.jwLangSymbolSchema.parse('fr')).toThrow()
+      expect(() => schemas.jwLangSymbolSchema.parse('invalid_symbol')).toThrow()
+    })
+  })
+
+  describe('bibleBookNrSchema', () => {
+    it('should create a schema for Bible book numbers', () => {
+      const schema = schemas.bibleBookNrSchema()
+      expect(schema.parse(1)).toBe(1)
+      expect(schema.parse('1')).toBe(1)
+      expect(() => schema.parse(0)).toThrow()
+      expect(() => schema.parse(67)).toThrow()
+    })
+
+    it('should create a schema for Bible book numbers with number type', () => {
+      const schema = schemas.bibleBookNrSchema('number')
+      expect(schema.parse(1)).toBe(1)
+      expect(() => schema.parse('1')).toThrow()
+    })
+  })
+
+  describe('bibleChapterNrSchema', () => {
+    it('should create a schema for Bible chapter numbers', () => {
+      const schema = schemas.bibleChapterNrSchema()
+      expect(schema.parse(1)).toBe(1)
+      expect(schema.parse('1')).toBe(1)
+      expect(() => schema.parse(0)).toThrow()
+      expect(() => schema.parse(151)).toThrow()
+    })
+
+    it('should create a schema for Bible chapter numbers with number type', () => {
+      const schema = schemas.bibleChapterNrSchema('number')
+      expect(schema.parse(1)).toBe(1)
+      expect(() => schema.parse('1')).toThrow()
+    })
+  })
+
+  describe('bibleVerseNrSchema', () => {
+    it('should create a schema for Bible verse numbers', () => {
+      const schema = schemas.bibleVerseNrSchema()
+      expect(schema.parse(1)).toBe(1)
+      expect(schema.parse('1')).toBe(1)
+      expect(() => schema.parse(0)).toThrow()
+      expect(() => schema.parse(177)).toThrow()
+    })
+
+    it('should create a schema for Bible verse numbers with number type', () => {
+      const schema = schemas.bibleVerseNrSchema('number')
+      expect(schema.parse(1)).toBe(1)
+      expect(() => schema.parse('1')).toThrow()
     })
   })
 

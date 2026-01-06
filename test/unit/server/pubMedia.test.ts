@@ -132,4 +132,80 @@ describe('pubMedia utils', () => {
       expect(result).toBe(parsedContent)
     })
   })
+
+  describe('getMwbJwpub', () => {
+    it('should return JWPUB url if exists', async () => {
+      const date = { month: 1, year: 2024 }
+      const langwritten = 'E'
+      const issue = '202401'
+      getWorkbookIssueMock.mockReturnValue(issue)
+
+      const mockPub = {
+        files: { E: { JWPUB: [{ file: { url: 'http://example.com/mwb.jwpub' } }] } },
+        issue,
+        pub: 'mwb'
+      }
+      vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue(mockPub)
+
+      const result = await pubMediaService.getMwbJwpub({ date, langwritten })
+      expect(result).toBe('http://example.com/mwb.jwpub')
+    })
+
+    it('should throw if JWPUB not found', async () => {
+      const date = { month: 1, year: 2024 }
+      const langwritten = 'E'
+      const issue = '202401'
+      getWorkbookIssueMock.mockReturnValue(issue)
+
+      vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue({
+        files: {},
+        issue,
+        pub: 'mwb'
+      })
+
+      vi.stubGlobal('createNotFoundError', (msg: string) => new Error(msg))
+
+      await expect(pubMediaService.getMwbJwpub({ date, langwritten })).rejects.toThrow(
+        'Meeting Workbook JWPUB not found'
+      )
+    })
+  })
+
+  describe('getWtJwpub', () => {
+    it('should return JWPUB url if exists', async () => {
+      const date = { month: 1, year: 2024 }
+      const langwritten = 'E'
+      const issue = '202401'
+      getStudyWatchtowerIssueMock.mockReturnValue(issue)
+
+      const mockPub = {
+        files: { E: { JWPUB: [{ file: { url: 'http://example.com/w.jwpub' } }] } },
+        issue,
+        pub: 'w'
+      }
+      vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue(mockPub)
+
+      const result = await pubMediaService.getWtJwpub({ date, langwritten })
+      expect(result).toBe('http://example.com/w.jwpub')
+    })
+
+    it('should throw if JWPUB not found', async () => {
+      const date = { month: 1, year: 2024 }
+      const langwritten = 'E'
+      const issue = '202401'
+      getStudyWatchtowerIssueMock.mockReturnValue(issue)
+
+      vi.mocked(pubMediaRepository.fetchPublication).mockResolvedValue({
+        files: {},
+        issue,
+        pub: 'w'
+      })
+
+      vi.stubGlobal('createNotFoundError', (msg: string) => new Error(msg))
+
+      await expect(pubMediaService.getWtJwpub({ date, langwritten })).rejects.toThrow(
+        'Study watchtower JWPUB not found'
+      )
+    })
+  })
 })
