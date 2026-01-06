@@ -133,5 +133,5 @@ export interface MediatorResultLanguage {
   isSignLanguage: boolean
   languageCode: JwLangCode
   locale: JwLangSymbol
-  script: string
+  script: JwLangScript
 }

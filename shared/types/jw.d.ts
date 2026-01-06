@@ -6,7 +6,7 @@ export interface JwLanguage {
   isSignLanguage: boolean
   langcode: JwLangCode
   name: string
-  script: string
+  script: JwLangScript
   symbol: JwLangSymbol
   vernacularName: string
 }
