@@ -144,7 +144,7 @@ export const generateVerseId = (
  * @returns The resolution.
  */
 export const extractResolution = (file: MediaItemFile): number => {
-  const resolution = file.label.match(/(\d+)p/)?.[1]
+  const resolution = file.label?.match(/(\d+)p/)?.[1]
   if (!resolution) return 0
   return parseInt(resolution)
 }

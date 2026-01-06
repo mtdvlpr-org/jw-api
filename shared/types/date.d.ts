@@ -1,6 +1,6 @@
 /**
  * A duration string in hours, minutes and seconds.
- * @example '13:32:28'
+ * @example '1:32:28'
  * @example '32:28'
  */
 export type DurationHHMM = `${number}:${number}:${number}` | `${number}:${number}`

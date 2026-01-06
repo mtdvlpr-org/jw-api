@@ -13,6 +13,24 @@ const getLanguages = async (locale: JwLangSymbol = 'en', webOnly = true) => {
 }
 
 /**
+ * Gets a language by name.
+ * @param name The name of the language.
+ * @param locale The locale to get the language for. Defaults to English.
+ * @returns The language.
+ */
+const getLanguage = async (name: string, locale: JwLangSymbol = 'en') => {
+  const result = await jwRepository.fetchLanguages(locale)
+  const normalizedName = name.toLowerCase()
+  const match = result.find(
+    (l) =>
+      l.name.toLowerCase() === normalizedName || l.vernacularName.toLowerCase() === normalizedName
+  )
+  if (!match) throw createNotFoundError(`Language ${name} not found`)
+
+  return match
+}
+
+/**
  * A service wrapping the JW repository.
  */
-export const jwService = { getLanguages }
+export const jwService = { getLanguage, getLanguages }
