@@ -5,7 +5,7 @@ export type PubFetcher = PublicationBookFetcher | PublicationDocFetcher | Public
 export interface Publication {
   pubName: string
   parentPubName: string
-  booknum: null | number
+  booknum: BibleBookNr | null
   pub: string
   issue: '' | `${number}`
   /**

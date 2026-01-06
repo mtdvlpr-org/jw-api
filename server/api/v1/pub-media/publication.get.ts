@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const querySchema = z.union([
   z.object({
-    booknum: z.coerce.number<string>().int().positive().min(1).max(66).describe('The book number.'),
+    booknum: bibleBookNrSchema(),
     fileformat: publicationFileFormatSchema.optional(),
     langwritten: jwLangCodeSchema,
     pub: z.literal('nwt').describe('The publication key.')
