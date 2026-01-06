@@ -20,7 +20,7 @@ export const bibleRepository = {
    * @returns The book data.
    */
   fetchBibleBook: defineCachedFunction(
-    async (book: number, locale: JwLangSymbol) => {
+    async (book: BibleBookNr, locale: JwLangSymbol) => {
       const url = await scrapeBibleDataUrl(locale)
       const startVerseId = generateVerseId(book, 1, 1)
       const endVerseId = generateVerseId(book, 999, 999)
@@ -47,7 +47,7 @@ export const bibleRepository = {
    * @returns The chapter data.
    */
   fetchBibleChapter: defineCachedFunction(
-    async (book: number, chapter: number, locale: JwLangSymbol) => {
+    async (book: BibleBookNr, chapter: number, locale: JwLangSymbol) => {
       const url = await scrapeBibleDataUrl(locale)
       const startVerseId = generateVerseId(book, chapter, 1)
       const endVerseId = generateVerseId(book, chapter, 999)
@@ -88,7 +88,7 @@ export const bibleRepository = {
    * @returns The verse data.
    */
   fetchBibleVerse: defineCachedFunction(
-    async (book: number, chapter: number, verseNumber: number, locale: JwLangSymbol) => {
+    async (book: BibleBookNr, chapter: number, verseNumber: number, locale: JwLangSymbol) => {
       const url = await scrapeBibleDataUrl(locale)
       const verseId = generateVerseId(book, chapter, verseNumber)
 

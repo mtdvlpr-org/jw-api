@@ -1,16 +1,10 @@
 import { z } from 'zod'
 
 const routeSchema = z.object({
-  book: z.coerce.number<string>().int().positive().min(1).max(66).describe('The book number.'),
-  chapter: z.coerce
-    .number<string>()
-    .int()
-    .positive()
-    .min(1)
-    .max(150)
-    .describe('The chapter number.'),
+  book: bibleBookNrSchema(),
+  chapter: bibleChapterNrSchema(),
   symbol: jwLangSymbolSchema,
-  verse: z.coerce.number<string>().int().positive().min(1).max(176).describe('The verse number.')
+  verse: bibleVerseNrSchema()
 })
 
 export default defineLoggedEventHandler(async (event) => {

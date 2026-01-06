@@ -55,14 +55,14 @@ export interface MediaItem {
   guid: string
   languageAgnosticNaturalKey: MediaKey
   naturalKey: string
-  type: string
+  type: 'video' | string
   primaryCategory: CategoryKey
   title: string
   description: string
-  firstPublished: `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`
+  firstPublished: ISODateTime
   duration: number
-  durationFormattedHHMM: `${number}:${number}`
-  durationFormattedMinSec: `${number}m ${number}s`
+  durationFormattedHHMM: DurationHHMM
+  durationFormattedMinSec: DurationMinSec
   tags: MediaTag[]
   files: MediaItemFile[]
   images: ImagesObject
@@ -77,7 +77,7 @@ export interface MediaItemFile {
   progressiveDownloadURL: string
   checksum: string
   filesize: number
-  modifiedDatetime: `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`
+  modifiedDatetime: ISODateTime
   bitRate: number
   duration: number
   frameHeight: number
@@ -88,7 +88,7 @@ export interface MediaItemFile {
   subtitled: boolean
   subtitles?: {
     url: string
-    modifiedDatetime: `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`
+    modifiedDatetime: ISODateTime
     checksum: string
   }
 }

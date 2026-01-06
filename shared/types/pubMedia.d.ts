@@ -8,13 +8,17 @@ export interface Publication {
   booknum: null | number
   pub: string
   issue: '' | `${number}`
+  /**
+   * The formatted date of the publication in HTML.
+   * @example 'November&nbsp;2022'
+   */
   formattedDate: string
   fileformat: PublicationFileFormat[]
   track: null | number
   specialty: string
   pubImage: {
     url: string
-    modifiedDatetime: string
+    modifiedDatetime: ISODateTimeOffset
     checksum: string
   }
   languages: Partial<
@@ -65,15 +69,13 @@ export interface PublicationFile {
   file: {
     url: string
     stream: string
-    modifiedDatetime: '' | `${number}-${number}-${number} ${number}:${number}:${number}`
+    modifiedDatetime: '' | HumanReadableDateTime
     checksum: string
   }
   filesize: number
   trackImage: {
     url: string
-    modifiedDatetime:
-      | ''
-      | `${number}-${number}-${number}T${number}:${number}:${number}+${number}:${number}`
+    modifiedDatetime: '' | ISODateTimeOffset
     checksum: null | string
   }
   markers: {
@@ -82,16 +84,16 @@ export interface PublicationFile {
     documentId: number
     type: 'publication' | string
     markers: {
-      duration: `${number}:${number}:${number}.${number}`
-      startTime: `${number}:${number}:${number}.${number}`
+      duration: Timestamp
+      startTime: Timestamp
       label?: string
-      endTransitionDuration?: `${number}:${number}:${number}.${number}`
+      endTransitionDuration?: Timestamp
       mepsParagraphId: number
     }[]
     hash: string
     introduction: {
-      duration: `${number}:${number}:${number}.${number}`
-      startTime: `${number}:${number}:${number}.${number}`
+      duration: Timestamp
+      startTime: Timestamp
     }
   }
   label: `${number}p`

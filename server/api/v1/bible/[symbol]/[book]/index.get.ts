@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const routeSchema = z.object({
-  book: z.coerce.number<string>().int().positive().min(1).max(66).describe('The book number.'),
+  book: bibleBookNrSchema(),
   symbol: jwLangSymbolSchema
 })
 

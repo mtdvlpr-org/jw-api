@@ -26,7 +26,7 @@ const getBooks = async (locale: JwLangSymbol = 'en') => {
  * @param locale The locale to get the book for. Defaults to English.
  * @returns The book of the Bible.
  */
-const getBook = async ({ book, locale = 'en' }: { book: number; locale?: JwLangSymbol }) => {
+const getBook = async ({ book, locale = 'en' }: { book: BibleBookNr; locale?: JwLangSymbol }) => {
   return await bibleRepository.fetchBibleBook(book, locale)
 }
 
@@ -42,7 +42,7 @@ const getChapter = async ({
   chapter,
   locale = 'en'
 }: {
-  book: number
+  book: BibleBookNr
   chapter: number
   locale?: JwLangSymbol
 }) => {
@@ -63,7 +63,7 @@ const getVerse = async ({
   locale = 'en',
   verse
 }: {
-  book: number
+  book: BibleBookNr
   chapter: number
   locale?: JwLangSymbol
   verse: number

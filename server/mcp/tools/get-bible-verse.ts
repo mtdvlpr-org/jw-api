@@ -24,18 +24,14 @@ export default defineMcpTool({
     }
   },
   inputSchema: {
-    book: z
-      .number()
-      .min(1)
-      .max(66)
-      .describe(
-        'The Bible book number (1-66). Can be found in the Bible Books resource. Example: 1 for Genesis, 2 for Exodus, etc.'
-      ),
-    chapter: z
-      .number()
-      .min(1)
-      .max(150)
-      .describe('The Bible chapter number. The number of the chapter in the book.'),
+    book: bibleBookNrSchema(
+      'number',
+      'The Bible book number (1-66). Can be found in the Bible Books resource. Example: 1 for Genesis, 2 for Exodus, etc.'
+    ),
+    chapter: bibleChapterNrSchema(
+      'number',
+      'The Bible chapter number. The number of the chapter in the book.'
+    ),
     symbol: z
       .enum(jwLangSymbols)
       .describe(
@@ -43,10 +39,9 @@ export default defineMcpTool({
       )
       .optional()
       .default('en'),
-    verseNumber: z
-      .number()
-      .min(1)
-      .max(176)
-      .describe('The Bible verse number (1-176). The number of the verse in the chapter.')
+    verseNumber: bibleVerseNrSchema(
+      'number',
+      'The Bible verse number (1-176). The number of the verse in the chapter.'
+    )
   }
 })

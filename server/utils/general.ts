@@ -130,8 +130,12 @@ export const extractMediaKey = (input: string): MediaKey | null => {
  * @param verse The verse number.
  * @returns The verse ID.
  */
-export const generateVerseId = (book: number, chapter: number, verse: number): `${number}` => {
-  return `${book}${pad(chapter, 3)}${pad(verse, 3)}` as `${number}`
+export const generateVerseId = (
+  book: BibleBookNr,
+  chapter: number,
+  verse: number
+): BibleVerseId => {
+  return `${book}${pad(chapter, 3)}${pad(verse, 3)}` as BibleVerseId
 }
 
 /**
