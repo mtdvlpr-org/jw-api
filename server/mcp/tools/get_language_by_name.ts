@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+const outputSchema = jwLanguageSchema
+
+type OutputSchema = z.output<z.ZodObject<typeof outputSchema>>
+
 export default defineMcpTool({
   annotations: {
     destructiveHint: false,
@@ -13,10 +17,7 @@ export default defineMcpTool({
     try {
       const language = await jwService.getLanguage(name, symbol)
 
-      return mcpService.toolResult(
-        JSON.stringify(language, null, 2),
-        language as unknown as Record<string, unknown>
-      )
+      return mcpService.toolResult<OutputSchema>(JSON.stringify(language, null, 2), language)
     } catch (e) {
       return mcpService.toolError(e)
     }
@@ -35,5 +36,6 @@ export default defineMcpTool({
       })
       .optional()
       .default('en')
-  }
+  },
+  outputSchema
 })

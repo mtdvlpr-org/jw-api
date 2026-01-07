@@ -14,6 +14,10 @@ export const jwLangCodeSchema = z
   .enum(jwLangCodes)
   .meta({ description: 'A JW language code.', examples: ['E', 'S', 'O'] })
 
+export const jwLangScriptSchema = z
+  .enum(jwLangScripts)
+  .meta({ description: 'A JW language script.', examples: ['ROMAN', 'CYRILLIC', 'ARABIC'] })
+
 export const publicationFileFormatSchema = z
   .enum(publicationFileFormats)
   .meta({ description: 'A publication file format.', examples: ['MP3', 'MP4', 'JWPUB'] })
@@ -24,6 +28,7 @@ export const biblePublicationSchema = z.enum(biblePublications).meta({
 })
 
 /* Dates */
+
 export const weekSchema = z.coerce
   .number<number | string>()
   .int()
@@ -71,6 +76,26 @@ export const bibleVerseNrSchema = z.coerce
   .meta({ description: 'A Bible book verse number.', examples: [1, 10, 176] })
 
 /* JW */
+export const jwLanguageSchema = {
+  altSpellings: z
+    .array(z.string())
+    .meta({ description: 'The alternative spellings of the language.' }),
+  direction: z.enum(['ltr', 'rtl']).meta({ description: 'The direction of the language.' }),
+  hasWebContent: z.boolean().meta({ description: 'Whether the language has web content.' }),
+  isCounted: z.boolean().meta({ description: 'Whether the language is counted.' }),
+  isSignLanguage: z.boolean().meta({ description: 'Whether the language is a sign language.' }),
+  langcode: jwLangCodeSchema,
+  name: z.string().meta({
+    description: 'The name of the language.',
+    examples: ['English', 'Dutch', 'Spanish']
+  }),
+  script: jwLangScriptSchema,
+  symbol: jwLangSymbolSchema,
+  vernacularName: z.string().meta({
+    description: 'The vernacular name of the language.',
+    examples: ['English', 'Nederlands', 'Español']
+  })
+}
 
 /* Mediator */
 
@@ -95,9 +120,10 @@ export const mediaKeySchema = z
     ]
   })
 
-/* Meeting */
+/* Meetings */
 
 /* PubMedia */
+
 const track = z.coerce
   .number<number | string>()
   .int()
@@ -117,7 +143,7 @@ export const pubFetcherSchema = z.object({
       examples: [201705, 202501, 202012]
     }),
   langwritten: jwLangCodeSchema,
-  pub: z.string().meta({ description: 'The publication key.', examples: ['nwt', 'mwb', 'w'] }),
+  pub: z.string().meta({ description: 'The publication key.', examples: ['jwb', 'mwb', 'w'] }),
   track
 })
 
@@ -157,11 +183,29 @@ export const zodToParams = (
   type: 'cookie' | 'header' | 'path' | 'query'
 ): NonNullable<Required<NitroRouteMeta>['openAPI']['parameters']> => {
   return Object.entries(zodObject.shape).map(([name, zodSchema]) => {
-    const { description, example, ...schema } = createSchema(zodSchema as any, { io: 'input' })
+    const { description, examples, ...schema } = createSchema(zodSchema as any, { io: 'input' })
       .schema as any
+
+    const exampleObject: Record<string, { description?: string; summary?: string; value: string }> =
+      {}
+
+    examples?.forEach(
+      (example: string | { description?: string; summary?: string; value: string }) => {
+        if (typeof example === 'string') {
+          exampleObject[example] = { value: example }
+        } else if (typeof example === 'object' && 'value' in example) {
+          exampleObject[example.value] = {
+            description: example.description,
+            summary: example.summary,
+            value: example.value
+          }
+        }
+      }
+    )
+
     return {
       description,
-      example,
+      examples: exampleObject,
       in: type,
       name,
       required: !(zodSchema instanceof ZodOptional),

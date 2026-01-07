@@ -10,7 +10,7 @@ export default defineMcpTool({
   handler: async ({ symbol }) => {
     try {
       const books = await bibleService.getBooks(symbol)
-      return mcpService.toolResult(JSON.stringify(books, null, 2), books)
+      return mcpService.toolResult(JSON.stringify(books, null, 2))
     } catch (e) {
       return mcpService.toolError(e)
     }

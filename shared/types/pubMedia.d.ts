@@ -28,7 +28,7 @@ export interface Publication {
         name: string
         direction: 'ltr' | 'rtl'
         locale: JwLangSymbol
-        script: string
+        script: JwLangScript
       }
     >
   >

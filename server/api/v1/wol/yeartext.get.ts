@@ -19,67 +19,86 @@ defineRouteMeta({
       {
         description: 'The language of the yeartext.',
         examples: {
-          English: { summary: 'English', value: 'E' },
-          O: { summary: 'Dutch', value: 'O' },
-          Spanish: { summary: 'Spanish', value: 'S' }
+          1: { summary: 'English', value: 'E' },
+          2: { summary: 'Dutch', value: 'O' },
+          3: { summary: 'Spanish', value: 'S' }
         },
         in: 'query',
         name: 'wtlocale',
         required: true,
-        schema: { enum: [...jwLangCodes], type: 'string' }
+        schema: { type: 'string' }
       },
       {
         description: 'The year of the yeartext.',
-        example: currentYear,
+        example: 2026,
         in: 'query',
         name: 'year',
         required: false,
-        schema: {
-          default: currentYear,
-          minimum: currentYear,
-          type: 'number'
-        }
+        schema: { default: 2026, maximum: 2027, minimum: 2025, type: 'number' }
       }
     ],
     responses: {
       200: {
         content: {
           'application/json': {
-            example: { yeartext: { 2025: 'The yeartext of 2025.' } },
+            example: { yeartext: { 2026: 'The yeartext of 2026.' } },
             schema: {
               properties: {
-                yeartext: {
-                  additionalProperties: { type: 'string' },
-                  type: 'object'
-                }
+                yeartext: { additionalProperties: { type: 'string' }, type: 'object' }
               },
               type: 'object'
             }
           }
         },
-        description: 'A successful response.'
+        description: 'Successful response.'
       },
       400: {
         content: {
           'application/json': {
-            example: { error: 'Invalid year or language.' },
+            example: {
+              error: true,
+              message: 'Invalid value.',
+              statusCode: 400,
+              statusMessage: 'Validation Error',
+              url: 'https://example.com/api/path'
+            },
             schema: {
+              properties: {
+                error: { type: 'boolean' },
+                message: { type: 'string' },
+                statusCode: { type: 'number' },
+                statusMessage: { type: 'string' },
+                url: { type: 'string' }
+              },
               type: 'object'
             }
           }
         },
-        description: 'Validation Error.'
+        description: 'Validation error.'
       },
       404: {
         content: {
           'application/json': {
-            example: { error: 'Yeartext not found.' },
+            example: {
+              error: true,
+              message: 'Yeartext not found.',
+              statusCode: 404,
+              statusMessage: 'Not Found',
+              url: 'https://example.com/api/path'
+            },
             schema: {
+              properties: {
+                error: { type: 'boolean' },
+                message: { type: 'string' },
+                statusCode: { type: 'number' },
+                statusMessage: { type: 'string' },
+                url: { type: 'string' }
+              },
               type: 'object'
             }
           }
         },
-        description: 'Not Found.'
+        description: 'Not found.'
       }
     }
   }

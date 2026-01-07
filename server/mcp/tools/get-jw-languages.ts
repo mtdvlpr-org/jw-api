@@ -9,8 +9,8 @@ export default defineMcpTool({
   description: 'Get the JW Languages resource.',
   handler: async () => {
     try {
-      const result = await jwService.getLanguages()
-      return mcpService.jsonResourceReference('file:///jw/en/languages.json', result)
+      const languages = await jwService.getLanguages()
+      return mcpService.jsonResourceReference('file:///jw/en/languages.json', languages)
     } catch (e) {
       return mcpService.toolError(e)
     }
