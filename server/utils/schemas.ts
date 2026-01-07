@@ -144,7 +144,8 @@ export const pubBibleFetcherSchema = z.object({
     }) as unknown as z.ZodCustom<0 | BibleBookNr>,
   fileformat: publicationFileFormatSchema.optional(),
   langwritten: jwLangCodeSchema,
-  pub: biblePublicationSchema
+  pub: biblePublicationSchema,
+  track
 })
 
 /* WOL */

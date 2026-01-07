@@ -42,6 +42,7 @@ export interface PublicationBibleFetcher {
   fileformat?: PublicationFileFormat
   langwritten: JwLangCode
   pub: BiblePublication
+  track?: number
 }
 
 export interface PublicationDocFetcher {
