@@ -4,51 +4,78 @@ import type { NitroRouteMeta } from 'nitropack/types'
 import { z, ZodOptional } from 'zod'
 import { createSchema } from 'zod-openapi'
 
-// Enums
+/* Enums */
+
 export const jwLangSymbolSchema = z
   .enum(jwLangSymbols)
-  .describe('A JW language symbol.')
-  .meta({ example: 'en' })
+  .meta({ description: 'A JW language symbol.', examples: ['en', 'es', 'nl'] })
 
 export const jwLangCodeSchema = z
   .enum(jwLangCodes)
-  .describe('A JW language code.')
-  .meta({ example: 'E' })
+  .meta({ description: 'A JW language code.', examples: ['E', 'S', 'O'] })
 
 export const publicationFileFormatSchema = z
   .enum(publicationFileFormats)
-  .describe('A publication file format.')
-  .meta({ example: 'MP4' })
+  .meta({ description: 'A publication file format.', examples: ['MP3', 'MP4', 'JWPUB'] })
 
-export const bibleBookNrSchema = (
-  type: 'coerced' | 'number' = 'coerced',
-  description?: string
-): z.ZodCustom<BibleBookNr> =>
-  (type === 'coerced' ? z.coerce.number<string>() : z.number())
-    .int()
-    .min(1)
-    .max(66)
-    .meta({ example: 1 })
-    .describe(description || 'A Bible book number.') as unknown as z.ZodCustom<BibleBookNr>
+/* Bible */
 
-export const bibleChapterNrSchema = (
-  type: 'coerced' | 'number' = 'coerced',
-  description?: string
-) =>
-  (type === 'coerced' ? z.coerce.number<string>() : z.number())
-    .int()
-    .min(1)
-    .max(150)
-    .meta({ example: 1 })
-    .describe(description || 'A Bible book chapter number.')
+export const bibleBookNrSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .min(1)
+  .max(66)
+  .meta({
+    description: 'A bible book number.',
+    examples: [1, 40, 66]
+  }) as unknown as z.ZodCustom<BibleBookNr>
 
-export const bibleVerseNrSchema = (type: 'coerced' | 'number' = 'coerced', description?: string) =>
-  (type === 'coerced' ? z.coerce.number<string>() : z.number())
-    .int()
-    .min(1)
-    .max(176)
-    .meta({ example: 1 })
-    .describe(description || 'A Bible book verse number.')
+export const bibleChapterNrSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .min(1)
+  .max(150)
+  .meta({ description: 'A Bible book chapter number.', examples: [1, 10, 150] })
+
+export const bibleVerseNrSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .min(1)
+  .max(176)
+  .meta({ description: 'A Bible book verse number.', examples: [1, 10, 176] })
+
+/* JW */
+
+/* Mediator */
+
+export const categoryKeySchema = z
+  .string() // Allow unknown category keys
+  .describe('A category key.')
+  .meta({
+    examples: [...categoryContainerKeys, ...categoryOnDemandKeys]
+  }) as unknown as z.ZodCustom<CategoryKey>
+
+export const mediaKeySchema = z
+  .custom<MediaKey>((v) => typeof v === 'string' && isMediaKey(v))
+  .describe('The language agnostic natural key of a media item.')
+  .meta({
+    examples: [
+      'pub-ivno_x_VIDEO',
+      'pub-mwbv_202405_1_VIDEO',
+      'pub-jwb-092_5_VIDEO',
+      'pub-osg_9_AUDIO',
+      'docid-1112024040_1_VIDEO',
+      'docid-1112024039_114_VIDEO'
+    ]
+  })
+
+/* Meeting */
+
+/* PubMedia */
+
+/* WOL */
+
+/* OpenAPI helpers */
 
 export const zodToParams = (
   zodObject: z.ZodObject<any, any>,

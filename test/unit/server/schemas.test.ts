@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
 
+import { isMediaKey } from '../../../server/utils/media'
+import { categoryContainerKeys, categoryOnDemandKeys } from '../../../shared/types/media.types'
+
 // Stub globals before import
 vi.stubGlobal('jwLangCodes', ['E', 'S'])
 vi.stubGlobal('jwLangSymbols', ['en', 'es'])
 vi.stubGlobal('publicationFileFormats', ['MP3', 'PDF', 'MP4'])
+vi.stubGlobal('categoryContainerKeys', categoryContainerKeys)
+vi.stubGlobal('categoryOnDemandKeys', categoryOnDemandKeys)
+vi.stubGlobal('isMediaKey', isMediaKey)
 
 describe('schemas utils', () => {
   let schemas: typeof import('../../../server/utils/schemas')
@@ -39,49 +45,57 @@ describe('schemas utils', () => {
 
   describe('bibleBookNrSchema', () => {
     it('should create a schema for Bible book numbers', () => {
-      const schema = schemas.bibleBookNrSchema()
+      const schema = schemas.bibleBookNrSchema
       expect(schema.parse(1)).toBe(1)
       expect(schema.parse('1')).toBe(1)
       expect(() => schema.parse(0)).toThrow()
       expect(() => schema.parse(67)).toThrow()
     })
-
-    it('should create a schema for Bible book numbers with number type', () => {
-      const schema = schemas.bibleBookNrSchema('number')
-      expect(schema.parse(1)).toBe(1)
-      expect(() => schema.parse('1')).toThrow()
-    })
   })
 
   describe('bibleChapterNrSchema', () => {
     it('should create a schema for Bible chapter numbers', () => {
-      const schema = schemas.bibleChapterNrSchema()
+      const schema = schemas.bibleChapterNrSchema
       expect(schema.parse(1)).toBe(1)
       expect(schema.parse('1')).toBe(1)
       expect(() => schema.parse(0)).toThrow()
       expect(() => schema.parse(151)).toThrow()
     })
-
-    it('should create a schema for Bible chapter numbers with number type', () => {
-      const schema = schemas.bibleChapterNrSchema('number')
-      expect(schema.parse(1)).toBe(1)
-      expect(() => schema.parse('1')).toThrow()
-    })
   })
 
   describe('bibleVerseNrSchema', () => {
     it('should create a schema for Bible verse numbers', () => {
-      const schema = schemas.bibleVerseNrSchema()
+      const schema = schemas.bibleVerseNrSchema
       expect(schema.parse(1)).toBe(1)
       expect(schema.parse('1')).toBe(1)
       expect(() => schema.parse(0)).toThrow()
       expect(() => schema.parse(177)).toThrow()
     })
+  })
 
-    it('should create a schema for Bible verse numbers with number type', () => {
-      const schema = schemas.bibleVerseNrSchema('number')
-      expect(schema.parse(1)).toBe(1)
-      expect(() => schema.parse('1')).toThrow()
+  describe('categoryKeySchema', () => {
+    it('should validate valid category keys', () => {
+      expect(schemas.categoryKeySchema.parse('Audio')).toBe('Audio')
+      expect(schemas.categoryKeySchema.parse('AllVideos')).toBe('AllVideos')
+    })
+
+    it('should allow unknown category keys (it is just a string)', () => {
+      expect(schemas.categoryKeySchema.parse('UnknownKey')).toBe('UnknownKey')
+    })
+
+    it('should reject non-string values', () => {
+      expect(() => schemas.categoryKeySchema.parse(123)).toThrow()
+    })
+  })
+
+  describe('mediaKeySchema', () => {
+    it('should validate valid media keys', () => {
+      expect(schemas.mediaKeySchema.parse('pub-jw_x_VIDEO')).toBe('pub-jw_x_VIDEO')
+      expect(schemas.mediaKeySchema.parse('docid-123_1_VIDEO')).toBe('docid-123_1_VIDEO')
+    })
+
+    it('should reject invalid media keys', () => {
+      expect(() => schemas.mediaKeySchema.parse('invalid-key')).toThrow()
     })
   })
 

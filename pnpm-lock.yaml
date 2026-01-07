@@ -38,6 +38,9 @@ importers:
       zod:
         specifier: ^4.2.1
         version: 4.2.1
+      zod-openapi:
+        specifier: ^5.4.5
+        version: 5.4.5(zod@4.2.1)
     devDependencies:
       '@commitlint/cli':
         specifier: ^20.2.0
@@ -108,9 +111,6 @@ importers:
       vue-tsc:
         specifier: ^3.2.1
         version: 3.2.1(typescript@5.9.3)
-      zod-openapi:
-        specifier: ^5.4.5
-        version: 5.4.5(zod@4.2.1)
 
 packages:
 

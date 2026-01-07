@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 const routeSchema = z.object({
-  book: bibleBookNrSchema(),
-  chapter: bibleChapterNrSchema(),
+  book: bibleBookNrSchema,
+  chapter: bibleChapterNrSchema,
   symbol: jwLangSymbolSchema,
-  verse: bibleVerseNrSchema()
+  verse: bibleVerseNrSchema
 })
 
 export default defineLoggedEventHandler(async (event) => {

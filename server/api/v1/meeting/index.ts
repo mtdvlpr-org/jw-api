@@ -1,11 +1,7 @@
 import { z } from 'zod'
 
 const querySchema = z.object({
-  langwritten: z
-    .enum(jwLangCodes)
-    .optional()
-    .default('E')
-    .describe('The language to get the meeting for.'),
+  langwritten: jwLangCodeSchema.optional().default('E'),
   week: z.coerce
     .number<string>()
     .min(1)

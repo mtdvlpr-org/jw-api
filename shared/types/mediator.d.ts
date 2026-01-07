@@ -126,8 +126,23 @@ export interface MediaItemVideo extends Omit<MediaItemGeneric, 'files' | 'type'>
 }
 
 export type MediaKey = MediaKeyAudio | MediaKeyVideo
-export type MediaKeyAudio = `docid-${number}_1_AUDIO` | `pub-${string}-${string}_AUDIO`
-export type MediaKeyVideo = `docid-${number}_1_VIDEO` | `pub-${string}-${string}_VIDEO`
+
+export type MediaKeyAudio =
+  | MediaKeyDocId<'AUDIO'>
+  | MediaKeyPub<'AUDIO'>
+  | MediaKeyPubIssue<'AUDIO'>
+
+export type MediaKeyDocId<T extends 'AUDIO' | 'VIDEO'> = `docid-${number}_${MediaTrack}_${T}`
+
+export type MediaKeyPub<T extends 'AUDIO' | 'VIDEO'> = `pub-${string}_${MediaTrack}_${T}`
+
+export type MediaKeyPubIssue<T extends 'AUDIO' | 'VIDEO'> =
+  `pub-${string}_${number}_${MediaTrack}_${T}`
+
+export type MediaKeyVideo =
+  | MediaKeyDocId<'VIDEO'>
+  | MediaKeyPub<'VIDEO'>
+  | MediaKeyPubIssue<'VIDEO'>
 
 export interface MediatorCategoryDetailedQuery extends MediatorCategoryQuery {
   mediaLimit?: number
@@ -167,3 +182,5 @@ export interface MediatorResultLanguage {
   locale: JwLangSymbol
   script: JwLangScript
 }
+
+export type MediaTrack = 'x' | `${number}`

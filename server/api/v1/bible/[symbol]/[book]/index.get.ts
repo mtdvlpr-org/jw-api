@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const routeSchema = z.object({
-  book: bibleBookNrSchema(),
+  book: bibleBookNrSchema,
   symbol: jwLangSymbolSchema
 })
 
