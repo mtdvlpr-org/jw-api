@@ -268,7 +268,7 @@ describe('repository utils', () => {
       )
     })
 
-    it('should fetch publication details with PublicationBookFetcher params', async () => {
+    it('should fetch publication details with PublicationBibleFetcher params', async () => {
       const pubMock = { booknum: 1, langwritten: 'E', pub: 'nwt' } as const
       const mockApiResult = { booknum: 1, pub: 'nwt', title: 'Genesis' }
       vi.mocked($fetch).mockResolvedValue(mockApiResult)

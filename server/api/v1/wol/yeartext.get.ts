@@ -4,14 +4,11 @@ const currentYear = new Date().getFullYear()
 
 const querySchema = z.object({
   wtlocale: jwLangCodeSchema,
-  year: z.coerce
-    .number<string>()
-    .int()
-    .positive()
-    .min(currentYear)
+  year: yearSchema
+    .min(currentYear - 1)
+    .max(currentYear + 1)
     .optional()
-    .describe('The year of the yeartext.')
-    .meta({ example: currentYear })
+    .meta({ description: 'The year of the yeartext.', examples: [currentYear] })
 })
 
 const _responseSchema = z.object({ yeartext: z.partialRecord(z.number(), z.string()) })

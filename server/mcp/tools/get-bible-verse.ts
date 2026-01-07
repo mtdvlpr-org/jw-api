@@ -28,9 +28,11 @@ export default defineMcpTool({
     chapter: bibleChapterNrSchema,
     symbol: z
       .enum(jwLangSymbols)
-      .describe(
-        'The language of the Bible. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list. Default to English.'
-      )
+      .meta({
+        description:
+          'The language of the Bible. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list. Default to English.',
+        examples: ['en', 'nl', 'es']
+      })
       .optional()
       .default('en'),
     verseNumber: bibleVerseNrSchema

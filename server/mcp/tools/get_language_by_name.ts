@@ -22,15 +22,17 @@ export default defineMcpTool({
     }
   },
   inputSchema: {
-    name: z
-      .string()
-      .describe(
-        'The name of the language. Example: English, Dutch, Spanish. See JW Languages for the full list.'
-      ),
+    name: z.string().meta({
+      description:
+        'The name of the language. Example: English, Dutch, Spanish. See JW Languages for the full list.',
+      examples: ['English', 'Dutch', 'Spanish']
+    }),
     symbol: jwLangSymbolSchema
-      .describe(
-        'The locale for the language. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list.'
-      )
+      .meta({
+        description:
+          'The locale for the language. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list.',
+        examples: ['en', 'nl', 'es']
+      })
       .optional()
       .default('en')
   }

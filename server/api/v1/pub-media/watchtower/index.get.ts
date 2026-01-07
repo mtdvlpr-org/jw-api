@@ -2,15 +2,13 @@ import { z } from 'zod'
 
 const querySchema = z.object({
   langwritten: jwLangCodeSchema,
-  month: z.coerce
-    .number<string>()
-    .int()
-    .positive()
-    .min(1)
-    .max(12)
+  month: monthSchema
     .optional()
-    .describe('The month number.'),
-  year: z.coerce.number<string>().int().positive().min(2015).optional().describe('The year number.')
+    .meta({ description: 'The month number. If not provided, the current month will be used.' }),
+  year: yearSchema
+    .min(2015)
+    .optional()
+    .meta({ description: 'The year number. If not provided, the current year will be used.' })
 })
 
 export default defineLoggedEventHandler(async (event) => {

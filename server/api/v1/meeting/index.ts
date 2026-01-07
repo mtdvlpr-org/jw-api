@@ -2,17 +2,12 @@ import { z } from 'zod'
 
 const querySchema = z.object({
   langwritten: jwLangCodeSchema.optional().default('E'),
-  week: z.coerce
-    .number<string>()
-    .min(1)
-    .max(53)
-    .optional()
-    .describe('The week number of the meeting. If not provided, the current week will be used.'),
-  year: z.coerce
-    .number<string>()
-    .min(2016)
-    .optional()
-    .describe('The year of the meeting. If not provided, the current year will be used.')
+  week: weekSchema.optional().meta({
+    description: 'The week number of the meeting. If not provided, the current week will be used.'
+  }),
+  year: yearSchema.min(2016).optional().meta({
+    description: 'The year of the meeting. If not provided, the current year will be used.'
+  })
 })
 
 export default defineLoggedEventHandler(async (event) => {

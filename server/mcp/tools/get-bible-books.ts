@@ -17,9 +17,11 @@ export default defineMcpTool({
   },
   inputSchema: {
     symbol: jwLangSymbolSchema
-      .describe(
-        'The language for the bible books. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list.'
-      )
+      .meta({
+        description:
+          'The language for the bible books. Example: en for English, nl for Dutch, es for Spanish. See JW Languages for the full list.',
+        examples: ['en', 'nl', 'es']
+      })
       .optional()
       .default('en')
   }

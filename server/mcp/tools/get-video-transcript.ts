@@ -35,15 +35,20 @@ export default defineMcpTool({
   inputSchema: {
     langcode: z
       .enum(jwLangCodes)
-      .describe(
-        'The language code of the video. Example: E for English, O for Dutch, S for Spanish. See JW Languages for the full list. If not provided, will try to extract it from the video URL. If that fails, will default to English.'
-      )
+      .meta({
+        description:
+          'The language code of the video. Example: E for English, O for Dutch, S for Spanish. See JW Languages for the full list. If not provided, will try to extract it from the video URL. If that fails, will default to English.',
+        examples: ['E', 'O', 'S']
+      })
       .optional(),
-    url: z
-      .url()
-      .describe(
-        'A JW Video URL. Examples: https://www.jw.org/finder?srcid=share&wtlocale=E&lank=pub-imv_4_VIDEO or https://www.jw.org/en/library/videos/#en/mediaitems/FeaturedLibraryVideos/pub-imv_4_VIDEO'
-      )
+    url: z.url().meta({
+      description:
+        'A JW Video URL. Examples: https://www.jw.org/finder?srcid=share&wtlocale=E&lank=pub-imv_4_VIDEO or https://www.jw.org/en/library/videos/#en/mediaitems/FeaturedLibraryVideos/pub-imv_4_VIDEO',
+      examples: [
+        'https://www.jw.org/finder?srcid=share&wtlocale=E&lank=pub-imv_4_VIDEO',
+        'https://www.jw.org/en/library/videos/#en/mediaitems/FeaturedLibraryVideos/pub-imv_4_VIDEO'
+      ]
+    })
   },
   outputSchema
 })

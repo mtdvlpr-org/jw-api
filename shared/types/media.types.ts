@@ -322,3 +322,16 @@ export const publicationFileFormats = [
 ] as const
 
 export type PublicationFileFormat = (typeof publicationFileFormats)[number]
+
+export const biblePublications = [
+  'nwt',
+  'nwtsty',
+  'bi12',
+  'int',
+  'bi10',
+  'bi22',
+  'by',
+  'rh'
+] as const
+
+export type BiblePublication = (typeof biblePublications)[number]

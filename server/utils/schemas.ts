@@ -18,6 +18,32 @@ export const publicationFileFormatSchema = z
   .enum(publicationFileFormats)
   .meta({ description: 'A publication file format.', examples: ['MP3', 'MP4', 'JWPUB'] })
 
+export const biblePublicationSchema = z.enum(biblePublications).meta({
+  description: 'A Bible publication key.',
+  examples: ['nwt', 'nwtsty', 'bi12']
+})
+
+/* Dates */
+export const weekSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .min(1)
+  .max(53)
+  .meta({ description: 'An ISO week number.', examples: [1, 52, 53] })
+
+export const monthSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .min(1)
+  .max(12)
+  .meta({ description: 'A month number.', examples: [1, 5, 12] })
+
+export const yearSchema = z.coerce
+  .number<number | string>()
+  .int()
+  .positive()
+  .meta({ description: 'A year number.', examples: [new Date().getFullYear()] })
+
 /* Bible */
 
 export const bibleBookNrSchema = z.coerce
@@ -50,15 +76,15 @@ export const bibleVerseNrSchema = z.coerce
 
 export const categoryKeySchema = z
   .string() // Allow unknown category keys
-  .describe('A category key.')
   .meta({
+    description: 'A category key.',
     examples: [...categoryContainerKeys, ...categoryOnDemandKeys]
   }) as unknown as z.ZodCustom<CategoryKey>
 
 export const mediaKeySchema = z
   .custom<MediaKey>((v) => typeof v === 'string' && isMediaKey(v))
-  .describe('The language agnostic natural key of a media item.')
   .meta({
+    description: 'The language agnostic natural key of a media item.',
     examples: [
       'pub-ivno_x_VIDEO',
       'pub-mwbv_202405_1_VIDEO',
@@ -72,6 +98,54 @@ export const mediaKeySchema = z
 /* Meeting */
 
 /* PubMedia */
+const track = z.coerce
+  .number<number | string>()
+  .int()
+  .min(0)
+  .optional()
+  .meta({ description: 'The track number.', examples: [0, 11, 161] })
+
+export const pubFetcherSchema = z.object({
+  fileformat: publicationFileFormatSchema.optional(),
+  issue: z.coerce
+    .number<number | string>()
+    .int()
+    .positive()
+    .optional()
+    .meta({
+      description: 'The issue number, usually in format YYYYMM.',
+      examples: [201705, 202501, 202012]
+    }),
+  langwritten: jwLangCodeSchema,
+  pub: z.string().meta({ description: 'The publication key.', examples: ['nwt', 'mwb', 'w'] }),
+  track
+})
+
+export const pubDocFetcherSchema = z.object({
+  docid: z.coerce
+    .number<number | string>()
+    .int()
+    .positive()
+    .meta({ description: 'The document ID.', examples: [1112024041, 502013189, -702018118] }),
+  fileformat: publicationFileFormatSchema.optional(),
+  langwritten: jwLangCodeSchema,
+  track
+})
+
+export const pubBibleFetcherSchema = z.object({
+  booknum: z.coerce
+    .number<number | string>()
+    .int()
+    .min(0)
+    .max(66)
+    .meta({
+      description: 'A bible book number. 0 is used for the whole Bible.',
+      examples: [0, 40, 66]
+    }) as unknown as z.ZodCustom<0 | BibleBookNr>,
+  fileformat: publicationFileFormatSchema.optional(),
+  langwritten: jwLangCodeSchema,
+  pub: biblePublicationSchema
+})
 
 /* WOL */
 

@@ -1,11 +1,11 @@
-export type PubFetcher = PublicationBookFetcher | PublicationDocFetcher | PublicationFetcher
+export type PubFetcher = PublicationBibleFetcher | PublicationDocFetcher | PublicationFetcher
 
 /* eslint-disable perfectionist/sort-interfaces */
 /* eslint-disable perfectionist/sort-object-types */
 export interface Publication {
   pubName: string
   parentPubName: string
-  booknum: BibleBookNr | null
+  booknum: 0 | BibleBookNr | null
   pub: string
   issue: '' | `${number}`
   /**
@@ -37,11 +37,11 @@ export interface Publication {
 /* eslint-enable perfectionist/sort-interfaces */
 /* eslint-enable perfectionist/sort-object-types */
 
-export interface PublicationBookFetcher {
-  booknum: number
+export interface PublicationBibleFetcher {
+  booknum: 0 | BibleBookNr
   fileformat?: PublicationFileFormat
   langwritten: JwLangCode
-  pub: 'nwt'
+  pub: BiblePublication
 }
 
 export interface PublicationDocFetcher {
