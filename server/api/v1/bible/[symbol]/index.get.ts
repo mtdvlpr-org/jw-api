@@ -56,6 +56,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get the Bible data for a given language.',
+    operationId: 'getBibleData',
     parameters: [{ $ref: '#/components/parameters/LangSymbol' }],
     responses: {
       200: {
@@ -65,6 +67,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get Bible data.',
     tags: ['Bible']
   }
 })

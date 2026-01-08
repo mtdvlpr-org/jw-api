@@ -26,6 +26,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get a Bible book by book number.',
+    operationId: 'getBibleBook',
     parameters: [
       { $ref: '#/components/parameters/LangSymbol' },
       { $ref: '#/components/parameters/BibleBook' }
@@ -49,6 +51,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get Bible book.',
     tags: ['Bible']
   }
 })

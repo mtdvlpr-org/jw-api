@@ -36,6 +36,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get the meeting schedule for a given language and week/year.',
+    operationId: 'getMeetingSchedule',
     parameters: [
       { $ref: '#/components/parameters/LangWritten' },
       { $ref: '#/components/parameters/Week' },
@@ -53,6 +55,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get meeting schedule.',
     tags: ['Meeting']
   }
 })

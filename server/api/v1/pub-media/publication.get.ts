@@ -144,6 +144,9 @@ defineRouteMeta({
         }
       }
     },
+    description:
+      'Get a publication by publication key, book number, document ID, issue, track, and file format.',
+    operationId: 'getPublication',
     parameters: [
       { $ref: '#/components/parameters/LangWritten' },
       { $ref: '#/components/parameters/Pub' },
@@ -161,6 +164,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get publication.',
     tags: ['Publication', 'Media']
   }
 })

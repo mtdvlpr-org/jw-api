@@ -170,6 +170,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get a media item by key and language.',
+    operationId: 'getMediaItem',
     parameters: [
       { $ref: '#/components/parameters/LangCode' },
       { $ref: '#/components/parameters/MediaKey' }
@@ -182,6 +184,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get media item.',
     tags: ['Mediator', 'Media']
   }
 })

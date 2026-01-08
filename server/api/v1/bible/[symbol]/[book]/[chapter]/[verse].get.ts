@@ -60,6 +60,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get a Bible verse by book, chapter, and verse number.',
+    operationId: 'getBibleVerse',
     parameters: [
       { $ref: '#/components/parameters/LangSymbol' },
       { $ref: '#/components/parameters/BibleBook' },
@@ -88,6 +90,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get Bible verse.',
     tags: ['Bible']
   }
 })

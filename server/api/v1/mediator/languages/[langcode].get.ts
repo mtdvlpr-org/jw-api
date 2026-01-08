@@ -43,6 +43,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get all languages supported by the Mediator API.',
+    operationId: 'getMediatorLanguages',
     parameters: [{ $ref: '#/components/parameters/LangCode' }],
     responses: {
       200: {
@@ -56,6 +58,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get Mediator languages.',
     tags: ['Mediator', 'Languages']
   }
 })

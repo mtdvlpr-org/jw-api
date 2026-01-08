@@ -13,6 +13,8 @@ const querySchema = z.object({
 
 defineRouteMeta({
   openAPI: {
+    description: 'Get the watchtower for a given language and month/year.',
+    operationId: 'getWatchtower',
     parameters: [
       { $ref: '#/components/parameters/LangWritten' },
       { $ref: '#/components/parameters/Month' },
@@ -26,6 +28,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get watchtower.',
     tags: ['Publication', 'Media']
   }
 })

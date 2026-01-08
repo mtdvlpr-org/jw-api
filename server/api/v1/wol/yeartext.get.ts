@@ -15,6 +15,8 @@ const _responseSchema = z.object({ yeartext: z.partialRecord(z.number(), z.strin
 
 defineRouteMeta({
   openAPI: {
+    description: 'Get the yeartext for a given language and year.',
+    operationId: 'getYeartext',
     parameters: [
       {
         description: 'The language of the yeartext.',
@@ -55,6 +57,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get yeartext.',
     tags: ['WOL']
   }
 })

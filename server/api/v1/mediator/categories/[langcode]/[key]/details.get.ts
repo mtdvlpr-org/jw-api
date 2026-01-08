@@ -39,6 +39,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get detailed information about a category.',
+    operationId: 'getCategoryDetails',
     parameters: [
       { $ref: '#/components/parameters/LangCode' },
       { $ref: '#/components/parameters/CategoryKey' }
@@ -61,6 +63,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get detailed category.',
     tags: ['Mediator', 'Categories']
   }
 })

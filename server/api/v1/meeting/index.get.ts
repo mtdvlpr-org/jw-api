@@ -41,6 +41,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get the meeting articles for a given language and week/year.',
+    operationId: 'getMeetingArticles',
     parameters: [
       { $ref: '#/components/parameters/LangWritten' },
       { $ref: '#/components/parameters/Week' },
@@ -65,6 +67,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get meeting articles.',
     tags: ['Meeting']
   }
 })

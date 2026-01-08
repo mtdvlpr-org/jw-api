@@ -4,6 +4,8 @@ const routeSchema = z.object({ langcode: jwLangCodeSchema })
 
 defineRouteMeta({
   openAPI: {
+    description: 'Get all Mediator API translations for a given language.',
+    operationId: 'getMediatorTranslations',
     parameters: [{ $ref: '#/components/parameters/LangCode' }],
     responses: {
       200: {
@@ -24,6 +26,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get translations.',
     tags: ['Mediator']
   }
 })

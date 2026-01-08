@@ -23,6 +23,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get all categories for a given language.',
+    operationId: 'getCategories',
     parameters: [{ $ref: '#/components/parameters/LangCode' }],
     responses: {
       200: {
@@ -36,6 +38,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get categories.',
     tags: ['Mediator', 'Categories']
   }
 })

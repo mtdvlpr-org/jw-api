@@ -170,6 +170,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get a Bible chapter by book and chapter number.',
+    operationId: 'getBibleChapter',
     parameters: [
       { $ref: '#/components/parameters/LangSymbol' },
       { $ref: '#/components/parameters/BibleBook' },
@@ -183,6 +185,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get Bible chapter.',
     tags: ['Bible']
   }
 })

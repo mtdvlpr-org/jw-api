@@ -49,6 +49,8 @@ defineRouteMeta({
         }
       }
     },
+    description: 'Get all languages supported by JW.org.',
+    operationId: 'getJWLanguages',
     parameters: [{ $ref: '#/components/parameters/LangSymbol' }],
     responses: {
       200: {
@@ -62,6 +64,7 @@ defineRouteMeta({
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
     },
+    summary: 'Get JW languages.',
     tags: ['JW', 'Languages']
   }
 })

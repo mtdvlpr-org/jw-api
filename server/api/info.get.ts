@@ -122,7 +122,10 @@ defineRouteMeta({
           }
         }
       }
-    }
+    },
+    description: 'Get general information about the API.',
+    operationId: 'getInfo',
+    summary: 'Get API information.'
   }
 })
 

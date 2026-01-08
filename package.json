@@ -1,7 +1,7 @@
 {
   "name": "jw-api",
   "version": "1.0.0",
-  "description": "An API for JW related data.",
+  "description": "An API for JW related data. Provides data from JW.org, WOL, Mediator API, Pub Media API, Bible Data API, and more.",
   "homepage": "https://github.com/mtdvlpr-org/jw-api#readme",
   "license": "(MIT OR Apache-2.0)",
   "repository": {
