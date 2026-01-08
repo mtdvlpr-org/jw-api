@@ -12,6 +12,21 @@ vi.mock('node:zlib')
 vi.mock('node:stream/promises')
 vi.mock('jszip')
 
+const createInternalServerError = vi.fn((msg, cause) => {
+  const err = new Error(msg)
+  err.cause = cause
+  return err
+})
+const logger = {
+  debug: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn()
+}
+
+vi.stubGlobal('createInternalServerError', createInternalServerError)
+vi.stubGlobal('logger', logger)
+
 describe('zip utils', () => {
   beforeEach(() => {
     vi.resetAllMocks()
@@ -53,7 +68,7 @@ describe('zip utils', () => {
       const result = await extractZipFiles(mockData)
 
       expect(JSZip).toHaveBeenCalled()
-      expect(mockLoadAsync).toHaveBeenCalledWith(mockData, {})
+      expect(mockLoadAsync).toHaveBeenCalledWith(mockData)
       expect(result).toBe('extracted data')
     })
   })

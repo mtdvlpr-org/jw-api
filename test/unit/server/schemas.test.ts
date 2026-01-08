@@ -7,6 +7,8 @@ import { categoryContainerKeys, categoryOnDemandKeys } from '../../../shared/typ
 // Stub globals before import
 vi.stubGlobal('jwLangCodes', ['E', 'S'])
 vi.stubGlobal('jwLangSymbols', ['en', 'es'])
+vi.stubGlobal('biblePublications', ['nwt', 'nwtsty'])
+vi.stubGlobal('jwLangScripts', ['ROMAN', 'CYRILLIC', 'ARABIC'])
 vi.stubGlobal('publicationFileFormats', ['MP3', 'PDF', 'MP4'])
 vi.stubGlobal('categoryContainerKeys', categoryContainerKeys)
 vi.stubGlobal('categoryOnDemandKeys', categoryOnDemandKeys)

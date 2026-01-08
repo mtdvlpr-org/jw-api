@@ -23,9 +23,16 @@ const createInternalServerError = vi.fn((msg, cause) => {
   return err
 })
 const createNotFoundError = vi.fn((msg) => new Error(msg))
+const logger = {
+  debug: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn()
+}
 
 vi.stubGlobal('createInternalServerError', createInternalServerError)
 vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('logger', logger)
 
 describe('sqlite utils', () => {
   beforeEach(() => {
@@ -115,7 +122,10 @@ describe('sqlite utils', () => {
       ])
 
       expect(() => queryDatabaseSingle(db, 'SELECT *')).toThrow('No result found for query.')
-      expect(createNotFoundError).toHaveBeenCalled()
+      expect(createInternalServerError).toHaveBeenCalledWith(
+        'No result found for query.',
+        'SELECT *'
+      )
     })
   })
 })

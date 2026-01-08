@@ -18,11 +18,18 @@ const jwpubService = {
   getMwbArticleForDate: vi.fn(),
   getWtArticleForDate: vi.fn()
 }
+const logger = {
+  debug: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn()
+}
 
 vi.stubGlobal('catalogService', catalogService)
 vi.stubGlobal('getMondayOfWeek', getMondayOfWeek)
 vi.stubGlobal('pubMediaService', pubMediaService)
 vi.stubGlobal('jwpubService', jwpubService)
+vi.stubGlobal('logger', logger)
 
 describe('meeting utils', () => {
   beforeEach(() => {

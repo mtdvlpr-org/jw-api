@@ -22,7 +22,8 @@ export default defineConfig({
       {
         test: {
           alias: {
-            '#server': fileURLToPath(new URL('./server', import.meta.url))
+            '#server': fileURLToPath(new URL('./server', import.meta.url)),
+            '~': fileURLToPath(new URL('./', import.meta.url))
           },
           environment: 'node',
           include: ['test/unit/{server,shared}/**/*.test.ts'],

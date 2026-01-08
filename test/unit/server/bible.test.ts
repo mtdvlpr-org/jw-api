@@ -6,7 +6,10 @@ import { bibleService } from '../../../server/utils/bible'
 // Mock defineCachedFunction BEFORE importing anything that uses it
 vi.hoisted(() => {
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
-  vi.stubGlobal('parseHtml', (html: string) => ({ innerText: html }))
+  vi.stubGlobal('parseHtml', (html: string) => ({
+    innerText: html,
+    querySelector: vi.fn().mockReturnValue({ remove: vi.fn(), textContent: 'test' })
+  }))
 })
 
 vi.mock('../../../server/repository/bible')

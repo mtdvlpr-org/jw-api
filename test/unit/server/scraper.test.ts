@@ -9,9 +9,11 @@ vi.hoisted(() => {
 
 const $fetch = vi.fn()
 const createNotFoundError = vi.fn((msg) => new Error(msg))
+const formatUrl = vi.fn((base, path) => new URL(path, base).toString())
 
 vi.stubGlobal('$fetch', $fetch)
 vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('formatUrl', formatUrl)
 
 describe('scraper utils', () => {
   beforeEach(() => {
@@ -79,7 +81,7 @@ describe('scraper utils', () => {
     it('should throw error if Bible data API is not found', async () => {
       const mockHtml = `
         <html>
-          <head></head>
+          <head><base href="https://www.jw.org/" /></head>
           <body>
             <div>No config here</div>
           </body>

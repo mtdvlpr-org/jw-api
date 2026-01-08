@@ -18,6 +18,17 @@ const queryDatabaseSingle = vi.fn()
 const formatDate = vi.fn()
 const parseHtml = vi.fn()
 const createNotFoundError = vi.fn((msg) => new Error(msg))
+const createInternalServerError = vi.fn((msg, cause) => {
+  const err = new Error(msg)
+  err.cause = cause
+  return err
+})
+const logger = {
+  debug: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn()
+}
 
 vi.stubGlobal('extractZipFiles', extractZipFiles)
 vi.stubGlobal('loadDatabase', loadDatabase)
@@ -25,6 +36,8 @@ vi.stubGlobal('queryDatabaseSingle', queryDatabaseSingle)
 vi.stubGlobal('formatDate', formatDate)
 vi.stubGlobal('parseHtml', parseHtml)
 vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('createInternalServerError', createInternalServerError)
+vi.stubGlobal('logger', logger)
 
 describe('jwpub utils', () => {
   beforeEach(() => {
@@ -34,8 +47,8 @@ describe('jwpub utils', () => {
   describe('getDatabase', () => {
     it('should download and extract database', async () => {
       const url = 'http://example.com/pub.jwpub'
-      const blob = new Blob([])
-      vi.mocked(downloadRepository.blob).mockResolvedValue(blob)
+      const buffer = new ArrayBuffer(0)
+      vi.mocked(downloadRepository.arrayBuffer).mockResolvedValue(buffer)
 
       const mockDbFile = { async: vi.fn().mockResolvedValue(new Uint8Array()) }
 
@@ -57,14 +70,14 @@ describe('jwpub utils', () => {
 
       const result = await jwpubService.getDatabase(url)
 
-      expect(downloadRepository.blob).toHaveBeenCalledWith(url)
+      expect(downloadRepository.arrayBuffer).toHaveBeenCalledWith(url)
       expect(extractZipFiles).toHaveBeenCalledTimes(2)
       expect(loadDatabase).toHaveBeenCalled()
       expect(result).toBe(mockSqlDb)
     })
 
     it('should throw error if no db file found', async () => {
-      vi.mocked(downloadRepository.blob).mockResolvedValue(new Blob([]))
+      vi.mocked(downloadRepository.arrayBuffer).mockResolvedValue(new ArrayBuffer(0))
       extractZipFiles
         .mockResolvedValueOnce({
           files: { contents: { async: vi.fn().mockResolvedValue(new Uint8Array()) } }
@@ -74,7 +87,7 @@ describe('jwpub utils', () => {
         })
 
       await expect(jwpubService.getDatabase('url')).rejects.toThrow(
-        'No database file found in the JWPUB file.'
+        'Failed to get database from URL.'
       )
     })
   })
@@ -87,13 +100,13 @@ describe('jwpub utils', () => {
       // Or we can assume getDatabase works (tested above) and just mock the dependencies it calls.
 
       // Let's mock the internal calls for getDatabase to succeed
-      vi.mocked(downloadRepository.blob).mockResolvedValue(new Blob([]))
+      vi.mocked(downloadRepository.arrayBuffer).mockResolvedValue(new ArrayBuffer(0))
       extractZipFiles
         .mockResolvedValueOnce({ files: { contents: { async: vi.fn() } } })
         .mockResolvedValueOnce({ files: { 'data.db': { async: vi.fn() } } })
       loadDatabase.mockResolvedValue(mockDb)
 
-      formatDate.mockReturnValue('20240101')
+      formatDate.mockImplementation((d) => (d === '20240107' ? '20240107' : '20240101'))
 
       // Mock queryDatabaseSingle responses
       // First call for DatedText
@@ -127,13 +140,13 @@ describe('jwpub utils', () => {
   describe('getMwbArticleForDate', () => {
     it('should fetch database and query mwb article details', async () => {
       const mockDb = {}
-      vi.mocked(downloadRepository.blob).mockResolvedValue(new Blob([]))
+      vi.mocked(downloadRepository.arrayBuffer).mockResolvedValue(new ArrayBuffer(0))
       extractZipFiles
         .mockResolvedValueOnce({ files: { contents: { async: vi.fn() } } })
         .mockResolvedValueOnce({ files: { 'data.db': { async: vi.fn() } } })
       loadDatabase.mockResolvedValue(mockDb)
 
-      formatDate.mockReturnValue('20240101')
+      formatDate.mockImplementation((d) => (d === '20240107' ? '20240107' : '20240101'))
 
       queryDatabaseSingle.mockReturnValueOnce({
         Caption: '<caption>MWB Title</caption>',
