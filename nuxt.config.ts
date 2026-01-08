@@ -13,6 +13,13 @@ const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }>
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   alias: { '#server': fileURLToPath(new URL('./server', import.meta.url)) },
+  app: {
+    head: {
+      htmlAttrs: { lang: 'en' },
+      meta: [{ content: description, name: 'description' }],
+      title
+    }
+  },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   future: { typescriptBundlerResolution: true },
@@ -24,7 +31,11 @@ export default defineNuxtConfig({
     openAPI: {
       meta: { description, title, version },
       production: 'prerender',
-      ui: { scalar: { telemetry: false } }
+      route: '/_docs/openapi.json',
+      ui: {
+        scalar: { route: '/_docs/scalar', telemetry: false },
+        swagger: { route: '/_docs/swagger' }
+      }
     },
     storage: {
       db: { base: './.data/db', driver: 'fs-lite' },

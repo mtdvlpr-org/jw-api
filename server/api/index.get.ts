@@ -176,9 +176,9 @@ export default defineEventHandler(async (event) => {
     general: { description, title, version },
     links: {
       health: formatUrl(base, '/api/health'),
-      openAPI: formatUrl(base, '/_openapi.json'),
-      scalar: formatUrl(base, '/_scalar'),
-      swagger: formatUrl(base, '/_swagger')
+      openAPI: formatUrl(base, '/_docs/openapi.json'),
+      scalar: formatUrl(base, '/_docs/scalar'),
+      swagger: formatUrl(base, '/_docs/swagger')
     }
   }
 })
