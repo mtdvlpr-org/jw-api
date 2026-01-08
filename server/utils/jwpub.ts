@@ -9,20 +9,25 @@ import { downloadRepository } from '#server/repository/download'
  * @returns The loaded database.
  */
 const getDatabase = async (url: string): Promise<Database> => {
-  const blob = await downloadRepository.blob(url)
-  const outerZip = await extractZipFiles(blob)
-  if (!outerZip.files['contents']) {
-    throw createNotFoundError('No contents file found in the JWPUB file.', url)
+  try {
+    logger.debug(`Getting database from URL: ${url}`)
+    const buffer = await downloadRepository.arrayBuffer(url)
+    const outerZip = await extractZipFiles(buffer)
+    if (!outerZip.files['contents']) {
+      throw createInternalServerError('No contents file found in the JWPUB file.', url)
+    }
+
+    const innerZip = await extractZipFiles(await outerZip.files['contents']!.async('uint8array'))
+
+    const dbFile = Object.keys(innerZip.files).find((file) => file.endsWith('.db'))
+    if (!dbFile) throw createInternalServerError('No database file found in the JWPUB file.', url)
+
+    const sqlDb = await innerZip.files[dbFile]!.async('uint8array')
+
+    return loadDatabase(sqlDb)
+  } catch (e) {
+    throw createInternalServerError('Failed to get database from URL.', e)
   }
-
-  const innerZip = await extractZipFiles(await outerZip.files['contents']!.async('uint8array'))
-
-  const dbFile = Object.keys(innerZip.files).find((file) => file.endsWith('.db'))
-  if (!dbFile) throw createNotFoundError('No database file found in the JWPUB file.', url)
-
-  const sqlDb = await innerZip.files[dbFile]!.async('uint8array')
-
-  return loadDatabase(sqlDb)
 }
 
 /**
@@ -44,8 +49,8 @@ const getWtArticleForDate = async (url: string, date?: Date) => {
     BeginParagraphOrdinal: number
     DocumentId: number
     EndParagraphOrdinal: number
-    FirstDateOffset: string
-    LastDateOffset: string
+    FirstDateOffset: number
+    LastDateOffset: number
   }>(
     db,
     `SELECT DocumentId, BeginParagraphOrdinal, EndParagraphOrdinal, FirstDateOffset, LastDateOffset

@@ -6,9 +6,28 @@ const querySchema = z.object({
     .optional()
     .meta({ description: 'The month number. If not provided, the current month will be used.' }),
   year: yearSchema
-    .min(2015)
+    .min(2016)
     .optional()
     .meta({ description: 'The year number. If not provided, the current year will be used.' })
+})
+
+defineRouteMeta({
+  openAPI: {
+    parameters: [
+      { $ref: '#/components/parameters/LangWritten' },
+      { $ref: '#/components/parameters/Month' },
+      { $ref: '#/components/parameters/MeetingYear' }
+    ],
+    responses: {
+      200: {
+        content: { 'application/json': { schema: { $ref: '#/components/schemas/Publication' } } },
+        description: 'Successful response'
+      },
+      400: { $ref: '#/components/responses/400' },
+      404: { $ref: '#/components/responses/404' }
+    },
+    tags: ['Publication', 'Media']
+  }
 })
 
 export default defineLoggedEventHandler(async (event) => {

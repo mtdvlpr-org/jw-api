@@ -21,8 +21,13 @@ export const decompressGzip = async (fileStream: Readable, outputPath: string): 
  * @returns The zip file contents.
  */
 export const extractZipFiles = async (
-  data: ArrayBuffer | Blob | Buffer | string | Uint8Array<ArrayBufferLike>
+  data: ArrayBuffer | Buffer | string | Uint8Array<ArrayBufferLike>
 ) => {
-  const { loadAsync } = new JSZip()
-  return await loadAsync(data, {})
+  logger.debug(`Extracting zip files from data...`)
+  try {
+    const appZip = new JSZip()
+    return await appZip.loadAsync(data)
+  } catch (e) {
+    throw createInternalServerError('Failed to extract zip files.', e)
+  }
 }

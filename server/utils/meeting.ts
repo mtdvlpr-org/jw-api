@@ -35,6 +35,11 @@ const getMeetingArticles = async (
   const mwbYear = workbook ? +workbook.issue.slice(0, 4) : null
   const mwbMonth = workbook ? +workbook.issue.slice(4) : null
 
+  logger.debug(`wtYear: ${wtYear}`)
+  logger.debug(`wtMonth: ${wtMonth}`)
+  logger.debug(`mwbYear: ${mwbYear}`)
+  logger.debug(`mwbMonth: ${mwbMonth}`)
+
   const [wtPub, mwbPub] = await Promise.allSettled([
     watchtower && wtMonth && wtYear
       ? await pubMediaService.getStudyWatchtower({
@@ -52,6 +57,13 @@ const getMeetingArticles = async (
       : null
   ])
 
+  logger.debug(
+    `wtPub: ${wtPub.status === 'fulfilled' && !!wtPub.value?.files[langwritten]?.JWPUB?.[0]}`
+  )
+  logger.debug(
+    `mwbPub: ${mwbPub.status === 'fulfilled' && !!mwbPub.value?.files[langwritten]?.JWPUB?.[0]}`
+  )
+
   const monday = getMondayOfWeek(date)
 
   const [wtArticle, mwbArticle] = await Promise.allSettled([
@@ -62,6 +74,13 @@ const getMeetingArticles = async (
       ? jwpubService.getMwbArticleForDate(mwbPub.value.files[langwritten].JWPUB[0].file.url, monday)
       : null
   ])
+
+  logger.debug(
+    `wtArticle: ${wtArticle.status === 'fulfilled' && wtArticle.value ? 'true' : 'false'}`
+  )
+  logger.debug(
+    `mwbArticle: ${mwbArticle.status === 'fulfilled' && mwbArticle.value ? 'true' : 'false'}`
+  )
 
   return {
     watchtower: wtArticle.status === 'fulfilled' && wtArticle.value ? wtArticle.value : null,

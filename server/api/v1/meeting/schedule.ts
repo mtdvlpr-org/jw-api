@@ -10,6 +10,53 @@ const querySchema = z.object({
   })
 })
 
+defineRouteMeta({
+  openAPI: {
+    $global: {
+      components: {
+        schemas: {
+          MeetingSchedule: {
+            example: {
+              watchtower: {
+                w_study_date: '2025/01/01',
+                w_study_title: 'Study Article 1'
+              },
+              workbook: {
+                mwb_week_date: '2025/01/01',
+                mwb_weekly_bible_reading: 'Genesis 1-3'
+              }
+            },
+            properties: {
+              watchtower: { nullable: true, type: 'object' },
+              workbook: { nullable: true, type: 'object' }
+            },
+            required: ['watchtower', 'workbook'],
+            type: 'object'
+          }
+        }
+      }
+    },
+    parameters: [
+      { $ref: '#/components/parameters/LangWritten' },
+      { $ref: '#/components/parameters/Week' },
+      { $ref: '#/components/parameters/MeetingYear' }
+    ],
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/MeetingSchedule' }
+          }
+        },
+        description: 'Successful response'
+      },
+      400: { $ref: '#/components/responses/400' },
+      404: { $ref: '#/components/responses/404' }
+    },
+    tags: ['Meeting']
+  }
+})
+
 export default defineLoggedEventHandler(async (event) => {
   const { langwritten, week, year } = await getValidatedQuery(event, querySchema.parse)
 

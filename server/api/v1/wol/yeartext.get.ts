@@ -100,7 +100,8 @@ defineRouteMeta({
         },
         description: 'Not found.'
       }
-    }
+    },
+    tags: ['WOL']
   }
 })
 

@@ -10,6 +10,65 @@ const querySchema = z.object({
   })
 })
 
+defineRouteMeta({
+  openAPI: {
+    $global: {
+      components: {
+        parameters: {
+          MeetingYear: {
+            description: 'A 4-digit year number representing a year.',
+            examples: {
+              1: { summary: '2024', value: 2024 },
+              2: { summary: '2025', value: 2025 },
+              3: { summary: '2026', value: 2026 }
+            },
+            in: 'query',
+            name: 'year',
+            schema: { minimum: 2016, type: 'integer' },
+            summary: 'A year number.'
+          }
+        },
+        schemas: {
+          MeetingArticle: {
+            properties: {
+              end: { format: 'date', type: 'string' },
+              start: { format: 'date', type: 'string' },
+              title: { type: 'string' }
+            },
+            required: ['end', 'start', 'title'],
+            type: ['object', 'null']
+          }
+        }
+      }
+    },
+    parameters: [
+      { $ref: '#/components/parameters/LangWritten' },
+      { $ref: '#/components/parameters/Week' },
+      { $ref: '#/components/parameters/MeetingYear' }
+    ],
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                watchtower: { $ref: '#/components/schemas/MeetingArticle' },
+                workbook: { $ref: '#/components/schemas/MeetingArticle' }
+              },
+              required: ['watchtower', 'workbook'],
+              type: 'object'
+            }
+          }
+        },
+        description: 'Successful response'
+      },
+      400: { $ref: '#/components/responses/400' },
+      404: { $ref: '#/components/responses/404' }
+    },
+    tags: ['Meeting']
+  }
+})
+
 export default defineLoggedEventHandler(async (event) => {
   const { langwritten, week, year } = await getValidatedQuery(event, querySchema.parse)
 

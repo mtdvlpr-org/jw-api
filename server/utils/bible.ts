@@ -70,7 +70,8 @@ const getVerse = async ({
 }) => {
   const result = await bibleRepository.fetchBibleVerse(book, chapter, verse, locale)
   const html = parseHtml(result.content)
-  return { parsedContent: html.innerText, result }
+  html.querySelector('span.chapterNum')?.remove()
+  return { parsedContent: html.querySelector('span')?.textContent.trim(), result }
 }
 
 /**

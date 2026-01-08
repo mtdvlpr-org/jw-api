@@ -68,3 +68,25 @@ export const formatDate = (
       throw createInternalServerError(`Unsupported date format: ${format}`)
   }
 }
+
+/**
+ * Parses a date string into a Date object.
+ * @param date The date to parse.
+ * @param format The format to use. Defaults to 'YYYY-MM-DD'.
+ * @returns The parsed date.
+ */
+export const parseDate = (
+  date: string,
+  format: 'YYYY-MM-DD' | 'YYYY/MM/DD' | 'YYYYMMDD' = 'YYYY-MM-DD'
+): Date => {
+  switch (format) {
+    case 'YYYY-MM-DD':
+      return new Date(date)
+    case 'YYYY/MM/DD':
+      return new Date(date)
+    case 'YYYYMMDD':
+      return new Date(date)
+    default:
+      throw createInternalServerError(`Unsupported date format: ${format}`)
+  }
+}

@@ -11,6 +11,85 @@ const querySchema = z.object({
     .meta({ description: 'The year number. If not provided, the current year will be used.' })
 })
 
+defineRouteMeta({
+  openAPI: {
+    $global: {
+      components: {
+        schemas: {
+          WatchtowerArticle: {
+            example: {
+              file: {
+                checksum: 'b52799ae27c35f13d9bb49cb7b4b9bdf',
+                modifiedDatetime: '2025-09-25 12:23:36',
+                stream: 'https://jw.org',
+                url: 'https://cfp2.jw-cdn.org/a/eefed82/1/o/w_E_202601_01.rtf'
+              },
+              title: 'March 2-8, 2026: Continue to Satisfy Your “Spiritual Need”'
+            },
+            properties: {
+              file: {
+                properties: {
+                  checksum: { type: 'string' },
+                  modifiedDatetime: { type: 'string' },
+                  stream: { type: 'string' },
+                  url: { format: 'uri', type: 'string' }
+                },
+                required: ['checksum', 'modifiedDatetime', 'stream', 'url'],
+                type: 'object'
+              },
+              title: { type: 'string' }
+            },
+            required: ['file', 'title'],
+            type: 'object'
+          }
+        }
+      }
+    },
+    parameters: [
+      { $ref: '#/components/parameters/LangWritten' },
+      { $ref: '#/components/parameters/Month' },
+      { $ref: '#/components/parameters/MeetingYear' }
+    ],
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            example: {
+              articles: [
+                {
+                  file: {
+                    checksum: 'b52799ae27c35f13d9bb49cb7b4b9bdf',
+                    modifiedDatetime: '2025-09-25 12:23:36',
+                    stream: 'https://jw.org',
+                    url: 'https://cfp2.jw-cdn.org/a/eefed82/1/o/w_E_202601_01.rtf'
+                  },
+                  title: 'March 2-8, 2026: Continue to Satisfy Your “Spiritual Need”'
+                }
+              ],
+              issue: '202601'
+            },
+            schema: {
+              properties: {
+                articles: {
+                  items: { $ref: '#/components/schemas/WatchtowerArticle' },
+                  type: 'array'
+                },
+                issue: { type: 'string' }
+              },
+              required: ['issue', 'article'],
+              type: 'object'
+            }
+          }
+        },
+        description: 'Successful response'
+      },
+      400: { $ref: '#/components/responses/400' },
+      404: { $ref: '#/components/responses/404' }
+    },
+    tags: ['Publication', 'Media']
+  }
+})
+
 export default defineLoggedEventHandler(async (event) => {
   const { langwritten, month, year } = await getValidatedQuery(event, querySchema.parse)
 
