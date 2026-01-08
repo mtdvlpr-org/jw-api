@@ -123,15 +123,62 @@ defineRouteMeta({
         }
       }
     },
-    description: 'Get general information about the API.',
+    description:
+      'Get general information about the API, like title, description, version, and more.',
     operationId: 'getInfo',
-    summary: 'Get API information.'
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                general: {
+                  example: {
+                    description: 'The description of the API.',
+                    title: 'API Title',
+                    version: 'x.x.x'
+                  },
+                  properties: {
+                    description: { type: 'string' },
+                    title: { type: 'string' },
+                    version: { type: 'string' }
+                  },
+                  type: 'object'
+                },
+                links: {
+                  properties: {
+                    health: { format: 'uri', type: 'string' },
+                    openAPI: { format: 'uri', type: 'string' },
+                    scalar: { format: 'uri', type: 'string' },
+                    swagger: { format: 'uri', type: 'string' }
+                  },
+                  type: 'object'
+                }
+              },
+              required: ['general', 'links'],
+              type: 'object'
+            }
+          }
+        },
+        description: 'Successful response.'
+      }
+    },
+    summary: 'Get API information.',
+    tags: ['API Routes']
   }
 })
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+  const base = getRequestURL(event).origin
   const config = useRuntimeConfig()
+  const { description, title, version } = config.public
   return {
-    version: config.public.version
+    general: { description, title, version },
+    links: {
+      health: formatUrl(base, '/api/health'),
+      openAPI: formatUrl(base, '/_openapi.json'),
+      scalar: formatUrl(base, '/_scalar'),
+      swagger: formatUrl(base, '/_swagger')
+    }
   }
 })

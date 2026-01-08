@@ -58,7 +58,7 @@ defineRouteMeta({
             }
           }
         },
-        description: 'Successful response'
+        description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }

@@ -4,6 +4,8 @@ import type { DbKey } from './shared/types/db'
 
 import { description, version } from './package.json'
 
+const title = 'JW API'
+
 const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }> = {
   catalog: { connector: 'sqlite', options: { name: 'catalog' } }
 }
@@ -14,13 +16,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   future: { typescriptBundlerResolution: true },
-  mcp: { name: 'JW MCP', version },
+  mcp: { name: title, version },
   modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit'],
   nitro: {
     database,
     experimental: { database: true, openAPI: true },
     openAPI: {
-      meta: { description, title: 'JW API', version },
+      meta: { description, title, version },
       production: 'prerender',
       ui: { scalar: { telemetry: false } }
     },
@@ -30,5 +32,5 @@ export default defineNuxtConfig({
     }
   },
   routeRules: { '/api/**': { cors: true }, '/mcp': { cors: true } },
-  runtimeConfig: { public: { version } }
+  runtimeConfig: { public: { description, title, version } }
 })

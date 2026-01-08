@@ -27,6 +27,16 @@ export const isJwLangSymbol = (input?: string): input is JwLangSymbol => {
 }
 
 /**
+ * Formats a URL.
+ * @param base The base URL.
+ * @param path The path to the URL.
+ * @returns The formatted URL.
+ */
+export const formatUrl = (base: string, path: string) => {
+  return new URL(path, base).toString()
+}
+
+/**
  * Extracts a language code from a string.
  * @param input The string to extract the language code from.
  * @returns The language code.

@@ -157,7 +157,7 @@ describe('schemas utils', () => {
 
       // @ts-expect-error - responses does not exist on reference
       expect(responses['200'].content['application/json']).toHaveProperty('schema')
-      expect(responses['200'].description).toBe('Successful response')
+      expect(responses['200'].description).toBe('Successful response.')
     })
   })
 })

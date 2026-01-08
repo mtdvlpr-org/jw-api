@@ -232,7 +232,7 @@ export const zodToResponses = (
       content: {
         'application/json': { schema: createSchema(schema, { io: 'output' }).schema as any }
       },
-      description: 'Successful response'
+      description: 'Successful response.'
     }
   }
 }

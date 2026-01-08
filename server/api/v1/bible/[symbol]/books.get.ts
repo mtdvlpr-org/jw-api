@@ -186,7 +186,7 @@ defineRouteMeta({
     responses: {
       200: {
         content: { 'application/json': { schema: { $ref: '#/components/schemas/BibleBooks' } } },
-        description: 'Successful response'
+        description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
       404: { $ref: '#/components/responses/404' }
