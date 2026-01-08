@@ -8,43 +8,49 @@ defineRouteMeta({
       components: {
         schemas: {
           BibleData: {
-            example: {
-              additionalPages: [],
-              copyrightPage: {},
-              currentLocale: 'en',
-              editionData: {
-                bookCount: '66',
-                books: {},
-                locale: 'en',
-                titleFormat: 'short',
-                url: 'https://www.jw.org/en/library/bible/study-bible/',
-                vernacularAbbreviation: 'nwtsty',
-                vernacularFullName: 'New World Translation of the Holy Scriptures (Study Edition)',
-                vernacularShortName: 'Study Bible'
-              },
-              ranges: [],
-              status: 200
-            },
             properties: {
-              additionalPages: { items: { type: 'object' }, type: 'array' },
-              copyrightPage: { type: 'object' },
-              currentLocale: { type: 'string' },
-              editionData: {
-                properties: {
-                  bookCount: { type: 'string' },
-                  books: { additionalProperties: { type: 'object' }, type: 'object' },
-                  locale: { type: 'string' },
-                  titleFormat: { type: 'string' },
-                  url: { type: 'string' },
-                  vernacularAbbreviation: { type: 'string' },
-                  vernacularFullName: { type: 'string' },
-                  vernacularShortName: { type: 'string' }
-                },
-                type: 'object'
+              additionalPages: {
+                items: { $ref: '#/components/schemas/BibleAdditionalPage' },
+                type: 'array'
               },
-              ranges: { items: { type: 'object' }, maxItems: 0, minItems: 0, type: 'array' },
-              status: { type: 'number' }
+              copyrightPage: { $ref: '#/components/schemas/BibleAdditionalPage' },
+              currentLocale: { type: 'string' },
+              editionData: { $ref: '#/components/schemas/BibleEditionData' },
+              ranges: { maxItems: 0, minItems: 0, type: 'array' },
+              status: { type: 'integer' }
             },
+            required: [
+              'status',
+              'currentLocale',
+              'ranges',
+              'editionData',
+              'additionalPages',
+              'copyrightPage'
+            ],
+            type: 'object'
+          },
+          BibleEditionData: {
+            properties: {
+              articleCSSClassNames: { type: 'string' },
+              bookCount: { type: 'string' },
+              books: { $ref: '#/components/schemas/BibleBooks' },
+              locale: { type: 'string' },
+              pageCSSClassNames: { type: 'string' },
+              titleFormat: { type: 'string' },
+              url: { type: 'string' },
+              vernacularAbbreviation: { type: 'string' },
+              vernacularFullName: { type: 'string' },
+              vernacularShortName: { type: ['string', 'null'] }
+            },
+            required: [
+              'articleCSSClassNames',
+              'bookCount',
+              'books',
+              'locale',
+              'pageCSSClassNames',
+              'titleFormat',
+              'url'
+            ],
             type: 'object'
           }
         }

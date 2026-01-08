@@ -8,21 +8,14 @@ defineRouteMeta({
       components: {
         schemas: {
           CategoryParent: {
-            example: {
-              description: 'Videos on demand',
-              images: {},
-              key: 'VOD',
-              name: 'Videos',
-              tags: [],
-              type: 'container'
-            },
             properties: {
               description: { type: 'string' },
-              images: { additionalProperties: { type: 'object' }, type: 'object' },
+              images: { $ref: '#/components/schemas/ImagesObject' },
               key: { type: 'string' },
+              media: { items: { $ref: '#/components/schemas/MediaItem' }, type: 'array' },
               name: { type: 'string' },
               tags: { items: { type: 'string' }, type: 'array' },
-              type: { type: 'string' }
+              type: { enum: ['container', 'ondemand'], type: 'string' }
             },
             required: ['description', 'images', 'key', 'name', 'tags', 'type'],
             type: 'object'

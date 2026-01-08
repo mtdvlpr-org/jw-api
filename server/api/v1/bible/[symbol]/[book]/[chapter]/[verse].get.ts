@@ -39,11 +39,11 @@ defineRouteMeta({
             },
             properties: {
               abbreviatedCitation: { format: 'html', type: 'string' },
-              bookNumber: { maximum: 66, minimum: 1, type: 'number' },
-              chapterNumber: { maximum: 150, minimum: 1, type: 'number' },
+              bookNumber: { maximum: 66, minimum: 1, type: 'integer' },
+              chapterNumber: { maximum: 150, minimum: 1, type: 'integer' },
               content: { format: 'html', type: 'string' },
               standardCitation: { format: 'html', type: 'string' },
-              verseNumber: { type: 'number' },
+              verseNumber: { type: 'integer' },
               vsID: { type: 'string' }
             },
             required: [

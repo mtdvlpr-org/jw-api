@@ -34,14 +34,14 @@ defineRouteMeta({
         in: 'query',
         name: 'year',
         required: false,
-        schema: { default: 2026, maximum: 2027, minimum: 2025, type: 'number' }
+        schema: { default: 2026, maximum: 2027, minimum: 2025, type: 'integer' }
       }
     ],
     responses: {
       200: {
         content: {
           'application/json': {
-            example: { yeartext: { 2026: 'The yeartext of 2026.' } },
+            example: { yeartext: { '2026': 'The yeartext of 2026.' } },
             schema: {
               properties: {
                 yeartext: { additionalProperties: { type: 'string' }, type: 'object' }
@@ -52,54 +52,8 @@ defineRouteMeta({
         },
         description: 'Successful response.'
       },
-      400: {
-        content: {
-          'application/json': {
-            example: {
-              error: true,
-              message: 'Invalid value.',
-              statusCode: 400,
-              statusMessage: 'Validation Error',
-              url: 'https://example.com/api/path'
-            },
-            schema: {
-              properties: {
-                error: { type: 'boolean' },
-                message: { type: 'string' },
-                statusCode: { type: 'number' },
-                statusMessage: { type: 'string' },
-                url: { type: 'string' }
-              },
-              type: 'object'
-            }
-          }
-        },
-        description: 'Validation error.'
-      },
-      404: {
-        content: {
-          'application/json': {
-            example: {
-              error: true,
-              message: 'Yeartext not found.',
-              statusCode: 404,
-              statusMessage: 'Not Found',
-              url: 'https://example.com/api/path'
-            },
-            schema: {
-              properties: {
-                error: { type: 'boolean' },
-                message: { type: 'string' },
-                statusCode: { type: 'number' },
-                statusMessage: { type: 'string' },
-                url: { type: 'string' }
-              },
-              type: 'object'
-            }
-          }
-        },
-        description: 'Not found.'
-      }
+      400: { $ref: '#/components/responses/400' },
+      404: { $ref: '#/components/responses/404' }
     },
     tags: ['WOL']
   }

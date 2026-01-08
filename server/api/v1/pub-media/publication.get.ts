@@ -103,26 +103,8 @@ defineRouteMeta({
         },
         schemas: {
           Publication: {
-            example: {
-              booknum: null,
-              fileformat: ['JWPUB', 'PDF'],
-              files: {},
-              formattedDate: 'January 2025',
-              issue: '202501',
-              languages: {},
-              parentPubName: 'Watchtower',
-              pub: 'w',
-              pubImage: {
-                checksum: 'checksum',
-                modifiedDatetime: '2025-01-01T00:00:00Z',
-                url: 'https://example.com/image.jpg'
-              },
-              pubName: 'Watchtower Study Edition',
-              specialty: 'Study',
-              track: null
-            },
             properties: {
-              booknum: { nullable: true, type: 'number' },
+              booknum: { nullable: true, type: 'integer' },
               fileformat: { items: { type: 'string' }, type: 'array' },
               files: { additionalProperties: { type: 'object' }, type: 'object' },
               formattedDate: { type: 'string' },
@@ -141,7 +123,7 @@ defineRouteMeta({
               },
               pubName: { type: 'string' },
               specialty: { type: 'string' },
-              track: { nullable: true, type: 'number' }
+              track: { type: ['integer', 'null'] }
             },
             required: [
               'booknum',

@@ -54,20 +54,6 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            example: {
-              articles: [
-                {
-                  file: {
-                    checksum: 'b52799ae27c35f13d9bb49cb7b4b9bdf',
-                    modifiedDatetime: '2025-09-25 12:23:36',
-                    stream: 'https://jw.org',
-                    url: 'https://cfp2.jw-cdn.org/a/eefed82/1/o/w_E_202601_01.rtf'
-                  },
-                  title: 'March 2-8, 2026: Continue to Satisfy Your “Spiritual Need”'
-                }
-              ],
-              issue: '202601'
-            },
             schema: {
               properties: {
                 articles: {

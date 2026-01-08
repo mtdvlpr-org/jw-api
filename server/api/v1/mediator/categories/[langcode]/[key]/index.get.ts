@@ -22,26 +22,30 @@ defineRouteMeta({
           }
         },
         schemas: {
-          Category: {
-            example: {
-              description: 'Videos on demand',
-              images: {},
-              key: 'VideoOnDemand',
-              name: 'Videos',
-              parentCategory: null,
-              tags: [],
-              type: 'container'
-            },
+          CategoryOndemand: {
             properties: {
               description: { type: 'string' },
-              images: { additionalProperties: { type: 'object' }, type: 'object' },
+              images: { $ref: '#/components/schemas/ImagesObject' },
               key: { type: 'string' },
+              media: { items: { $ref: '#/components/schemas/MediaItem' }, type: 'array' },
               name: { type: 'string' },
-              parentCategory: { nullable: true, type: 'object' },
+              parentCategory: {
+                oneOf: [{ $ref: '#/components/schemas/CategoryParent' }, { type: 'null' }],
+                type: ['object', 'null']
+              },
               tags: { items: { type: 'string' }, type: 'array' },
-              type: { type: 'string' }
+              type: { enum: ['ondemand'], type: 'string' }
             },
-            required: ['description', 'images', 'key', 'name', 'parentCategory', 'tags', 'type'],
+            required: [
+              'description',
+              'media',
+              'parentCategory',
+              'images',
+              'key',
+              'name',
+              'tags',
+              'type'
+            ],
             type: 'object'
           }
         }
@@ -55,7 +59,13 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: { $ref: '#/components/schemas/Category' }
+            schema: {
+              oneOf: [
+                { $ref: '#/components/schemas/CategoryOndemand' },
+                { $ref: '#/components/schemas/CategoryContainer' }
+              ],
+              type: 'object'
+            }
           }
         },
         description: 'Successful response'

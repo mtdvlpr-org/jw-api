@@ -114,7 +114,7 @@ defineRouteMeta({
             properties: {
               error: { type: 'boolean' },
               message: { type: 'string' },
-              statusCode: { type: 'number' },
+              statusCode: { type: 'integer' },
               statusMessage: { type: 'string' },
               url: { type: 'string' }
             },

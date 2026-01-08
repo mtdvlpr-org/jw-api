@@ -21,42 +21,101 @@ defineRouteMeta({
           }
         },
         schemas: {
-          MediaItem: {
-            example: {
-              availableLanguages: ['E'],
-              description: 'Description',
-              duration: 100,
-              durationFormattedHHMM: '1:40',
-              durationFormattedMinSec: '1:40',
-              files: [],
-              firstPublished: '2020-01-01T00:00:00.000Z',
-              guid: 'GUID',
-              images: {},
-              languageAgnosticNaturalKey: 'pub-ivno_x_VIDEO',
-              naturalKey: 'pub-ivno_E_x_VIDEO',
-              primaryCategory: 'VideoOnDemand',
-              printReferences: [],
-              tags: [],
-              title: 'Title',
-              type: 'video'
+          ImagesObject: {
+            properties: {
+              cvr: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              lsr: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              lss: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xl: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              pnr: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              sqr: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              sqs: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              wsr: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              },
+              wss: {
+                properties: {
+                  lg: { format: 'uri', type: 'string' },
+                  md: { format: 'uri', type: 'string' },
+                  sm: { format: 'uri', type: 'string' },
+                  xs: { format: 'uri', type: 'string' }
+                },
+                type: 'object'
+              }
             },
+            type: 'object'
+          },
+          MediaItem: {
             properties: {
               availableLanguages: { items: { type: 'string' }, type: 'array' },
               description: { type: 'string' },
               duration: { type: 'number' },
               durationFormattedHHMM: { type: 'string' },
               durationFormattedMinSec: { type: 'string' },
-              files: { items: { type: 'object' }, type: 'array' },
+              files: { items: { $ref: '#/components/schemas/MediaItemFile' }, type: 'array' },
               firstPublished: { format: 'date-time', type: 'string' },
               guid: { type: 'string' },
-              images: { additionalProperties: { type: 'object' }, type: 'object' },
+              images: { $ref: '#/components/schemas/ImagesObject' },
               languageAgnosticNaturalKey: { type: 'string' },
               naturalKey: { type: 'string' },
               primaryCategory: { type: 'string' },
               printReferences: { items: { type: 'string' }, type: 'array' },
-              tags: { items: { type: 'object' }, type: 'array' },
+              tags: { items: { type: 'string' }, type: 'array' },
               title: { type: 'string' },
-              type: { type: 'string' }
+              type: { enum: ['video', 'audio'], type: 'string' }
             },
             required: [
               'availableLanguages',
@@ -77,6 +136,36 @@ defineRouteMeta({
               'type'
             ],
             type: 'object'
+          },
+          MediaItemFile: {
+            properties: {
+              checksum: { type: 'string' },
+              filesize: { type: 'integer' },
+              label: { type: 'string' },
+              mimetype: { type: 'string' },
+              modifiedDateTime: { format: 'date-time', type: 'string' },
+              progressiveDownloadURL: { format: 'uri', type: 'string' },
+              subtitled: { type: 'boolean' },
+              subtitles: {
+                properties: {
+                  checksum: { type: 'string' },
+                  modifiedDateTime: { format: 'date-time', type: 'string' },
+                  url: { format: 'uri', type: 'string' }
+                },
+                required: ['checksum', 'modifiedDateTime', 'url'],
+                type: 'object'
+              }
+            },
+            required: [
+              'checksum',
+              'filesize',
+              'label',
+              'mimetype',
+              'modifiedDateTime',
+              'progressiveDownloadURL',
+              'subtitled'
+            ],
+            type: 'object'
           }
         }
       }
@@ -87,11 +176,7 @@ defineRouteMeta({
     ],
     responses: {
       200: {
-        content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/MediaItem' }
-          }
-        },
+        content: { 'application/json': { schema: { $ref: '#/components/schemas/MediaItem' } } },
         description: 'Successful response'
       },
       400: { $ref: '#/components/responses/400' },

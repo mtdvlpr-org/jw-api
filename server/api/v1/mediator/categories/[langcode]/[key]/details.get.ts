@@ -7,28 +7,33 @@ defineRouteMeta({
     $global: {
       components: {
         schemas: {
-          CategoryDetailed: {
-            example: {
-              description: 'Videos on demand',
-              images: {},
-              key: 'VideoOnDemand',
-              name: 'Videos',
-              parentCategory: null,
-              subcategories: [],
-              tags: [],
-              type: 'container'
-            },
+          CategoryContainer: {
             properties: {
               description: { type: 'string' },
-              images: { additionalProperties: { type: 'object' }, type: 'object' },
+              images: { $ref: '#/components/schemas/ImagesObject' },
               key: { type: 'string' },
               name: { type: 'string' },
-              parentCategory: { nullable: true, type: 'object' },
-              subcategories: { items: { type: 'object' }, type: 'array' },
+              parentCategory: {
+                oneOf: [{ $ref: '#/components/schemas/CategoryParent' }, { type: 'null' }],
+                type: ['object', 'null']
+              },
+              subcategories: {
+                items: { $ref: '#/components/schemas/CategoryParent' },
+                type: 'array'
+              },
               tags: { items: { type: 'string' }, type: 'array' },
-              type: { type: 'string' }
+              type: { enum: ['container'], type: 'string' }
             },
-            required: ['description', 'images', 'key', 'name', 'parentCategory', 'tags', 'type'],
+            required: [
+              'description',
+              'subcategories',
+              'parentCategory',
+              'images',
+              'key',
+              'name',
+              'tags',
+              'type'
+            ],
             type: 'object'
           }
         }
@@ -42,7 +47,13 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: { $ref: '#/components/schemas/CategoryDetailed' }
+            schema: {
+              oneOf: [
+                { $ref: '#/components/schemas/CategoryContainer' },
+                { $ref: '#/components/schemas/CategoryOndemand' }
+              ],
+              type: 'object'
+            }
           }
         },
         description: 'Successful response'

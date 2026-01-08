@@ -48,10 +48,7 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: {
-              items: { $ref: '#/components/schemas/MediatorLanguage' },
-              type: 'array'
-            }
+            schema: { items: { $ref: '#/components/schemas/MediatorLanguage' }, type: 'array' }
           }
         },
         description: 'Successful response'
