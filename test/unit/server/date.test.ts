@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { formatDate, getMondayOfWeek, getWeekOfYear } from '../../../server/utils/date'
+import { formatDate, getMondayOfWeek, getWeekOfYear, parseDate } from '../../../server/utils/date'
 import { pad } from '../../../server/utils/general'
 
 // Stub globals
@@ -79,6 +79,27 @@ describe('date utils', () => {
       expect(() => formatDate(new Date(), 'unsupported' as 'YYYY-MM-DD')).toThrow(
         'Unsupported date format: unsupported'
       )
+    })
+  })
+
+  describe('parseDate', () => {
+    it('should parse YYYY-MM-DD format', () => {
+      const date = parseDate('2024-01-30')
+      expect(date.toISOString().split('T')[0]).toBe('2024-01-30')
+    })
+
+    it('should parse YYYY/MM/DD format', () => {
+      const date = parseDate('2024/01/30')
+      expect(date.toISOString().split('T')[0]).toBe('2024-01-30')
+    })
+
+    it('should parse YYYYMMDD format', () => {
+      const date = parseDate('20240130')
+      expect(date.toISOString().split('T')[0]).toBe('2024-01-30')
+    })
+
+    it('should throw error for invalid format', () => {
+      expect(() => parseDate('invalid-date')).toThrow('Invalid date format: invalid-date')
     })
   })
 })

@@ -19,6 +19,12 @@ export type DurationMinSec = `${number}h ${number}m ${number}s` | `${number}m ${
 export type HumanReadableDateTime = `${number}-${string}-${number} ${number}:${number}:${number}`
 
 /**
+ * An ISO date string.
+ * @example '2026-01-30'
+ */
+export type ISODate = `${number}-${number}-${number}`
+
+/**
  * An ISO date time string.
  * @example '2026-01-30T13:32:28.886Z'
  */

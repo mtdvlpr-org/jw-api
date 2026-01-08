@@ -36,7 +36,10 @@ const getDatabase = async (url: string): Promise<Database> => {
  * @param date The date to get the article for. Defaults to the current date.
  * @returns The article.
  */
-const getWtArticleForDate = async (url: string, date?: Date) => {
+const getWtArticleForDate = async (
+  url: string,
+  date?: Date
+): Promise<{ end: ISODate; start: ISODate; title: string }> => {
   const db = await getDatabase(url)
   const dateString = formatDate(date, 'YYYYMMDD')
   const {
@@ -69,7 +72,10 @@ const getWtArticleForDate = async (url: string, date?: Date) => {
   const html = parseHtml(Caption)
   const title = html.querySelector('span.etitle')?.innerText ?? html.innerText
 
-  return { end: LastDateOffset, start: FirstDateOffset, title }
+  const end = formatDate(LastDateOffset.toString()) as ISODate
+  const start = formatDate(FirstDateOffset.toString()) as ISODate
+
+  return { end, start, title }
 }
 
 /**
@@ -78,7 +84,10 @@ const getWtArticleForDate = async (url: string, date?: Date) => {
  * @param date The date to get the article for. Defaults to the current date.
  * @returns The article.
  */
-const getMwbArticleForDate = async (url: string, date?: Date) => {
+const getMwbArticleForDate = async (
+  url: string,
+  date?: Date
+): Promise<{ end: ISODate; start: ISODate; title: string }> => {
   const db = await getDatabase(url)
   const dateString = formatDate(date, 'YYYYMMDD')
   const { Caption, FirstDateOffset, LastDateOffset } = queryDatabaseSingle<{
@@ -95,7 +104,10 @@ const getMwbArticleForDate = async (url: string, date?: Date) => {
   const html = parseHtml(Caption)
   const title = html.querySelector('span.etitle')?.innerText ?? html.innerText
 
-  return { end: LastDateOffset, start: FirstDateOffset, title }
+  const end = formatDate(LastDateOffset.toString()) as ISODate
+  const start = formatDate(FirstDateOffset.toString()) as ISODate
+
+  return { end, start, title }
 }
 
 export const jwpubService = { getDatabase, getMwbArticleForDate, getWtArticleForDate }
