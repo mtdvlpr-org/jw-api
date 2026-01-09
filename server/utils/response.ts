@@ -184,20 +184,29 @@ export const toFetchApiError = (error: unknown, context: FetchErrorContext): Err
 
   if (error instanceof FetchError) {
     const cause = { cause: error }
-    if (error.statusCode === 404) {
-      return apiNotFoundError(notFoundMessage, cause)
+    switch (error.statusCode) {
+      case 400:
+        return apiBadRequestError(
+          `Invalid request to ${serviceName} service: ${error.message}`,
+          cause
+        )
+      case 401:
+        return apiUnauthorizedError(
+          `Unauthorized request to ${serviceName} service: ${error.message}`,
+          cause
+        )
+      case 403:
+        return apiForbiddenError(notFoundMessage, cause)
+      case 404:
+        return apiNotFoundError(notFoundMessage, cause)
+      case 500:
+        return apiInternalError(`${serviceName} service unavailable: ${error.message}`, cause)
+      default:
+        return apiInternalError(
+          `Failed to connect to ${serviceName} service: ${error.message}`,
+          cause
+        )
     }
-    if (error.statusCode && error.statusCode >= 500) {
-      return apiInternalError(`${serviceName} service unavailable: ${error.message}`, cause)
-    }
-    if (error.statusCode === 400) {
-      return apiBadRequestError(
-        `Invalid request to ${serviceName} service: ${error.message}`,
-        cause
-      )
-    }
-    // Network errors (no status code)
-    return apiInternalError(`Failed to connect to ${serviceName} service: ${error.message}`, cause)
   }
 
   // Return unexpected errors as-is

@@ -25,8 +25,9 @@ export const defineLoggedEventHandler = <
     // @ts-ignore: nuxt typecheck doesn't know about the custom properties
     const logger = event.node.req.log as pino.Logger
     const startTime = Date.now()
-    const requestId = (event.node.req.headers['x-tracing-id'] as string) || randomUUID()
-
+    const tracingHeader = event.node.req.headers['x-tracing-id']
+    const requestId =
+      (Array.isArray(tracingHeader) ? tracingHeader[0] : tracingHeader) || randomUUID()
     logger.info(`Request received: ${event.node.req.url}`)
 
     const context: RequestContext = { logger, requestId, startTime }

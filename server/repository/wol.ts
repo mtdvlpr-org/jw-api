@@ -68,8 +68,6 @@ export const wolRepository = {
 
         const result = await fetchYeartextResult(wtlocale, year)
 
-        yeartextUrls.set(getYeartextKey(wtlocale, year), result.jsonUrl)
-
         return await $fetch<YeartextDetails>(result.jsonUrl, { ...defaultFetchOptions })
       } catch (error) {
         // If it's already an API error (from fetchYeartextResult), re-throw it

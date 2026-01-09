@@ -8,8 +8,7 @@ import { wolRepository } from '#server/repository/wol'
  */
 const getYeartext = async (locale: JwLangCode = 'E', year?: number) => {
   const usedYear = year ?? new Date().getFullYear()
-  const content = await wolRepository.fetchYeartext(locale, usedYear)
-  return content
+  return await wolRepository.fetchYeartext(locale, usedYear)
 }
 
 /**

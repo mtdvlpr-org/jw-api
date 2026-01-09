@@ -235,7 +235,7 @@ defineRouteMeta({
               statusCode: { description: 'HTTP status code.', type: 'integer' },
               statusMessage: { description: 'HTTP status text.', type: 'string' }
             },
-            required: ['statusCode', 'statusMessage', 'data'],
+            required: ['statusCode', 'statusMessage', 'message', 'data'],
             type: 'object'
           }
         }
