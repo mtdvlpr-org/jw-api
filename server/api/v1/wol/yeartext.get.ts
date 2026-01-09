@@ -11,8 +11,6 @@ const querySchema = z.object({
     .meta({ description: 'The year of the yeartext.', examples: [currentYear] })
 })
 
-const _responseSchema = z.object({ yeartext: z.partialRecord(z.number(), z.string()) })
-
 defineRouteMeta({
   openAPI: {
     description: 'Get the yeartext for a given language and year.',
@@ -43,11 +41,29 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            example: { yeartext: { '2026': 'The yeartext of 2026.' } },
+            example: {
+              data: { yeartext: { '2026': 'The yeartext of 2026.' } },
+              meta: {
+                requestId: 'k7f2m9x3q1',
+                responseTime: 42,
+                timestamp: '2026-01-09T12:34:56.789Z',
+                version: 'v1'
+              },
+              success: true
+            },
             schema: {
               properties: {
-                yeartext: { additionalProperties: { type: 'string' }, type: 'object' }
+                data: {
+                  properties: {
+                    yeartext: { additionalProperties: { type: 'string' }, type: 'object' }
+                  },
+                  required: ['yeartext'],
+                  type: 'object'
+                },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
               },
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -62,10 +78,10 @@ defineRouteMeta({
   }
 })
 
-export default defineLoggedEventHandler<typeof _responseSchema>(async (event) => {
-  const { wtlocale, year } = await getValidatedQuery(event, querySchema.parse)
+export default defineLoggedEventHandler(async (event) => {
+  const { wtlocale, year } = parseQuery(event, querySchema)
 
   const { parsedTitle, year: usedYear } = await wolService.getYeartextDetails(wtlocale, year)
 
-  return { yeartext: { [usedYear?.toString()]: parsedTitle } }
+  return apiSuccess({ yeartext: { [usedYear.toString()]: parsedTitle } })
 })

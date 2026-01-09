@@ -8,6 +8,7 @@ import { logger } from '../../../server/utils/logger'
 vi.stubGlobal('asyncLocalStorage', asyncLocalStorage)
 const defineEventHandler = vi.fn((handler) => handler)
 vi.stubGlobal('defineEventHandler', defineEventHandler)
+vi.stubGlobal('crypto', { randomUUID: () => 'test-uuid-1234' })
 
 // Stub console methods to verify fallback
 const consoleSpy = {
@@ -41,8 +42,14 @@ describe('logging utils', () => {
         warn: vi.fn()
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      asyncLocalStorage.run({ logger: mockLogger as any }, () => {
+      const context = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        logger: mockLogger as any,
+        requestId: 'test-request-id',
+        startTime: Date.now()
+      }
+
+      asyncLocalStorage.run(context, () => {
         logger.info('store info')
         expect(mockLogger.info).toHaveBeenCalledWith('store info')
         expect(consoleSpy.info).not.toHaveBeenCalledWith('store info')
@@ -70,6 +77,7 @@ describe('logging utils', () => {
       const mockEvent = {
         node: {
           req: {
+            headers: { 'x-tracing-id': 'trace-123' },
             log: mockLogger,
             url: '/test'
           }
@@ -97,6 +105,7 @@ describe('logging utils', () => {
       const mockEvent = {
         node: {
           req: {
+            headers: {},
             log: mockLogger,
             url: '/test-error'
           }

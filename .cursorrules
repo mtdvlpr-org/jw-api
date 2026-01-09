@@ -65,9 +65,12 @@ This project uses a split testing configuration in `vitest.config.ts`:
 Nuxt automatically imports helper functions, composables, and Vue APIs to streamline development.
 
 ### How it works
-1.  **Scanning**: Nuxt scans specific directories (`components/`, `composables/`, `utils/`, `server/utils/`) at startup.
+1.  **Scanning**: Nuxt scans specific directories (`components/`, `composables/`, `utils/`, `server/utils/`, `shared/types/`) at startup.
 2.  **Generation**: It generates a `.nuxt/types/imports.d.ts` file that declares these functions globally for TypeScript.
 3.  **Transpilation**: During build/dev, unplugin-auto-import injects the actual imports into your code where they are used.
+
+### Shared Types
+Types in `shared/types/` are auto-imported throughout the project. **Do NOT explicitly import them** in server utils, API routes, or components. They are globally available.
 
 ### Auto-Imports in Vitest
 

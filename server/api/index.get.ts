@@ -70,16 +70,7 @@ defineRouteMeta({
           400: {
             content: {
               'application/json': {
-                example: {
-                  error: true,
-                  message: 'Invalid value.',
-                  statusCode: 400,
-                  statusMessage: 'Validation Error',
-                  url: 'https://example.com/api/path'
-                },
-                schema: {
-                  $ref: '#/components/schemas/Error'
-                }
+                schema: { $ref: '#/components/schemas/ErrorResponse' }
               }
             },
             description: 'Validation error.'
@@ -87,37 +78,164 @@ defineRouteMeta({
           404: {
             content: {
               'application/json': {
-                example: {
-                  error: true,
-                  message: 'Not found.',
-                  statusCode: 404,
-                  statusMessage: 'Not Found',
-                  url: 'https://example.com/api/path'
-                },
-                schema: {
-                  $ref: '#/components/schemas/Error'
-                }
+                schema: { $ref: '#/components/schemas/ErrorResponse' }
               }
             },
             description: 'Not found.'
+          },
+          500: {
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' }
+              }
+            },
+            description: 'Internal server error.'
           }
         },
         schemas: {
-          Error: {
+          /* API Info Response */
+          ApiInfoResponse: {
+            description: 'API information response.',
+            properties: {
+              data: {
+                properties: {
+                  general: {
+                    properties: {
+                      description: { type: 'string' },
+                      title: { type: 'string' },
+                      version: { type: 'string' }
+                    },
+                    required: ['title', 'description', 'version'],
+                    type: 'object'
+                  },
+                  links: {
+                    properties: {
+                      health: { format: 'uri', type: 'string' },
+                      openAPI: { format: 'uri', type: 'string' },
+                      scalar: { format: 'uri', type: 'string' },
+                      swagger: { format: 'uri', type: 'string' }
+                    },
+                    required: ['health', 'openAPI', 'scalar', 'swagger'],
+                    type: 'object'
+                  }
+                },
+                required: ['general', 'links'],
+                type: 'object'
+              },
+              links: { $ref: '#/components/schemas/ApiLinks' },
+              meta: { $ref: '#/components/schemas/ApiMeta' },
+              success: { enum: [true], type: 'boolean' }
+            },
+            required: ['success', 'data', 'meta'],
+            type: 'object'
+          },
+          ApiLinks: {
+            description: 'HATEOAS links for navigation.',
+            properties: {
+              first: { description: 'Link to the first page.', format: 'uri', type: 'string' },
+              last: { description: 'Link to the last page.', format: 'uri', type: 'string' },
+              next: { description: 'Link to the next page.', format: 'uri', type: 'string' },
+              prev: { description: 'Link to the previous page.', format: 'uri', type: 'string' },
+              related: {
+                additionalProperties: { format: 'uri', type: 'string' },
+                description: 'Related resource links.',
+                type: 'object'
+              },
+              self: { description: 'Link to the current resource.', format: 'uri', type: 'string' }
+            },
+            required: ['self'],
+            type: 'object'
+          },
+          /* Response Envelope Schemas */
+          ApiMeta: {
+            description: 'Metadata about the API response.',
             example: {
-              error: true,
-              message: 'Error message.',
-              statusCode: 404,
-              statusMessage: 'Not Found',
-              url: 'https://example.com/api/path'
+              requestId: 'k7f2m9x3q1',
+              responseTime: 42,
+              timestamp: '2026-01-09T12:34:56.789Z',
+              version: 'v1'
             },
             properties: {
-              error: { type: 'boolean' },
-              message: { type: 'string' },
-              statusCode: { type: 'integer' },
-              statusMessage: { type: 'string' },
-              url: { type: 'string' }
+              requestId: {
+                description: 'Correlation ID for request tracing.',
+                type: 'string'
+              },
+              responseTime: {
+                description: 'Response time in milliseconds.',
+                type: 'integer'
+              },
+              timestamp: {
+                description: 'ISO 8601 timestamp of when the response was generated.',
+                format: 'date-time',
+                type: 'string'
+              },
+              version: {
+                description: 'API version that handled the request.',
+                type: 'string'
+              }
             },
+            required: ['requestId', 'timestamp', 'responseTime', 'version'],
+            type: 'object'
+          },
+          ApiPagination: {
+            description: 'Pagination information for list responses.',
+            example: {
+              page: 1,
+              pageSize: 20,
+              totalItems: 100,
+              totalPages: 5
+            },
+            properties: {
+              page: { description: 'Current page number (1-indexed).', type: 'integer' },
+              pageSize: { description: 'Number of items per page.', type: 'integer' },
+              totalItems: { description: 'Total number of items.', type: 'integer' },
+              totalPages: { description: 'Total number of pages.', type: 'integer' }
+            },
+            required: ['page', 'pageSize', 'totalItems', 'totalPages'],
+            type: 'object'
+          },
+          /* Error Response (Nuxt format with meta in data) */
+          ErrorResponse: {
+            description: 'Error response format. The data property contains request metadata.',
+            example: {
+              data: {
+                meta: {
+                  requestId: 'k7f2m9x3q1',
+                  responseTime: 5,
+                  timestamp: '2026-01-09T12:34:56.789Z',
+                  version: 'v1'
+                }
+              },
+              message: 'Resource not found.',
+              statusCode: 404,
+              statusMessage: 'Not Found'
+            },
+            properties: {
+              data: {
+                description: 'Additional error data with request metadata.',
+                properties: {
+                  details: {
+                    description: 'Field-level error details (for validation errors).',
+                    items: {
+                      properties: {
+                        field: { description: 'The field that caused the error.', type: 'string' },
+                        message: { description: 'Human-readable error message.', type: 'string' }
+                      },
+                      required: ['message'],
+                      type: 'object'
+                    },
+                    type: 'array'
+                  },
+                  meta: { $ref: '#/components/schemas/ApiMeta' }
+                },
+                required: ['meta'],
+                type: 'object'
+              },
+              message: { description: 'Error message.', type: 'string' },
+              statusCode: { description: 'HTTP status code.', type: 'integer' },
+              statusMessage: { description: 'HTTP status text.', type: 'string' }
+            },
+            required: ['statusCode', 'statusMessage', 'data'],
             type: 'object'
           }
         }
@@ -130,34 +248,7 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: {
-              properties: {
-                general: {
-                  example: {
-                    description: 'The description of the API.',
-                    title: 'API Title',
-                    version: 'x.x.x'
-                  },
-                  properties: {
-                    description: { type: 'string' },
-                    title: { type: 'string' },
-                    version: { type: 'string' }
-                  },
-                  type: 'object'
-                },
-                links: {
-                  properties: {
-                    health: { format: 'uri', type: 'string' },
-                    openAPI: { format: 'uri', type: 'string' },
-                    scalar: { format: 'uri', type: 'string' },
-                    swagger: { format: 'uri', type: 'string' }
-                  },
-                  type: 'object'
-                }
-              },
-              required: ['general', 'links'],
-              type: 'object'
-            }
+            schema: { $ref: '#/components/schemas/ApiInfoResponse' }
           }
         },
         description: 'Successful response.'
@@ -168,17 +259,21 @@ defineRouteMeta({
   }
 })
 
-export default defineEventHandler(async (event) => {
+export default defineLoggedEventHandler(async (event) => {
   const base = getRequestURL(event).origin
   const config = useRuntimeConfig()
   const { description, title, version } = config.public
-  return {
-    general: { description, title, version },
-    links: {
-      health: formatUrl(base, '/api/health'),
-      openAPI: formatUrl(base, '/_docs/openapi.json'),
-      scalar: formatUrl(base, '/_docs/scalar'),
-      swagger: formatUrl(base, '/_docs/swagger')
-    }
-  }
+
+  return apiSuccess(
+    {
+      general: { description, title, version },
+      links: {
+        health: formatUrl(base, '/api/health'),
+        openAPI: formatUrl(base, '/_docs/openapi.json'),
+        scalar: formatUrl(base, '/_docs/scalar'),
+        swagger: formatUrl(base, '/_docs/swagger')
+      }
+    },
+    { self: formatUrl(base, '/api') }
+  )
 })

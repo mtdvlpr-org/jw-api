@@ -16,14 +16,21 @@ const defaultFetchOptions = {
  */
 const fetchYeartextResult = defineCachedFunction(
   async (wtlocale: JwLangCode, year: number) => {
-    const result = await $fetch<YeartextResult>(`/wol/finder`, {
-      ...defaultFetchOptions,
-      query: { docid: `110${year}800`, format: 'json', snip: 'yes', wtlocale }
-    })
+    try {
+      const result = await $fetch<YeartextResult>(`/wol/finder`, {
+        ...defaultFetchOptions,
+        query: { docid: `110${year}800`, format: 'json', snip: 'yes', wtlocale }
+      })
 
-    yeartextUrls.set(getYeartextKey(wtlocale, year), result.jsonUrl)
+      yeartextUrls.set(getYeartextKey(wtlocale, year), result.jsonUrl)
 
-    return result
+      return result
+    } catch (error) {
+      throw toFetchApiError(error, {
+        notFoundMessage: `Yeartext not found for language '${wtlocale}' and year ${year}`,
+        serviceName: 'WOL'
+      })
+    }
   },
   { maxAge: 60 * 60 * 24 * 30, name: 'wolRepository.fetchYeartextResult' }
 )
@@ -37,6 +44,7 @@ export const wolRepository = {
    * @param wtlocale The language of the yeartext.
    * @param year The year of the yeartext.
    * @returns The yeartext content.
+   * @throws If the yeartext is not found or the service is unavailable.
    */
   fetchYeartext: async (wtlocale: JwLangCode, year: number) => {
     const result = await fetchYeartextResult(wtlocale, year)
@@ -48,19 +56,31 @@ export const wolRepository = {
    * @param wtlocale The language of the yeartext.
    * @param year The year of the yeartext.
    * @returns The details of the yeartext.
+   * @throws If the yeartext is not found or the service is unavailable.
    */
   fetchYeartextDetails: defineCachedFunction(
     async (wtlocale: JwLangCode, year: number) => {
-      const key = getYeartextKey(wtlocale, year)
-      if (yeartextUrls.has(key)) {
-        return await $fetch<YeartextDetails>(yeartextUrls.get(key)!, { ...defaultFetchOptions })
+      try {
+        const key = getYeartextKey(wtlocale, year)
+        if (yeartextUrls.has(key)) {
+          return await $fetch<YeartextDetails>(yeartextUrls.get(key)!, { ...defaultFetchOptions })
+        }
+
+        const result = await fetchYeartextResult(wtlocale, year)
+
+        yeartextUrls.set(getYeartextKey(wtlocale, year), result.jsonUrl)
+
+        return await $fetch<YeartextDetails>(result.jsonUrl, { ...defaultFetchOptions })
+      } catch (error) {
+        // If it's already an API error (from fetchYeartextResult), re-throw it
+        if (error instanceof Error && 'statusCode' in error) {
+          throw error
+        }
+        throw toFetchApiError(error, {
+          notFoundMessage: `Yeartext details not found for language '${wtlocale}' and year ${year}`,
+          serviceName: 'WOL'
+        })
       }
-
-      const result = await fetchYeartextResult(wtlocale, year)
-
-      yeartextUrls.set(getYeartextKey(wtlocale, year), result.jsonUrl)
-
-      return await $fetch<YeartextDetails>(result.jsonUrl, { ...defaultFetchOptions })
     },
     { maxAge: 60 * 60 * 24 * 30, name: 'wolRepository.fetchYeartextDetails' }
   )

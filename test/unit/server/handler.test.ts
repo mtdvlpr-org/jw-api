@@ -1,7 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { asyncLocalStorage } from '../../../server/utils/async-storage'
+// Import after mocking
 import { defineLoggedEventHandler } from '../../../server/utils/handler'
+
+// Mock node:crypto module
+vi.mock('node:crypto', () => ({
+  randomUUID: () => 'test-uuid-1234'
+}))
 
 // Stub defineEventHandler
 vi.stubGlobal('defineEventHandler', (handler: unknown) => handler)
@@ -16,10 +22,11 @@ describe('handler utils', () => {
   describe('defineLoggedEventHandler', () => {
     it('should run handler within asyncLocalStorage context', async () => {
       const mockHandler = vi.fn().mockResolvedValue('success')
-      const mockLogger = { error: vi.fn(), info: vi.fn() }
+      const mockLogger = { debug: vi.fn(), error: vi.fn(), info: vi.fn() }
       const mockEvent = {
         node: {
           req: {
+            headers: { 'x-tracing-id': 'trace-123' },
             log: mockLogger,
             url: '/test'
           }
@@ -38,16 +45,53 @@ describe('handler utils', () => {
       expect(result).toBe('success')
       expect(mockLogger.info).toHaveBeenCalledWith('Request received: /test')
       expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Request completed in'))
-      expect(runSpy).toHaveBeenCalledWith({ logger: mockLogger }, expect.any(Function))
+      expect(runSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          logger: mockLogger,
+          requestId: 'trace-123',
+          startTime: expect.any(Number)
+        }),
+        expect.any(Function)
+      )
+    })
+
+    it('should use crypto.randomUUID when x-tracing-id header is missing', async () => {
+      const mockHandler = vi.fn().mockResolvedValue('success')
+      const mockLogger = { debug: vi.fn(), error: vi.fn(), info: vi.fn() }
+      const mockEvent = {
+        node: {
+          req: {
+            headers: {},
+            log: mockLogger,
+            url: '/test'
+          }
+        }
+      }
+
+      const runSpy = vi.spyOn(asyncLocalStorage, 'run').mockImplementation((store, callback) => {
+        return callback()
+      })
+
+      const wrappedHandler = defineLoggedEventHandler(mockHandler)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await wrappedHandler(mockEvent as any)
+
+      expect(runSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          requestId: 'test-uuid-1234'
+        }),
+        expect.any(Function)
+      )
     })
 
     it('should log error and rethrow if handler fails', async () => {
       const mockError = new Error('Test error')
       const mockHandler = vi.fn().mockRejectedValue(mockError)
-      const mockLogger = { error: vi.fn(), info: vi.fn() }
+      const mockLogger = { debug: vi.fn(), error: vi.fn(), info: vi.fn() }
       const mockEvent = {
         node: {
           req: {
+            headers: {},
             log: mockLogger,
             url: '/error'
           }
@@ -76,6 +120,7 @@ describe('handler utils', () => {
       const mockEvent = {
         node: {
           req: {
+            headers: {},
             log: mockLogger,
             url: '/test-error-string'
           }

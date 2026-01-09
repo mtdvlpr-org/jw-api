@@ -6,10 +6,21 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            example: { status: 'OK' },
             schema: {
-              properties: { status: { example: 'OK', type: 'string' } },
-              required: ['status'],
+              description: 'Health check response.',
+              properties: {
+                data: {
+                  properties: {
+                    status: { enum: ['OK'], type: 'string' }
+                  },
+                  required: ['status'],
+                  type: 'object'
+                },
+                links: { $ref: '#/components/schemas/ApiLinks' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -22,6 +33,6 @@ defineRouteMeta({
   }
 })
 
-export default defineEventHandler(async () => {
-  return { status: 'OK' }
+export default defineLoggedEventHandler(async () => {
+  return apiSuccess({ status: 'OK' })
 })
