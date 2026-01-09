@@ -122,7 +122,6 @@ defineRouteMeta({
                 required: ['general', 'links'],
                 type: 'object'
               },
-              links: { $ref: '#/components/schemas/ApiLinks' },
               meta: { $ref: '#/components/schemas/ApiMeta' },
               success: { enum: [true], type: 'boolean' }
             },
