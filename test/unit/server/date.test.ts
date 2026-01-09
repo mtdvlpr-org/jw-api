@@ -5,9 +5,8 @@ import { pad } from '../../../server/utils/general'
 
 // Stub globals
 vi.stubGlobal('pad', pad)
-vi.stubGlobal('apiInternalError', (msg: string) => new Error(msg))
+vi.stubGlobal('pad', pad)
 vi.stubGlobal('apiBadRequestError', (msg: string) => new Error(msg))
-
 describe('date utils', () => {
   afterEach(() => {
     vi.useRealTimers()
@@ -78,7 +77,7 @@ describe('date utils', () => {
 
     it('should throw error for unsupported format', () => {
       expect(() => formatDate(new Date(), 'unsupported' as 'YYYY-MM-DD')).toThrow(
-        'Unsupported date format: unsupported'
+        'Invalid date format: unsupported'
       )
     })
   })

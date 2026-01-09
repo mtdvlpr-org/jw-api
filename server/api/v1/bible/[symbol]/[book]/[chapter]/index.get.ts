@@ -179,7 +179,19 @@ defineRouteMeta({
     ],
     responses: {
       200: {
-        content: { 'application/json': { schema: { $ref: '#/components/schemas/BibleRange' } } },
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                data: { $ref: '#/components/schemas/BibleRange' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
+          }
+        },
         description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
@@ -193,5 +205,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { book, chapter, symbol } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await bibleService.getChapter({ book, chapter, locale: symbol })
+  const result = await bibleService.getChapter({ book, chapter, locale: symbol })
+  return apiSuccess(result)
 })

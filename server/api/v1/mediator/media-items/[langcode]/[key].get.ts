@@ -178,7 +178,19 @@ defineRouteMeta({
     ],
     responses: {
       200: {
-        content: { 'application/json': { schema: { $ref: '#/components/schemas/MediaItem' } } },
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                data: { $ref: '#/components/schemas/MediaItem' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
+          }
+        },
         description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
@@ -192,5 +204,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { key, langcode: langwritten } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await mediatorService.getMediaItem({ key, langwritten })
+  const result = await mediatorService.getMediaItem({ key, langwritten })
+  return apiSuccess(result)
 })

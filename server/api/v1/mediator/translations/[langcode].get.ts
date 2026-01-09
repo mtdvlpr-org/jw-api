@@ -11,12 +11,16 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            example: {
-              'translation.key.1': 'Translation 1',
-              'translation.key.2': 'Translation 2'
-            },
             schema: {
-              additionalProperties: { type: 'string' },
+              properties: {
+                data: {
+                  additionalProperties: { type: 'string' },
+                  type: 'object'
+                },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -34,5 +38,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { langcode } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await mediatorService.getTranslations(langcode)
+  const result = await mediatorService.getTranslations(langcode)
+  return apiSuccess(result)
 })

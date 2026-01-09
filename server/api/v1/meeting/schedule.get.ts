@@ -47,7 +47,15 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: { $ref: '#/components/schemas/MeetingSchedule' }
+            schema: {
+              properties: {
+                data: { $ref: '#/components/schemas/MeetingSchedule' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
           }
         },
         description: 'Successful response.'
@@ -67,5 +75,9 @@ export default defineLoggedEventHandler(async (event) => {
     throw apiBadRequestError('Week and year must be provided together or not at all')
   }
 
-  return meetingService.getMeetingSchedule(langwritten, week && year ? { week, year } : undefined)
+  const result = await meetingService.getMeetingSchedule(
+    langwritten,
+    week && year ? { week, year } : undefined
+  )
+  return apiSuccess(result)
 })

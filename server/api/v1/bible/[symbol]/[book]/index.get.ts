@@ -38,10 +38,18 @@ defineRouteMeta({
           'application/json': {
             schema: {
               properties: {
-                book: { $ref: '#/components/schemas/BibleBook' },
-                range: { $ref: '#/components/schemas/BibleRange' }
+                data: {
+                  properties: {
+                    book: { $ref: '#/components/schemas/BibleBook' },
+                    range: { $ref: '#/components/schemas/BibleRange' }
+                  },
+                  required: ['book', 'range'],
+                  type: 'object'
+                },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
               },
-              required: ['book', 'range'],
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -59,5 +67,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { book, symbol } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await bibleService.getBook({ book, locale: symbol })
+  const result = await bibleService.getBook({ book, locale: symbol })
+  return apiSuccess(result)
 })

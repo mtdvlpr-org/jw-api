@@ -22,7 +22,19 @@ defineRouteMeta({
     ],
     responses: {
       200: {
-        content: { 'application/json': { schema: { $ref: '#/components/schemas/Publication' } } },
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                data: { $ref: '#/components/schemas/Publication' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
+          }
+        },
         description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
@@ -44,6 +56,5 @@ export default defineLoggedEventHandler(async (event) => {
     date: year && month ? { month, year } : undefined,
     langwritten
   })
-
-  return result
+  return apiSuccess(result)
 })

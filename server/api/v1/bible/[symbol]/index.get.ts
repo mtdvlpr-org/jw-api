@@ -61,7 +61,19 @@ defineRouteMeta({
     parameters: [{ $ref: '#/components/parameters/LangSymbol' }],
     responses: {
       200: {
-        content: { 'application/json': { schema: { $ref: '#/components/schemas/BibleData' } } },
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                data: { $ref: '#/components/schemas/BibleData' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
+          }
+        },
         description: 'Successful response.'
       },
       400: { $ref: '#/components/responses/400' },
@@ -75,5 +87,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { symbol } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await bibleService.getBibleData(symbol)
+  const result = await bibleService.getBibleData(symbol)
+  return apiSuccess(result)
 })

@@ -50,10 +50,18 @@ defineRouteMeta({
         content: {
           'application/json': {
             schema: {
-              oneOf: [
-                { $ref: '#/components/schemas/CategoryContainer' },
-                { $ref: '#/components/schemas/CategoryOndemand' }
-              ],
+              properties: {
+                data: {
+                  oneOf: [
+                    { $ref: '#/components/schemas/CategoryContainer' },
+                    { $ref: '#/components/schemas/CategoryOndemand' }
+                  ],
+                  type: 'object'
+                },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -71,5 +79,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { key, langcode: locale } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await mediatorService.getDetailedCategory(key, { locale })
+  const result = await mediatorService.getDetailedCategory(key, { locale })
+  return apiSuccess(result)
 })

@@ -58,13 +58,21 @@ defineRouteMeta({
           'application/json': {
             schema: {
               properties: {
-                articles: {
-                  items: { $ref: '#/components/schemas/WatchtowerArticle' },
-                  type: 'array'
+                data: {
+                  properties: {
+                    articles: {
+                      items: { $ref: '#/components/schemas/WatchtowerArticle' },
+                      type: 'array'
+                    },
+                    issue: { type: 'string' }
+                  },
+                  required: ['issue', 'articles'],
+                  type: 'object'
                 },
-                issue: { type: 'string' }
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
               },
-              required: ['issue', 'article'],
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -90,6 +98,5 @@ export default defineLoggedEventHandler(async (event) => {
     date: year && month ? { month, year } : undefined,
     langwritten
   })
-
-  return result
+  return apiSuccess(result)
 })

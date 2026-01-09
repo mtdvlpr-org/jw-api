@@ -74,13 +74,21 @@ defineRouteMeta({
           'application/json': {
             schema: {
               properties: {
-                parsedContent: {
-                  example: 'In the beginning God created the heavens and the earth.',
-                  type: 'string'
+                data: {
+                  properties: {
+                    parsedContent: {
+                      example: 'In the beginning God created the heavens and the earth.',
+                      type: 'string'
+                    },
+                    result: { $ref: '#/components/schemas/BibleVerse' }
+                  },
+                  required: ['parsedContent', 'result'],
+                  type: 'object'
                 },
-                result: { $ref: '#/components/schemas/BibleVerse' }
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
               },
-              required: ['parsedContent', 'result'],
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -98,5 +106,6 @@ defineRouteMeta({
 export default defineLoggedEventHandler(async (event) => {
   const { book, chapter, symbol, verse } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await bibleService.getVerse({ book, chapter, locale: symbol, verse })
+  const result = await bibleService.getVerse({ book, chapter, locale: symbol, verse })
+  return apiSuccess(result)
 })

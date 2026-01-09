@@ -2,8 +2,6 @@ import { z } from 'zod'
 
 const routeSchema = z.object({ symbol: jwLangSymbolSchema })
 
-const _responseSchema = z.array(z.object(jwLanguageSchema))
-
 defineRouteMeta({
   openAPI: {
     $global: {
@@ -56,7 +54,15 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            schema: { items: { $ref: '#/components/schemas/JWLanguage' }, type: 'array' }
+            schema: {
+              properties: {
+                data: { items: { $ref: '#/components/schemas/JWLanguage' }, type: 'array' },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
+              },
+              required: ['success', 'data', 'meta'],
+              type: 'object'
+            }
           }
         },
         description: 'Successful response.'
@@ -69,8 +75,9 @@ defineRouteMeta({
   }
 })
 
-export default defineLoggedEventHandler<typeof _responseSchema>(async (event) => {
+export default defineLoggedEventHandler(async (event) => {
   const { symbol } = await getValidatedRouterParams(event, routeSchema.parse)
 
-  return await jwService.getLanguages(symbol)
+  const result = await jwService.getLanguages(symbol)
+  return apiSuccess(result)
 })

@@ -54,10 +54,18 @@ defineRouteMeta({
           'application/json': {
             schema: {
               properties: {
-                watchtower: { $ref: '#/components/schemas/MeetingArticle' },
-                workbook: { $ref: '#/components/schemas/MeetingArticle' }
+                data: {
+                  properties: {
+                    watchtower: { $ref: '#/components/schemas/MeetingArticle' },
+                    workbook: { $ref: '#/components/schemas/MeetingArticle' }
+                  },
+                  required: ['watchtower', 'workbook'],
+                  type: 'object'
+                },
+                meta: { $ref: '#/components/schemas/ApiMeta' },
+                success: { enum: [true], type: 'boolean' }
               },
-              required: ['watchtower', 'workbook'],
+              required: ['success', 'data', 'meta'],
               type: 'object'
             }
           }
@@ -79,5 +87,9 @@ export default defineLoggedEventHandler(async (event) => {
     throw apiBadRequestError('Week and year must be provided together or not at all')
   }
 
-  return meetingService.getMeetingArticles(langwritten, week && year ? { week, year } : undefined)
+  const result = await meetingService.getMeetingArticles(
+    langwritten,
+    week && year ? { week, year } : undefined
+  )
+  return apiSuccess(result)
 })
