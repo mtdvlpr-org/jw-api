@@ -71,7 +71,7 @@ export const wolRepository = {
         return await $fetch<YeartextDetails>(result.jsonUrl, { ...defaultFetchOptions })
       } catch (error) {
         // If it's already an API error (from fetchYeartextResult), re-throw it
-        if (error instanceof Error && 'statusCode' in error) {
+        if (error instanceof Error && 'fatal' in error) {
           throw error
         }
         throw toFetchApiError(error, {

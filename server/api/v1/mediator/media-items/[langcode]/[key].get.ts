@@ -202,7 +202,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { key, langcode: langwritten } = await getValidatedRouterParams(event, routeSchema.parse)
+  const { key, langcode: langwritten } = parseRouteParams(event, routeSchema)
 
   const result = await mediatorService.getMediaItem({ key, langwritten })
   return apiSuccess(result)

@@ -73,7 +73,7 @@ defineRouteMeta({
                 schema: { $ref: '#/components/schemas/ErrorResponse' }
               }
             },
-            description: 'Validation error.'
+            description: 'Bad request.'
           },
           404: {
             content: {
@@ -194,22 +194,8 @@ defineRouteMeta({
             required: ['page', 'pageSize', 'totalItems', 'totalPages'],
             type: 'object'
           },
-          /* Error Response (Nuxt format with meta in data) */
           ErrorResponse: {
             description: 'Error response format. The data property contains request metadata.',
-            example: {
-              data: {
-                meta: {
-                  requestId: 'k7f2m9x3q1',
-                  responseTime: 5,
-                  timestamp: '2026-01-09T12:34:56.789Z',
-                  version: 'v1'
-                }
-              },
-              message: 'Resource not found.',
-              statusCode: 404,
-              statusMessage: 'Not Found'
-            },
             properties: {
               data: {
                 description: 'Additional error data with request metadata.',
@@ -218,10 +204,17 @@ defineRouteMeta({
                     description: 'Field-level error details (for validation errors).',
                     items: {
                       properties: {
-                        field: { description: 'The field that caused the error.', type: 'string' },
-                        message: { description: 'Human-readable error message.', type: 'string' }
+                        code: { description: 'The error code.', type: 'string' },
+                        expected: { description: 'The expected value type.', type: 'string' },
+                        message: { description: 'The error message.', type: 'string' },
+                        path: {
+                          description: 'The path to the value that caused the error.',
+                          items: { type: 'string' },
+                          type: 'array'
+                        },
+                        received: { description: 'The received value.', type: 'string' }
                       },
-                      required: ['message'],
+                      required: ['code', 'expected', 'message', 'path', 'received'],
                       type: 'object'
                     },
                     type: 'array'
@@ -231,11 +224,17 @@ defineRouteMeta({
                 required: ['meta'],
                 type: 'object'
               },
+              error: { enum: [true], type: 'boolean' },
               message: { description: 'Error message.', type: 'string' },
               statusCode: { description: 'HTTP status code.', type: 'integer' },
-              statusMessage: { description: 'HTTP status text.', type: 'string' }
+              statusMessage: { description: 'HTTP status text.', type: 'string' },
+              url: {
+                description: 'URL of the resource that caused the error.',
+                format: 'uri',
+                type: 'string'
+              }
             },
-            required: ['statusCode', 'statusMessage', 'message', 'data'],
+            required: ['error', 'url', 'statusCode', 'statusMessage', 'message', 'data'],
             type: 'object'
           }
         }

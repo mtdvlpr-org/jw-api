@@ -182,7 +182,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const publication = await getValidatedQuery(event, querySchema.parse)
+  const publication = parseQuery(event, querySchema)
 
   const result = await pubMediaService.getPublication(publication)
   return apiSuccess(result)

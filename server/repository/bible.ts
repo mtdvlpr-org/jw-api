@@ -40,7 +40,7 @@ export const bibleRepository = {
 
         return { book: result.editionData.books[book], range: rangesData }
       } catch (error) {
-        if (error instanceof Error && 'statusCode' in error) {
+        if (error instanceof Error && 'fatal' in error) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -80,7 +80,7 @@ export const bibleRepository = {
 
         return chapterData
       } catch (error) {
-        if (error instanceof Error && 'statusCode' in error) {
+        if (error instanceof Error && 'fatal' in error) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -104,7 +104,7 @@ export const bibleRepository = {
         const url = await scrapeBibleDataUrl(locale)
         return await $fetch<BibleResultEmpty>(url, { ...defaultFetchOptions })
       } catch (error) {
-        if (error instanceof Error && 'statusCode' in error) {
+        if (error instanceof Error && 'fatal' in error) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -145,7 +145,7 @@ export const bibleRepository = {
 
         return verse
       } catch (error) {
-        if (error instanceof Error && 'statusCode' in error) {
+        if (error instanceof Error && 'fatal' in error) {
           throw error
         }
         throw toFetchApiError(error, {

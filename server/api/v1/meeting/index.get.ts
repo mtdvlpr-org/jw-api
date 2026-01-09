@@ -81,7 +81,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { langwritten, week, year } = await getValidatedQuery(event, querySchema.parse)
+  const { langwritten, week, year } = parseQuery(event, querySchema)
 
   if (!!week !== !!year) {
     throw apiBadRequestError('Week and year must be provided together or not at all')

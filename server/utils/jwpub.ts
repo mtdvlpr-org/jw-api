@@ -26,7 +26,7 @@ const getDatabase = async (url: string): Promise<Database> => {
 
     return loadDatabase(sqlDb)
   } catch (e) {
-    if (e instanceof Error && 'statusCode' in e) {
+    if (e instanceof Error && 'fatal' in e) {
       throw e
     }
     throw apiInternalError(

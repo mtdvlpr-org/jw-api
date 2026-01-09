@@ -104,7 +104,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { book, chapter, symbol, verse } = await getValidatedRouterParams(event, routeSchema.parse)
+  const { book, chapter, symbol, verse } = parseRouteParams(event, routeSchema)
 
   const result = await bibleService.getVerse({ book, chapter, locale: symbol, verse })
   return apiSuccess(result)

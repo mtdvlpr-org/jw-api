@@ -20,7 +20,7 @@ const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
     return err
   })
   const toFetchApiError = vi.fn((error, opts) => {
-    if (error instanceof Error && 'statusCode' in error) return error
+    if (error instanceof Error && 'fatal' in error) return error
     return new Error(opts?.notFoundMessage || 'Error')
   })
 

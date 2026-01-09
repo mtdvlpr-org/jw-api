@@ -85,7 +85,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { symbol } = await getValidatedRouterParams(event, routeSchema.parse)
+  const { symbol } = parseRouteParams(event, routeSchema)
 
   const result = await bibleService.getBibleData(symbol)
   return apiSuccess(result)

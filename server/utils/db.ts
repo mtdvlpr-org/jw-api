@@ -27,7 +27,7 @@ const queryDb =
 
       return result.rows as T[]
     } catch (e) {
-      if (e instanceof Error && 'statusCode' in e) {
+      if (e instanceof Error && 'fatal' in e) {
         throw e
       }
       throw apiInternalError(`SQL query failed: ${e instanceof Error ? e.message : String(e)}`, {

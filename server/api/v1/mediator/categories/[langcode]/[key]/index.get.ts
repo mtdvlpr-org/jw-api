@@ -89,7 +89,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { key, langcode: locale } = await getValidatedRouterParams(event, routeSchema.parse)
+  const { key, langcode: locale } = parseRouteParams(event, routeSchema)
 
   const result = await mediatorService.getCategory(key, { locale })
   return apiSuccess(result)

@@ -36,7 +36,7 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
-  const { langcode } = await getValidatedRouterParams(event, routeSchema.parse)
+  const { langcode } = parseRouteParams(event, routeSchema)
 
   const result = await mediatorService.getTranslations(langcode)
   return apiSuccess(result)
