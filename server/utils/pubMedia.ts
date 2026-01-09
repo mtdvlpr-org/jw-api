@@ -45,7 +45,7 @@ const getMwbJwpub = async ({
 }) => {
   const publication = await getMeetingWorkbook({ date, fileformat: 'JWPUB', langwritten })
   const jwpub = publication.files[langwritten]?.JWPUB?.[0]?.file.url
-  if (!jwpub) throw createNotFoundError('Meeting Workbook JWPUB not found', { date, langwritten })
+  if (!jwpub) throw apiNotFoundError('Meeting Workbook JWPUB not found')
   return jwpub
 }
 
@@ -84,7 +84,7 @@ const getWtJwpub = async ({
 }) => {
   const publication = await getStudyWatchtower({ date, fileformat: 'JWPUB', langwritten })
   const jwpub = publication.files[langwritten]?.JWPUB?.[0]?.file.url
-  if (!jwpub) throw createNotFoundError('Study watchtower JWPUB not found', { date, langwritten })
+  if (!jwpub) throw apiNotFoundError('Study Watchtower JWPUB not found')
   return jwpub
 }
 

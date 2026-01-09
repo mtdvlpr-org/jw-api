@@ -8,11 +8,11 @@ vi.hoisted(() => {
 })
 
 const $fetch = vi.fn()
-const createNotFoundError = vi.fn((msg) => new Error(msg))
+const apiNotFoundError = vi.fn((msg) => new Error(msg))
 const formatUrl = vi.fn((base, path) => new URL(path, base).toString())
 
 vi.stubGlobal('$fetch', $fetch)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('apiNotFoundError', apiNotFoundError)
 vi.stubGlobal('formatUrl', formatUrl)
 
 describe('scraper utils', () => {
@@ -89,9 +89,11 @@ describe('scraper utils', () => {
       `
       vi.mocked($fetch).mockResolvedValue(mockHtml)
 
-      await expect(scrapeBibleDataUrl('it')).rejects.toThrow('Failed to find Bible data API.')
+      await expect(scrapeBibleDataUrl('it')).rejects.toThrow(
+        "Failed to find Bible data API for locale 'it'"
+      )
 
-      expect(createNotFoundError).toHaveBeenCalledWith('Failed to find Bible data API.', 'it')
+      expect(apiNotFoundError).toHaveBeenCalledWith("Failed to find Bible data API for locale 'it'")
     })
   })
 })

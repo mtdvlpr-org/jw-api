@@ -67,7 +67,7 @@ export const formatDate = (
     case 'YYYYMMDD':
       return `${year}${month}${day}`
     default:
-      throw createInternalServerError(`Unsupported date format: ${format}`)
+      throw apiBadRequestError(`Invalid date format: ${format}`)
   }
 }
 
@@ -94,5 +94,5 @@ export const parseDate = (date: string): Date => {
     const day = +date.slice(6, 8)
     return new Date(Date.UTC(year, month - 1, day))
   }
-  throw createInternalServerError(`Invalid date format: ${date}`)
+  throw apiBadRequestError(`Invalid date format: ${date}`)
 }

@@ -11,17 +11,26 @@ import { generateVerseId } from '../../../server/utils/general'
 import { generateMediaKey } from '../../../server/utils/media'
 
 // Mock globals for tests since they are auto-imported in Nuxt but not here
-const { $fetch, createNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
+const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
   const $fetch = vi.fn()
   const scrapeBibleDataUrl = vi.fn()
-  const createNotFoundError = vi.fn((msg) => new Error(msg))
+  const apiNotFoundError = vi.fn((msg) => {
+    const err = new Error(msg)
+    Object.assign(err, { statusCode: 404 })
+    return err
+  })
+  const toFetchApiError = vi.fn((error, opts) => {
+    if (error instanceof Error && 'statusCode' in error) return error
+    return new Error(opts?.notFoundMessage || 'Error')
+  })
 
   vi.stubGlobal('$fetch', $fetch)
   vi.stubGlobal('scrapeBibleDataUrl', scrapeBibleDataUrl)
-  vi.stubGlobal('createNotFoundError', createNotFoundError)
+  vi.stubGlobal('apiNotFoundError', apiNotFoundError)
+  vi.stubGlobal('toFetchApiError', toFetchApiError)
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
 
-  return { $fetch, createNotFoundError, scrapeBibleDataUrl }
+  return { $fetch, apiNotFoundError, scrapeBibleDataUrl }
 })
 
 vi.stubGlobal('generateVerseId', generateVerseId)
@@ -368,12 +377,11 @@ describe('repository utils', () => {
       vi.mocked($fetch).mockResolvedValue(mockApiResult)
 
       await expect(mediatorRepository.fetchMediaItem(pubMock)).rejects.toThrow(
-        'Could not find media item.'
+        "Media item 'pub-w_202401_1_AUDIO' not found for locale 'E'"
       )
-      expect(createNotFoundError).toHaveBeenCalledWith('Could not find media item.', {
-        key: 'pub-w_202401_1_AUDIO',
-        publication: pubMock
-      })
+      expect(apiNotFoundError).toHaveBeenCalledWith(
+        "Media item 'pub-w_202401_1_AUDIO' not found for locale 'E'"
+      )
     })
   })
 
@@ -532,13 +540,10 @@ describe('repository utils', () => {
       vi.mocked($fetch).mockResolvedValue(mockResult)
 
       await expect(bibleRepository.fetchBibleBook(book, locale)).rejects.toThrow(
-        'Could not find book data.'
+        `Book ${book} not found for locale '${locale}'`
       )
 
-      expect(createNotFoundError).toHaveBeenCalledWith('Could not find book data.', {
-        book,
-        locale
-      })
+      expect(apiNotFoundError).toHaveBeenCalledWith(`Book ${book} not found for locale '${locale}'`)
     })
   })
 
@@ -586,13 +591,11 @@ describe('repository utils', () => {
       vi.mocked($fetch).mockResolvedValue(mockResult)
 
       await expect(bibleRepository.fetchBibleChapter(book, chapter, locale)).rejects.toThrow(
-        'Could not find chapter data.'
+        `Chapter ${chapter} of book ${book} not found for locale '${locale}'`
       )
-      expect(createNotFoundError).toHaveBeenCalledWith('Could not find chapter data.', {
-        book,
-        chapter,
-        locale
-      })
+      expect(apiNotFoundError).toHaveBeenCalledWith(
+        `Chapter ${chapter} of book ${book} not found for locale '${locale}'`
+      )
     })
   })
 
@@ -666,13 +669,12 @@ describe('repository utils', () => {
 
       await expect(
         bibleRepository.fetchBibleVerse(book, chapter, verseNumber, locale)
-      ).rejects.toThrow('Could not find verse data.')
-      expect(createNotFoundError).toHaveBeenCalledWith('Could not find verse data.', {
-        book,
-        chapter,
-        locale,
-        verseNumber
-      })
+      ).rejects.toThrow(
+        `Verse ${verseNumber} of chapter ${chapter}, book ${book} not found for locale '${locale}'`
+      )
+      expect(apiNotFoundError).toHaveBeenCalledWith(
+        `Verse ${verseNumber} of chapter ${chapter}, book ${book} not found for locale '${locale}'`
+      )
     })
   })
 })

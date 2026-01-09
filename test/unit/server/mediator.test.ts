@@ -7,14 +7,14 @@ import { mediatorService } from '../../../server/utils/mediator'
 const { $fetch, findBestFile } = vi.hoisted(() => {
   const $fetch = vi.fn()
   const findBestFile = vi.fn()
-  const createNotFoundError = vi.fn((msg) => new Error(msg))
+  const apiNotFoundError = vi.fn((msg) => new Error(msg))
 
   vi.stubGlobal('$fetch', $fetch)
   vi.stubGlobal('findBestFile', findBestFile)
-  vi.stubGlobal('createNotFoundError', createNotFoundError)
+  vi.stubGlobal('apiNotFoundError', apiNotFoundError)
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
 
-  return { $fetch, createNotFoundError, findBestFile }
+  return { $fetch, apiNotFoundError, findBestFile }
 })
 
 vi.mock('../../../server/repository/mediator')
@@ -122,7 +122,7 @@ describe('mediator utils', () => {
       vi.mocked(findBestFile).mockReturnValue(null)
 
       await expect(mediatorService.getMediaWithSubtitles(mockPub)).rejects.toThrow(
-        'No media file with subtitles found.'
+        'No media file with subtitles found'
       )
     })
   })
@@ -157,7 +157,7 @@ describe('mediator utils', () => {
       vi.mocked(mediatorRepository.fetchMediaItem).mockResolvedValue(mockMediaItem)
       vi.mocked(findBestFile).mockReturnValue(mockBestMatch)
 
-      await expect(mediatorService.getSubtitles(mockPub)).rejects.toThrow('No subtitles found.')
+      await expect(mediatorService.getSubtitles(mockPub)).rejects.toThrow('No subtitles found')
     })
   })
 

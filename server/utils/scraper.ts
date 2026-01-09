@@ -20,11 +20,11 @@ export const scrapeBibleDataUrl = async (locale: JwLangSymbol = 'en'): Promise<s
 
   // Find the base URL
   const base = root.querySelector('head > base')?.getAttribute('href')
-  if (!base) throw createNotFoundError('Failed to find base URL.', locale)
+  if (!base) throw apiNotFoundError(`Failed to find base URL for locale '${locale}'`)
 
   // Find the Bible data URL
   const path = root.getElementById('pageConfig')?.getAttribute('data-bible_data_api')
-  if (!path) throw createNotFoundError('Failed to find Bible data API.', locale)
+  if (!path) throw apiNotFoundError(`Failed to find Bible data API for locale '${locale}'`)
 
   // Construct the URL
   const url = formatUrl(base, path)

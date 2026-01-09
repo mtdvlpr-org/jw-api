@@ -9,6 +9,7 @@ import { pubMediaService } from '../../../server/utils/pubMedia'
 // Mock defineCachedFunction BEFORE importing anything that uses it
 vi.hoisted(() => {
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
+  vi.stubGlobal('apiNotFoundError', (msg: string) => new Error(msg))
 })
 
 vi.mock('../../../server/repository/pubMedia')
@@ -163,8 +164,6 @@ describe('pubMedia utils', () => {
         pub: 'mwb'
       })
 
-      vi.stubGlobal('createNotFoundError', (msg: string) => new Error(msg))
-
       await expect(pubMediaService.getMwbJwpub({ date, langwritten })).rejects.toThrow(
         'Meeting Workbook JWPUB not found'
       )
@@ -201,10 +200,8 @@ describe('pubMedia utils', () => {
         pub: 'w'
       })
 
-      vi.stubGlobal('createNotFoundError', (msg: string) => new Error(msg))
-
       await expect(pubMediaService.getWtJwpub({ date, langwritten })).rejects.toThrow(
-        'Study watchtower JWPUB not found'
+        'Study Watchtower JWPUB not found'
       )
     })
   })

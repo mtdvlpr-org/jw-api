@@ -17,10 +17,9 @@ const loadDatabase = vi.fn()
 const queryDatabaseSingle = vi.fn()
 const formatDate = vi.fn()
 const parseHtml = vi.fn()
-const createNotFoundError = vi.fn((msg) => new Error(msg))
-const createInternalServerError = vi.fn((msg, cause) => {
+const apiInternalError = vi.fn((msg, opts) => {
   const err = new Error(msg)
-  err.cause = cause
+  if (opts?.cause) err.cause = opts.cause
   return err
 })
 const logger = {
@@ -35,8 +34,7 @@ vi.stubGlobal('loadDatabase', loadDatabase)
 vi.stubGlobal('queryDatabaseSingle', queryDatabaseSingle)
 vi.stubGlobal('formatDate', formatDate)
 vi.stubGlobal('parseHtml', parseHtml)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
-vi.stubGlobal('createInternalServerError', createInternalServerError)
+vi.stubGlobal('apiInternalError', apiInternalError)
 vi.stubGlobal('logger', logger)
 
 describe('jwpub utils', () => {
@@ -87,7 +85,7 @@ describe('jwpub utils', () => {
         })
 
       await expect(jwpubService.getDatabase('url')).rejects.toThrow(
-        'Failed to get database from URL.'
+        'No database file found in the JWPUB file'
       )
     })
   })

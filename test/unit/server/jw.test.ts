@@ -6,7 +6,7 @@ import { jwService } from '../../../server/utils/jw'
 // Mock defineCachedFunction BEFORE importing anything that uses it
 vi.hoisted(() => {
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
-  vi.stubGlobal('createNotFoundError', (msg: string) => new Error(msg))
+  vi.stubGlobal('apiNotFoundError', (msg: string) => new Error(msg))
 })
 
 vi.mock('../../../server/repository/jw')
@@ -71,7 +71,7 @@ describe('jw service', () => {
       const mockLanguages = [{ code: 'en', name: 'English', vernacularName: 'English' }]
       vi.mocked(jwRepository.fetchLanguages).mockResolvedValue(mockLanguages)
 
-      await expect(jwService.getLanguage('German')).rejects.toThrow('Language German not found')
+      await expect(jwService.getLanguage('German')).rejects.toThrow("Language 'German' not found")
     })
   })
 })

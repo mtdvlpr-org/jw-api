@@ -14,19 +14,27 @@ const getDatabase = async (url: string): Promise<Database> => {
     const buffer = await downloadRepository.arrayBuffer(url)
     const outerZip = await extractZipFiles(buffer)
     if (!outerZip.files['contents']) {
-      throw createInternalServerError('No contents file found in the JWPUB file.', url)
+      throw apiInternalError('No contents file found in the JWPUB file')
     }
 
     const innerZip = await extractZipFiles(await outerZip.files['contents']!.async('uint8array'))
 
     const dbFile = Object.keys(innerZip.files).find((file) => file.endsWith('.db'))
-    if (!dbFile) throw createInternalServerError('No database file found in the JWPUB file.', url)
+    if (!dbFile) throw apiInternalError('No database file found in the JWPUB file')
 
     const sqlDb = await innerZip.files[dbFile]!.async('uint8array')
 
     return loadDatabase(sqlDb)
   } catch (e) {
-    throw createInternalServerError('Failed to get database from URL.', e)
+    if (e instanceof Error && 'statusCode' in e) {
+      throw e
+    }
+    throw apiInternalError(
+      `Failed to get database from URL: ${e instanceof Error ? e.message : String(e)}`,
+      {
+        cause: e
+      }
+    )
   }
 }
 

@@ -17,12 +17,12 @@ vi.mock('sql.js', () => {
 })
 
 // Globals
-const createInternalServerError = vi.fn((msg, cause) => {
+const apiInternalError = vi.fn((msg, opts) => {
   const err = new Error(msg)
-  err.cause = cause
+  if (opts?.cause) err.cause = opts.cause
   return err
 })
-const createNotFoundError = vi.fn((msg) => new Error(msg))
+const apiNotFoundError = vi.fn((msg) => new Error(msg))
 const logger = {
   debug: vi.fn(),
   error: vi.fn(),
@@ -30,8 +30,8 @@ const logger = {
   warn: vi.fn()
 }
 
-vi.stubGlobal('createInternalServerError', createInternalServerError)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('apiInternalError', apiInternalError)
+vi.stubGlobal('apiNotFoundError', apiNotFoundError)
 vi.stubGlobal('logger', logger)
 
 describe('sqlite utils', () => {
@@ -73,15 +73,13 @@ describe('sqlite utils', () => {
 
     it('should handle errors', async () => {
       const db = await loadDatabase(Buffer.from(''))
+      const error = new Error('DB Error')
       mockExec.mockImplementation(() => {
-        throw new Error('DB Error')
+        throw error
       })
 
-      expect(() => queryDatabase(db, 'SELECT *')).toThrow('SQL query failed.')
-      expect(createInternalServerError).toHaveBeenCalledWith('SQL query failed.', {
-        message: 'DB Error',
-        query: 'SELECT *'
-      })
+      expect(() => queryDatabase(db, 'SELECT *')).toThrow('SQL query failed: DB Error')
+      expect(apiInternalError).toHaveBeenCalledWith('SQL query failed: DB Error', { cause: error })
     })
 
     it('should handle non-error objects thrown', async () => {
@@ -90,10 +88,9 @@ describe('sqlite utils', () => {
         throw 'String Error'
       })
 
-      expect(() => queryDatabase(db, 'SELECT *')).toThrow('SQL query failed.')
-      expect(createInternalServerError).toHaveBeenCalledWith('SQL query failed.', {
-        message: 'String Error',
-        query: 'SELECT *'
+      expect(() => queryDatabase(db, 'SELECT *')).toThrow('SQL query failed: String Error')
+      expect(apiInternalError).toHaveBeenCalledWith('SQL query failed: String Error', {
+        cause: 'String Error'
       })
     })
   })
@@ -121,11 +118,8 @@ describe('sqlite utils', () => {
         }
       ])
 
-      expect(() => queryDatabaseSingle(db, 'SELECT *')).toThrow('No result found for query.')
-      expect(createInternalServerError).toHaveBeenCalledWith(
-        'No result found for query.',
-        'SELECT *'
-      )
+      expect(() => queryDatabaseSingle(db, 'SELECT *')).toThrow('No result found for query')
+      expect(apiNotFoundError).toHaveBeenCalledWith('No result found for query')
     })
   })
 })

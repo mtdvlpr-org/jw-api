@@ -101,11 +101,11 @@ export const getWorkbookIssue = (date?: { month: number; year: number }): `${num
   const { month, year } = date
 
   if (year < 2016) {
-    throw createBadRequestError('Workbooks are not available before 2016.')
+    throw apiBadRequestError('Workbooks are not available before 2016')
   }
 
   if (month < 1 || month > 12) {
-    throw createBadRequestError('Month must be between 1 and 12.')
+    throw apiBadRequestError('Month must be between 1 and 12')
   }
 
   // Workbooks before 2021 are published every month.
@@ -129,11 +129,11 @@ export const getStudyWatchtowerIssue = (date?: { month: number; year: number }):
   const { month, year } = date
 
   if (year < 2008) {
-    throw createBadRequestError('Study watchtower is not available before 2008.')
+    throw apiBadRequestError('Study Watchtower is not available before 2008')
   }
 
   if (month < 1 || month > 12) {
-    throw createBadRequestError('Month must be between 1 and 12.')
+    throw apiBadRequestError('Month must be between 1 and 12')
   }
 
   // Study watchtowers before 2016 are published on the 15th of the month.

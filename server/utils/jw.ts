@@ -25,7 +25,7 @@ const getLanguage = async (name: string, locale: JwLangSymbol = 'en') => {
     (l) =>
       l.name.toLowerCase() === normalizedName || l.vernacularName.toLowerCase() === normalizedName
   )
-  if (!match) throw createNotFoundError(`Language ${name} not found`)
+  if (!match) throw apiNotFoundError(`Language '${name}' not found`)
 
   return match
 }

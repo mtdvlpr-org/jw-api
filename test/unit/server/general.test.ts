@@ -16,7 +16,7 @@ import { jwLangCodes, jwLangSymbols, mepsLanguageIds } from '../../../shared/typ
 vi.stubGlobal('jwLangCodes', jwLangCodes)
 vi.stubGlobal('jwLangSymbols', jwLangSymbols)
 vi.stubGlobal('mepsLanguageIds', mepsLanguageIds)
-vi.stubGlobal('createBadRequestError', (message: string) => new Error(message))
+vi.stubGlobal('apiBadRequestError', (message: string) => new Error(message))
 
 describe('jw general utils', () => {
   describe('pad', () => {
@@ -114,16 +114,16 @@ describe('jw general utils', () => {
   describe('getWorkbookIssue', () => {
     it('should throw error for pre-2016 years', () => {
       expect(() => getWorkbookIssue({ month: 1, year: 2015 })).toThrow(
-        'Workbooks are not available before 2016.'
+        'Workbooks are not available before 2016'
       )
     })
 
     it('should throw error for invalid months', () => {
       expect(() => getWorkbookIssue({ month: 0, year: 2024 })).toThrow(
-        'Month must be between 1 and 12.'
+        'Month must be between 1 and 12'
       )
       expect(() => getWorkbookIssue({ month: 13, year: 2024 })).toThrow(
-        'Month must be between 1 and 12.'
+        'Month must be between 1 and 12'
       )
     })
 
@@ -153,16 +153,16 @@ describe('jw general utils', () => {
   describe('getStudyWatchtowerIssue', () => {
     it('should throw error for pre-2008 years', () => {
       expect(() => getStudyWatchtowerIssue({ month: 1, year: 2007 })).toThrow(
-        'Study watchtower is not available before 2008.'
+        'Study Watchtower is not available before 2008'
       )
     })
 
     it('should throw error for invalid months', () => {
       expect(() => getStudyWatchtowerIssue({ month: 0, year: 2024 })).toThrow(
-        'Month must be between 1 and 12.'
+        'Month must be between 1 and 12'
       )
       expect(() => getStudyWatchtowerIssue({ month: 13, year: 2024 })).toThrow(
-        'Month must be between 1 and 12.'
+        'Month must be between 1 and 12'
       )
     })
 

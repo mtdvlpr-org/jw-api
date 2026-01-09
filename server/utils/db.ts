@@ -22,12 +22,17 @@ const queryDb =
       logger.debug(JSON.stringify(result))
 
       if (result.error || !result.success || !result.rows) {
-        throw createInternalServerError('SQL query failed.', result.error)
+        throw apiInternalError(`SQL query failed: ${result.error}`)
       }
 
       return result.rows as T[]
     } catch (e) {
-      throw createInternalServerError('SQL query failed.', e)
+      if (e instanceof Error && 'statusCode' in e) {
+        throw e
+      }
+      throw apiInternalError(`SQL query failed: ${e instanceof Error ? e.message : String(e)}`, {
+        cause: e
+      })
     }
   }
 
@@ -41,7 +46,7 @@ const queryDbSingle =
   (db: DbKey) =>
   async <T = unknown>(strings: TemplateStringsArray, ...values: Primitive[]): Promise<T> => {
     const [row] = await queryDb(db)<T>(strings, ...values)
-    if (!row) throw createNotFoundError('SQL query returned no rows.')
+    if (!row) throw apiNotFoundError('SQL query returned no rows')
     return row
   }
 

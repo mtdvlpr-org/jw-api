@@ -5,7 +5,8 @@ import { pad } from '../../../server/utils/general'
 
 // Stub globals
 vi.stubGlobal('pad', pad)
-vi.stubGlobal('createInternalServerError', (msg: string) => new Error(msg))
+vi.stubGlobal('apiInternalError', (msg: string) => new Error(msg))
+vi.stubGlobal('apiBadRequestError', (msg: string) => new Error(msg))
 
 describe('date utils', () => {
   afterEach(() => {

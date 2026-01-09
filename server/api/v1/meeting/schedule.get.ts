@@ -64,7 +64,7 @@ export default defineLoggedEventHandler(async (event) => {
   const { langwritten, week, year } = await getValidatedQuery(event, querySchema.parse)
 
   if (!!week !== !!year) {
-    throw createBadRequestError('Week and year must be provided together or not at all.')
+    throw apiBadRequestError('Week and year must be provided together or not at all')
   }
 
   return meetingService.getMeetingSchedule(langwritten, week && year ? { week, year } : undefined)

@@ -4,18 +4,23 @@ import { useDb } from '../../../server/utils/db'
 
 // Globals
 const logger = { debug: vi.fn() }
-const createInternalServerError = vi.fn((msg, cause) => {
+const apiInternalError = vi.fn((msg, opts) => {
   const err = new Error(msg)
-  err.cause = cause
+  if (opts?.cause) err.cause = opts.cause
+  Object.assign(err, { statusCode: 500 })
   return err
 })
-const createNotFoundError = vi.fn((msg) => new Error(msg))
+const apiNotFoundError = vi.fn((msg) => {
+  const err = new Error(msg)
+  Object.assign(err, { statusCode: 404 })
+  return err
+})
 const sqlMock = vi.fn()
 const useDatabase = vi.fn(() => ({ sql: sqlMock }))
 
 vi.stubGlobal('logger', logger)
-vi.stubGlobal('createInternalServerError', createInternalServerError)
-vi.stubGlobal('createNotFoundError', createNotFoundError)
+vi.stubGlobal('apiInternalError', apiInternalError)
+vi.stubGlobal('apiNotFoundError', apiNotFoundError)
 vi.stubGlobal('useDatabase', useDatabase)
 
 describe('db utils', () => {
@@ -55,8 +60,8 @@ describe('db utils', () => {
         success: false
       })
 
-      await expect(query`SELECT * FROM table`).rejects.toThrow('SQL query failed.')
-      expect(createInternalServerError).toHaveBeenCalledWith('SQL query failed.', 'Some error')
+      await expect(query`SELECT * FROM table`).rejects.toThrow('SQL query failed: Some error')
+      expect(apiInternalError).toHaveBeenCalledWith('SQL query failed: Some error')
     })
 
     it('should catch and rethrow unexpected errors', async () => {
@@ -64,8 +69,10 @@ describe('db utils', () => {
       const error = new Error('Unexpected')
       sqlMock.mockRejectedValue(error)
 
-      await expect(query`SELECT * FROM table`).rejects.toThrow('SQL query failed.')
-      expect(createInternalServerError).toHaveBeenCalledWith('SQL query failed.', error)
+      await expect(query`SELECT * FROM table`).rejects.toThrow('SQL query failed: Unexpected')
+      expect(apiInternalError).toHaveBeenCalledWith('SQL query failed: Unexpected', {
+        cause: error
+      })
     })
   })
 
@@ -92,8 +99,8 @@ describe('db utils', () => {
         success: true
       })
 
-      await expect(querySingle`SELECT * FROM table`).rejects.toThrow('SQL query returned no rows.')
-      expect(createNotFoundError).toHaveBeenCalledWith('SQL query returned no rows.')
+      await expect(querySingle`SELECT * FROM table`).rejects.toThrow('SQL query returned no rows')
+      expect(apiNotFoundError).toHaveBeenCalledWith('SQL query returned no rows')
     })
   })
 })

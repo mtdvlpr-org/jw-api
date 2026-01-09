@@ -28,6 +28,11 @@ export const extractZipFiles = async (
     const appZip = new JSZip()
     return await appZip.loadAsync(data)
   } catch (e) {
-    throw createInternalServerError('Failed to extract zip files.', e)
+    throw apiInternalError(
+      `Failed to extract zip files: ${e instanceof Error ? e.message : String(e)}`,
+      {
+        cause: e
+      }
+    )
   }
 }

@@ -12,9 +12,9 @@ vi.mock('node:zlib')
 vi.mock('node:stream/promises')
 vi.mock('jszip')
 
-const createInternalServerError = vi.fn((msg, cause) => {
+const apiInternalError = vi.fn((msg, opts) => {
   const err = new Error(msg)
-  err.cause = cause
+  if (opts?.cause) err.cause = opts.cause
   return err
 })
 const logger = {
@@ -24,7 +24,7 @@ const logger = {
   warn: vi.fn()
 }
 
-vi.stubGlobal('createInternalServerError', createInternalServerError)
+vi.stubGlobal('apiInternalError', apiInternalError)
 vi.stubGlobal('logger', logger)
 
 describe('zip utils', () => {

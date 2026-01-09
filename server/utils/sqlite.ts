@@ -38,9 +38,8 @@ export const queryDatabase = <T extends Record<string, unknown>>(
     logger.debug(JSON.stringify(rows))
     return rows
   } catch (e) {
-    throw createInternalServerError('SQL query failed.', {
-      message: e instanceof Error ? e.message : String(e),
-      query
+    throw apiInternalError(`SQL query failed: ${e instanceof Error ? e.message : String(e)}`, {
+      cause: e
     })
   }
 }
@@ -56,6 +55,6 @@ export const queryDatabaseSingle = <T extends Record<string, unknown>>(
   query: string
 ): T => {
   const result = queryDatabase<T>(db, query)
-  if (result.length === 0) throw createInternalServerError('No result found for query.', query)
+  if (result.length === 0) throw apiNotFoundError('No result found for query')
   return result[0]!
 }
