@@ -51,6 +51,16 @@ describe('zip utils', () => {
       expect(fs.createWriteStream).toHaveBeenCalledWith(outputPath)
       expect(pipeline).toHaveBeenCalledWith(mockStream, mockGunzip, mockWriteStream)
     })
+
+    it('should reject if pipeline fails', async () => {
+      const mockStream = new Readable()
+      const outputPath = 'output.txt'
+      const error = new Error('Pipeline failed')
+
+      vi.mocked(pipeline).mockRejectedValue(error)
+
+      await expect(decompressGzip(mockStream, outputPath)).rejects.toThrow('Pipeline failed')
+    })
   })
 
   describe('extractZipFiles', () => {
@@ -70,6 +80,44 @@ describe('zip utils', () => {
       expect(JSZip).toHaveBeenCalled()
       expect(mockLoadAsync).toHaveBeenCalledWith(mockData)
       expect(result).toBe('extracted data')
+    })
+
+    it('should throw apiInternalError if extraction fails with Error', async () => {
+      const mockData = Buffer.from('invalid')
+      const error = new Error('Invalid zip format')
+      const mockLoadAsync = vi.fn().mockRejectedValue(error)
+
+      vi.mocked(JSZip).mockImplementation(
+        () =>
+          ({
+            loadAsync: mockLoadAsync
+          }) as unknown as JSZip
+      )
+
+      await expect(extractZipFiles(mockData)).rejects.toThrow()
+
+      expect(apiInternalError).toHaveBeenCalledWith(
+        'Failed to extract zip files: Invalid zip format',
+        { cause: error }
+      )
+    })
+
+    it('should handle non-Error exceptions', async () => {
+      const mockData = Buffer.from('invalid')
+      const mockLoadAsync = vi.fn().mockRejectedValue('string error')
+
+      vi.mocked(JSZip).mockImplementation(
+        () =>
+          ({
+            loadAsync: mockLoadAsync
+          }) as unknown as JSZip
+      )
+
+      await expect(extractZipFiles(mockData)).rejects.toThrow()
+
+      expect(apiInternalError).toHaveBeenCalledWith('Failed to extract zip files: string error', {
+        cause: 'string error'
+      })
     })
   })
 })

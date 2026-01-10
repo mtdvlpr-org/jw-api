@@ -1,3 +1,4 @@
+import { FetchError } from 'ofetch'
 import { describe, expect, it, vi } from 'vitest'
 
 import {
@@ -5,7 +6,10 @@ import {
   apiForbiddenError,
   apiInternalError,
   apiNotFoundError,
-  apiUnauthorizedError
+  apiPaginated,
+  apiSuccess,
+  apiUnauthorizedError,
+  toFetchApiError
 } from '../../../server/utils/response'
 
 // Mock globals BEFORE importing anything that uses them
@@ -79,6 +83,153 @@ describe('api error utils', () => {
       expect(error.statusCode).toBe(403)
       expect(error.statusMessage).toBe('Forbidden')
       expect(error.message).toBe('Forbidden')
+    })
+  })
+
+  describe('apiSuccess', () => {
+    it('should create successful response with data', () => {
+      const data = { message: 'Success' }
+      const response = apiSuccess(data)
+
+      expect(response.success).toBe(true)
+      expect(response.data).toEqual(data)
+      expect(response.meta).toHaveProperty('requestId')
+      expect(response.meta).toHaveProperty('version', 'v1')
+      expect(response.meta).toHaveProperty('responseTime')
+      expect(response.meta).toHaveProperty('timestamp')
+    })
+
+    it('should include links if provided', () => {
+      const data = { test: 'data' }
+      const links = { self: '/api/test' }
+      const response = apiSuccess(data, links)
+
+      expect(response.links).toEqual(links)
+    })
+
+    it('should not include links if not provided', () => {
+      const response = apiSuccess({ test: 'data' })
+
+      expect(response.links).toBeUndefined()
+    })
+  })
+
+  describe('apiPaginated', () => {
+    it('should create paginated response', () => {
+      const data = [{ id: 1 }, { id: 2 }]
+      const pagination = {
+        page: 1,
+        pageSize: 10,
+        totalItems: 100,
+        totalPages: 10
+      }
+
+      const response = apiPaginated(data, pagination)
+
+      expect(response.success).toBe(true)
+      expect(response.data).toEqual(data)
+      expect(response.meta.pagination).toEqual(pagination)
+    })
+
+    it('should include links if provided', () => {
+      const links = {
+        first: '/api?page=1',
+        last: '/api?page=10',
+        next: '/api?page=2',
+        self: '/api?page=1'
+      }
+
+      const response = apiPaginated(
+        [],
+        { page: 1, pageSize: 10, totalItems: 0, totalPages: 0 },
+        links
+      )
+
+      expect(response.links).toEqual(links)
+    })
+
+    it('should handle empty data array', () => {
+      const response = apiPaginated([], { page: 1, pageSize: 10, totalItems: 0, totalPages: 0 })
+
+      expect(response.data).toEqual([])
+      expect(response.meta.pagination.totalItems).toBe(0)
+    })
+  })
+
+  describe('toFetchApiError', () => {
+    const context = {
+      notFoundMessage: 'Resource not found',
+      serviceName: 'TestService'
+    }
+
+    it('should handle 400 errors', () => {
+      const fetchError = new FetchError('Bad Request')
+      fetchError.statusCode = 400
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toContain('Invalid request to TestService')
+      expect('statusCode' in result && result.statusCode).toBe(400)
+    })
+
+    it('should handle 401 errors', () => {
+      const fetchError = new FetchError('Unauthorized')
+      fetchError.statusCode = 401
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toContain('Unauthorized request to TestService')
+    })
+
+    it('should handle 403 errors', () => {
+      const fetchError = new FetchError('Forbidden')
+      fetchError.statusCode = 403
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toBe(context.notFoundMessage)
+    })
+
+    it('should handle 404 errors', () => {
+      const fetchError = new FetchError('Not Found')
+      fetchError.statusCode = 404
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toBe(context.notFoundMessage)
+    })
+
+    it('should handle 500 errors', () => {
+      const fetchError = new FetchError('Server Error')
+      fetchError.statusCode = 500
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toContain('TestService service unavailable')
+    })
+
+    it('should handle unknown status codes', () => {
+      const fetchError = new FetchError('Unknown Error')
+      fetchError.statusCode = 502
+
+      const result = toFetchApiError(fetchError, context)
+
+      expect(result.message).toContain('Failed to connect to TestService')
+    })
+
+    it('should return non-FetchError errors as-is', () => {
+      const genericError = new Error('Generic error')
+
+      const result = toFetchApiError(genericError, context)
+
+      expect(result).toBe(genericError)
+    })
+
+    it('should convert non-Error values to Error', () => {
+      const result = toFetchApiError('string error', context)
+
+      expect(result).toBeInstanceOf(Error)
+      expect(result.message).toBe('string error')
     })
   })
 })
