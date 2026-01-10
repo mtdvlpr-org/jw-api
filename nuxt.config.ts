@@ -24,7 +24,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   future: { typescriptBundlerResolution: true },
   mcp: { name: title, version },
-  modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit'],
+  modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit', 'nuxt-security'],
   nitro: {
     database,
     experimental: { database: true, openAPI: true },
@@ -43,5 +43,6 @@ export default defineNuxtConfig({
     }
   },
   routeRules: { '/api/**': { cors: true }, '/mcp': { cors: true } },
-  runtimeConfig: { apiVersion: 'v1', public: { description, title, version } }
+  runtimeConfig: { apiVersion: 'v1', public: { description, title, version } },
+  security: { csrf: true, strict: true }
 })

@@ -1,11 +1,13 @@
 import vitest from '@vitest/eslint-plugin'
 import perfectionist from 'eslint-plugin-perfectionist'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import security from 'eslint-plugin-security'
 
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
+  security.configs.recommended,
   perfectionist.configs['recommended-natural'],
   { files: ['test/**'], plugins: { vitest }, rules: { ...vitest.configs.recommended.rules } },
   {
