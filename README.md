@@ -5,20 +5,21 @@
 ## Overview
 
 This application acts as a central API gateway that simplifies interaction with:
--   **Mediator**: Access detailed categorization, media items, and translation data.
--   **WOL (Watchtower Online Library)**: Retrieve daily texts and year texts programmatically.
--   **Publication Media**: Fetch metadata and links for various publications.
--   **Bible Data**: Access Bible books and verse data.
+
+- **Mediator**: Access detailed categorization, media items, and translation data.
+- **WOL (Watchtower Online Library)**: Retrieve daily texts and year texts programmatically.
+- **Publication Media**: Fetch metadata and links for various publications.
+- **Bible Data**: Access Bible books and verse data.
 
 In addition to standard REST endpoints, this project includes a **Model Context Protocol (MCP)** server, enabling AI agents to directly query JW-related data (like Bible verses and transcripts) for enhanced context.
 
 ## Key Features
 
--   **RESTful API**: Clean and structured endpoints for querying data.
--   **Multi-Language Support**: robust handling of language codes and translations.
--   **Media Integration**: Easy access to media items and publication details.
--   **AI Ready**: Built-in MCP server for integrating with AI assistants.
--   **Modern Tech Stack**: Built on Nuxt 4, ensuring high performance and type safety.
+- **RESTful API**: Clean and structured endpoints for querying data.
+- **Multi-Language Support**: robust handling of language codes and translations.
+- **Media Integration**: Easy access to media items and publication details.
+- **AI Ready**: Built-in MCP server for integrating with AI assistants.
+- **Modern Tech Stack**: Built on Nuxt 4, ensuring high performance and type safety.
 
 ## Getting Started (For Users)
 
@@ -28,13 +29,13 @@ This is an API service. If you have the service running (locally or hosted), you
 
 Assuming the API is running at `http://localhost:3000`:
 
--   **Get Year Text**:
+- **Get Year Text**:
     `GET /api/v1/wol/yeartext`
-    
--   **Get Languages**:
+
+- **Get Languages**:
     `GET /api/v1/mediator/languages/E` (where 'E' is the language code)
 
--   **Get Publication Media**:
+- **Get Publication Media**:
     `GET /api/v1/pub-media/publication?pub=...`
 
 ## Developers
@@ -42,10 +43,11 @@ Assuming the API is running at `http://localhost:3000`:
 If you are a developer looking to contribute, modify, or run this project locally, please refer to the [Contributing Guide](CONTRIBUTING.md).
 
 It covers:
--   Setup and Installation
--   Development Workflow
--   Testing and Linting
--   Coding Standards
+
+- Setup and Installation
+- Development Workflow
+- Testing and Linting
+- Coding Standards
 
 ## License
 
