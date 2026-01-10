@@ -44,5 +44,5 @@ export default defineNuxtConfig({
   },
   routeRules: { '/api/**': { cors: true }, '/mcp': { cors: true } },
   runtimeConfig: { apiVersion: 'v1', public: { description, title, version } },
-  security: { csrf: true, strict: true }
+  security: { csrf: true, rateLimiter: { headers: true }, strict: true }
 })

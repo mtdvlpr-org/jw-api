@@ -25,18 +25,37 @@ In addition to standard REST endpoints, this project includes a **Model Context 
 
 This is an API service. If you have the service running (locally or hosted), you can interact with it via HTTP requests.
 
-### Example Endpoints
+For detailed API documentation including all endpoints, request/response formats, and examples, see [server/api/README.md](server/api/README.md).
+
+### Quick Start Examples
 
 Assuming the API is running at `http://localhost:3000`:
 
 - **Get Year Text**:
-    `GET /api/v1/wol/yeartext`
+    ```bash
+    curl "http://localhost:3000/api/v1/wol/yeartext?wtlocale=E&year=2026"
+    ```
+
+- **Get Bible Verse** (Genesis 1:1):
+    ```bash
+    curl http://localhost:3000/api/v1/bible/en/1/1/1
+    ```
 
 - **Get Languages**:
-    `GET /api/v1/mediator/languages/E` (where 'E' is the language code)
+    ```bash
+    curl http://localhost:3000/api/v1/mediator/languages/E
+    ```
 
 - **Get Publication Media**:
-    `GET /api/v1/pub-media/publication?pub=...`
+    ```bash
+    curl "http://localhost:3000/api/v1/pub-media/publication?pub=mwb&langwritten=E&issue=202401"
+    ```
+
+### Interactive Documentation
+
+- **Swagger UI**: http://localhost:3000/_docs/swagger
+- **Scalar**: http://localhost:3000/_docs/scalar
+- **OpenAPI Spec**: http://localhost:3000/_docs/openapi.json
 
 ## Developers
 
