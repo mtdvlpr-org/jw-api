@@ -4,7 +4,7 @@ This document describes the RESTful API endpoints, response formats, error handl
 
 ## Base URL
 
-```
+```bash
 http://localhost:3000/api/v1
 ```
 
