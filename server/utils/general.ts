@@ -153,3 +153,39 @@ export const langCodeToMepsId = (lang: JwLangCode): number => {
     Object.entries(mepsLanguageIds).find(([, langcode]) => langcode === lang)?.[0] ?? '0'
   )
 }
+
+/**
+ * Parses a Bible verse ID into its book, chapter, and verse components.
+ * @param verseId The Bible verse ID to parse.
+ * @returns The parsed components.
+ */
+export const parseBibleVerseId = (verseId: BibleVerseId) => {
+  if (!/^[1-6]\d{6,7}$/.test(verseId)) {
+    throw apiBadRequestError(`Invalid Bible verse ID: '${verseId}'`)
+  }
+
+  const startIndex = verseId.length === 7 ? 1 : 2
+  const book = parseInt(verseId.slice(0, startIndex)) as BibleBookNr
+  const chapter = parseInt(verseId.slice(startIndex, startIndex + 3))
+  const verse = parseInt(verseId.slice(startIndex + 3, startIndex + 6))
+
+  return { book, chapter, verse }
+}
+
+/**
+ * Parses a Bible range ID into its start and end verse components.
+ * @param rangeId The Bible range ID to parse.
+ * @returns An object containing the start and end verse components.
+ */
+export const parseBibleRangeId = (rangeId: BibleRangeId) => {
+  if (!/^[1-6]\d{6,7}-[1-6]\d{6,7}$/.test(rangeId)) {
+    throw apiBadRequestError(`Invalid Bible range ID: '${rangeId}'`)
+  }
+
+  const [startVerseId, endVerseId] = rangeId.split('-') as [BibleVerseId, BibleVerseId]
+
+  return {
+    end: parseBibleVerseId(endVerseId),
+    start: parseBibleVerseId(startVerseId)
+  }
+}

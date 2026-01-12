@@ -247,11 +247,16 @@ export interface BibleRange {
 
 /**
  * The string representation of a verse range in BBCCCVVV-BBCCCVVV format.
- * @example '01001001-01001005' // Genesis 1:1-5
+ * @example '1001001-1001005' // Genesis 1:1-5
  * @example '19025012-19025015' // Psalms 25:12-15
  * @example '40001001-40013005' // Matthew 1:1-13:5
  */
 export type BibleRangeId = `${BibleVerseId}-${BibleVerseId}`
+
+export type BibleRangeMultimedia = Pick<
+  BibleRange,
+  'citation' | 'citationVerseRange' | 'link' | 'multimedia' | 'validRange'
+>
 
 export interface BibleRangeSingle extends Omit<BibleRange, 'citationVerseRange' | 'validRange'> {
   citationVerseRange: BibleVerseString
@@ -295,6 +300,13 @@ export interface BibleResult {
 export interface BibleResultEmpty extends Omit<BibleResult, 'ranges'> {
   copyrightPage: BibleCopyrightPage
   ranges: []
+}
+
+export interface BibleResultMultimedia extends Pick<
+  BibleResult,
+  'currentLocale' | 'editionData' | 'status'
+> {
+  ranges: Partial<Record<BibleRangeId, BibleRangeMultimedia>>
 }
 
 export interface BibleResultSingle extends Omit<BibleResult, 'ranges'> {
@@ -345,7 +357,7 @@ export interface BibleVerse {
 
 /**
  * The ID of a verse in BBCCCVVV format.
- * @example '01001001' // Genesis 1:1
+ * @example '1001001' // Genesis 1:1
  * @example '19025012' // Psalms 25:12
  * @example '40013005' // Matthew 13:5
  */
@@ -353,8 +365,8 @@ export type BibleVerseId = `${number}`
 
 /**
  * The ID of a verse or a comma separated list of verse IDs.
- * @example '01001001' // Genesis 1:1
- * @example '01001001,19025012,40013005' // Genesis 1:1, Psalms 25:12, Matthew 13:5
+ * @example '1001001' // Genesis 1:1
+ * @example '1001001,19025012,40013005' // Genesis 1:1, Psalms 25:12, Matthew 13:5
  */
 export type BibleVerseSource = BibleVerseId | string
 

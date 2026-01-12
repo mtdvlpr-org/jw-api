@@ -12,6 +12,89 @@ const defaultFetchOptions = {
 } satisfies FetchOptions
 
 /**
+ * Fetches multimedia from a book of the Bible.
+ * @param book The book number.
+ * @param locale The language of the Bible.
+ * @returns The multimedia.
+ * @throws If the book is not found or the service is unavailable.
+ */
+const fetchBibleMultimedia = defineCachedFunction(
+  async (book: BibleBookNr, locale: JwLangSymbol) => {
+    try {
+      const url = (await scrapeBibleDataUrl(locale)).replace('/data', '/multimedia')
+
+      const result = await $fetch<BibleResultMultimedia>(`${url}/${book}`, {
+        ...defaultFetchOptions
+      })
+
+      const rangesData = Object.values(result.ranges ?? {})[0] ?? null
+
+      if (!rangesData) {
+        throw apiNotFoundError(`Book ${book} multimedia not found for locale '${locale}'`)
+      }
+
+      return rangesData
+    } catch (error) {
+      if (error instanceof Error && 'fatal' in error) {
+        throw error
+      }
+      throw toFetchApiError(error, {
+        notFoundMessage: `Book ${book} multimedia not found for locale '${locale}'`,
+        serviceName: SERVICE_NAME
+      })
+    }
+  },
+  { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleMultimedia' }
+)
+
+/**
+ * Fetches a Bible range.
+ * @param start The start of the range.
+ * @param end The end of the range.
+ * @param locale The language of the Bible.
+ * @returns The range data.
+ * @throws If the book is not found or the service is unavailable.
+ */
+const fetchBibleRange = defineCachedFunction(
+  async (
+    start: { book: BibleBookNr; chapter: number; verse: number },
+    end: { book: BibleBookNr; chapter: number; verse: number },
+    locale: JwLangSymbol
+  ) => {
+    console.log(
+      `fetchBibleRange: ${generateVerseId(start.book, start.chapter, start.verse)}-${generateVerseId(end.book, end.chapter, end.verse)}`
+    )
+    try {
+      const url = await scrapeBibleDataUrl(locale)
+      const startVerseId = generateVerseId(start.book, start.chapter, start.verse)
+      const endVerseId = generateVerseId(end.book, end.chapter, end.verse)
+      const range: `${number}-${number}` = `${startVerseId}-${endVerseId}`
+
+      const result = await $fetch<BibleResult>(`${url}/${range}`, { ...defaultFetchOptions })
+
+      const rangesData = Object.values(result.ranges ?? {})[0] ?? null
+
+      if (!rangesData) {
+        throw apiNotFoundError(`Range not found for locale '${locale}'`)
+      }
+
+      console.log(`fetched ${rangesData.validRange}`)
+
+      return rangesData
+    } catch (error) {
+      if (error instanceof Error && 'fatal' in error) {
+        throw error
+      }
+      throw toFetchApiError(error, {
+        notFoundMessage: `Range not found for locale '${locale}'`,
+        serviceName: SERVICE_NAME
+      })
+    }
+  },
+  { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleRange' }
+)
+
+/**
  * Repository for Bible resources.
  */
 export const bibleRepository = {
@@ -38,7 +121,54 @@ export const bibleRepository = {
           throw apiNotFoundError(`Book ${book} not found for locale '${locale}'`)
         }
 
-        return { book: result.editionData.books[book], range: rangesData }
+        const bookData = result.editionData.books[book]
+
+        const multimediaResult = await fetchBibleMultimedia(book, locale)
+        const validRange = multimediaResult.validRange
+
+        if (rangesData.validRange === validRange) {
+          return { book: bookData, range: rangesData }
+        }
+
+        let mergedRange: BibleRange = rangesData
+        const totalRange = parseBibleRangeId(validRange).end
+        let fetchedRange = parseBibleRangeId(rangesData.validRange).end
+
+        while (JSON.stringify(fetchedRange) !== JSON.stringify(totalRange)) {
+          const nextRange = await fetchBibleRange(
+            { ...fetchedRange, verse: fetchedRange.verse + 1 },
+            totalRange,
+            locale
+          )
+
+          mergedRange = {
+            ...multimediaResult,
+            chapterOutlines: [
+              ...(mergedRange.chapterOutlines ?? []),
+              ...(nextRange.chapterOutlines ?? [])
+            ],
+            commentaries: [...(mergedRange.commentaries ?? []), ...(nextRange.commentaries ?? [])],
+            crossReferences: [
+              ...(mergedRange.crossReferences ?? []),
+              ...(nextRange.crossReferences ?? [])
+            ],
+            footnotes: [...(mergedRange.footnotes ?? []), ...(nextRange.footnotes ?? [])],
+            html: (mergedRange.html ?? '') + (nextRange.html ?? ''),
+            pubReferences: [
+              ...(mergedRange.pubReferences ?? []),
+              ...(nextRange.pubReferences ?? [])
+            ],
+            superscriptions: [
+              ...(mergedRange.superscriptions ?? []),
+              ...(nextRange.superscriptions ?? [])
+            ],
+            verses: [...(mergedRange.verses ?? []), ...(nextRange.verses ?? [])]
+          }
+
+          fetchedRange = parseBibleRangeId(nextRange.validRange).end
+        }
+
+        return { book: bookData, range: mergedRange }
       } catch (error) {
         if (error instanceof Error && 'fatal' in error) {
           throw error
@@ -51,7 +181,6 @@ export const bibleRepository = {
     },
     { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleBook' }
   ),
-
   /**
    * Fetches a chapter of the Bible.
    * @param book The book number.
@@ -63,22 +192,11 @@ export const bibleRepository = {
   fetchBibleChapter: defineCachedFunction(
     async (book: BibleBookNr, chapter: number, locale: JwLangSymbol) => {
       try {
-        const url = await scrapeBibleDataUrl(locale)
-        const startVerseId = generateVerseId(book, chapter, 1)
-        const endVerseId = generateVerseId(book, chapter, 999)
-        const range: `${number}-${number}` = `${startVerseId}-${endVerseId}`
-
-        const result = await $fetch<BibleResult>(`${url}/${range}`, { ...defaultFetchOptions })
-
-        const chapterData = result.ranges?.[range]
-
-        if (!chapterData) {
-          throw apiNotFoundError(
-            `Chapter ${chapter} of book ${book} not found for locale '${locale}'`
-          )
-        }
-
-        return chapterData
+        return await fetchBibleRange(
+          { book, chapter, verse: 1 },
+          { book, chapter, verse: 999 },
+          locale
+        )
       } catch (error) {
         if (error instanceof Error && 'fatal' in error) {
           throw error
@@ -115,6 +233,8 @@ export const bibleRepository = {
     },
     { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleData' }
   ),
+
+  fetchBibleMultimedia,
 
   /**
    * Fetches a verse of the Bible.

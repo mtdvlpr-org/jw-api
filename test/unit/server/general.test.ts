@@ -9,7 +9,9 @@ import {
   isJwLangCode,
   isJwLangSymbol,
   langCodeToMepsId,
-  pad
+  pad,
+  parseBibleRangeId,
+  parseBibleVerseId
 } from '../../../server/utils/general'
 import { jwLangCodes, jwLangSymbols, mepsLanguageIds } from '../../../shared/types/lang.types'
 
@@ -193,6 +195,83 @@ describe('jw general utils', () => {
     it('should return 0 for unknown language code', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(langCodeToMepsId('XYZ' as any)).toBe(0)
+    })
+  })
+
+  describe('parseBibleVerseId', () => {
+    it('should parse single-digit book verse ID', () => {
+      // Genesis 1:1 = 1001001
+      expect(parseBibleVerseId('1001001')).toEqual({ book: 1, chapter: 1, verse: 1 })
+    })
+
+    it('should parse double-digit book verse ID', () => {
+      // Revelation 22:21 = 66022021
+      expect(parseBibleVerseId('66022021')).toEqual({ book: 66, chapter: 22, verse: 21 })
+    })
+
+    it('should parse verse with leading zeros', () => {
+      // Matthew 1:1 = 40001001
+      expect(parseBibleVerseId('40001001')).toEqual({ book: 40, chapter: 1, verse: 1 })
+    })
+
+    it('should parse verse with higher chapter and verse numbers', () => {
+      // Psalms 119:176 = 19119176
+      expect(parseBibleVerseId('19119176')).toEqual({ book: 19, chapter: 119, verse: 176 })
+    })
+
+    it('should parse verse with maximum verse number', () => {
+      // Revelation 150:999 (hypothetical max)
+      expect(parseBibleVerseId('66150999')).toEqual({ book: 66, chapter: 150, verse: 999 })
+    })
+  })
+
+  describe('parseBibleRangeId', () => {
+    it('should parse range with single-digit book numbers', () => {
+      // Genesis 1:1 - Genesis 1:5
+      expect(parseBibleRangeId('1001001-1001005')).toEqual({
+        end: { book: 1, chapter: 1, verse: 5 },
+        start: { book: 1, chapter: 1, verse: 1 }
+      })
+    })
+
+    it('should parse range with double-digit book numbers', () => {
+      // Matthew 5:1 - Matthew 5:12
+      expect(parseBibleRangeId('40005001-40005012')).toEqual({
+        end: { book: 40, chapter: 5, verse: 12 },
+        start: { book: 40, chapter: 5, verse: 1 }
+      })
+    })
+
+    it('should parse range across chapters', () => {
+      // John 3:16 - John 4:10
+      expect(parseBibleRangeId('43003016-43004010')).toEqual({
+        end: { book: 43, chapter: 4, verse: 10 },
+        start: { book: 43, chapter: 3, verse: 16 }
+      })
+    })
+
+    it('should parse range across books', () => {
+      // Genesis 50:26 - Exodus 1:1
+      expect(parseBibleRangeId('1050026-2001001')).toEqual({
+        end: { book: 2, chapter: 1, verse: 1 },
+        start: { book: 1, chapter: 50, verse: 26 }
+      })
+    })
+
+    it('should parse entire book range', () => {
+      // Genesis 1:1 - Genesis 999:999 (representing entire book)
+      expect(parseBibleRangeId('1001001-1999999')).toEqual({
+        end: { book: 1, chapter: 999, verse: 999 },
+        start: { book: 1, chapter: 1, verse: 1 }
+      })
+    })
+
+    it('should parse range with large chapter and verse numbers', () => {
+      // Psalms 119:1 - Psalms 119:176
+      expect(parseBibleRangeId('19119001-19119176')).toEqual({
+        end: { book: 19, chapter: 119, verse: 176 },
+        start: { book: 19, chapter: 119, verse: 1 }
+      })
     })
   })
 })
