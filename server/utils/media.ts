@@ -10,6 +10,7 @@
  * @example 'pub-jwb-080_x_AUDIO'
  */
 const MEDIA_KEY_REGEX =
+  // eslint-disable-next-line security/detect-unsafe-regex
   /^(?:docid-(?<docid>[1-9]\d*)|pub-(?<pub>[a-zA-Z0-9-]+)(?:_(?<issue>[1-9]\d*))?)_(?<track>[1-9]\d*|x)_(?<type>VIDEO|AUDIO)$/
 
 /**

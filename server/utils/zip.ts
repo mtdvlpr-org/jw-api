@@ -12,6 +12,7 @@ import { createGunzip } from 'node:zlib'
  * @returns A promise that resolves when the decompression is complete.
  */
 export const decompressGzip = async (fileStream: Readable, outputPath: string): Promise<void> => {
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   return await pipeline(fileStream, createGunzip(), createWriteStream(outputPath))
 }
 

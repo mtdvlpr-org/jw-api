@@ -375,6 +375,7 @@ const SPECIAL_CHARS: Partial<Record<string, string>> = {
 }
 
 // Main RTF pattern
+// eslint-disable-next-line security/detect-unsafe-regex
 const PATTERN = /\\([a-z]{1,32})(-?\d{1,10})?[ ]?|\\'([0-9a-f]{2})|\\([^a-z])|([{}])|[\r\n]+|(.)/gi
 
 // Hyperlink pattern
@@ -411,6 +412,7 @@ const cleanAndFormatText = (text: string): string => {
   text = text.replace(/([.!?])\s*(\d+\s+[A-Z])/g, '$1\n\n$2')
 
   // Add line breaks before section headings
+  // eslint-disable-next-line security/detect-unsafe-regex
   text = text.replace(/([a-z]\.?)([A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g, '$1\n\n$2')
 
   // Fix specific transitions

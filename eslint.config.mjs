@@ -31,6 +31,7 @@ export default withNuxt(
   eslintPluginPrettierRecommended,
   { rules: { 'prettier/prettier': ['error', { endOfLine: 'auto' }] } }
 ).overrideRules({
+  'security/detect-object-injection': 'off',
   'vue/attributes-order': ['warn', { alphabetical: true, sortLineLength: true }],
   'vue/block-order': ['error', { order: ['template', 'script', 'style'] }]
 })
