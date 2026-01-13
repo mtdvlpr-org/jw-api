@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "local-jw-api": {
+      "url": "http://localhost:3001/mcp",
+      "headers": {}
+    }
+  }
+}

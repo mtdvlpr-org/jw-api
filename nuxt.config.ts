@@ -42,7 +42,7 @@ export default defineNuxtConfig({
       temp: { base: './.data/temp', driver: 'fs-lite' }
     }
   },
-  routeRules: { '/api/**': { cors: true }, '/mcp': { cors: true } },
+  routeRules: { '/api/**': { cors: true }, '/mcp/**': { cors: true } },
   runtimeConfig: { apiVersion: 'v1', public: { description, title, version } },
-  security: { csrf: true, rateLimiter: { headers: true }, strict: true }
+  security: { csrf: false, rateLimiter: { headers: true }, strict: false }
 })

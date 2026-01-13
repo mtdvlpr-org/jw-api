@@ -1,11 +1,22 @@
 import type { FetchOptions } from 'ofetch'
 
+// Bible urls
+
+// https://wol.jw.org/nl/wol/b/r18/lp-o/nwtsty/1/1#study=discover
+// https://wol.jw.org/en/wol/b/r1/lp-e/nwtsty/1/1#study=discover
+
+// Root urls
+
+// https://wol.jw.org/nl/wol/h/r18/lp-o
+// https://wol.jw.org/en/wol/h/r1/lp-e
+
 const yeartextUrls = new Map<string, string>()
 
 const getYeartextKey = (wtlocale: JwLangCode, year: number) => `${wtlocale}-${year}`
 
 const defaultFetchOptions = {
-  baseURL: 'https://wol.jw.org'
+  baseURL: 'https://wol.jw.org',
+  headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)' }
 } satisfies FetchOptions
 
 /**
@@ -39,6 +50,43 @@ const fetchYeartextResult = defineCachedFunction(
  * Repository for WOL resources.
  */
 export const wolRepository = {
+  fetchHomepage: async (wtlocale: JwLangCode) => {
+    try {
+      const result = await $fetch.raw<string>(`/wol/finder?wtlocale=${wtlocale}`, {
+        ...defaultFetchOptions
+      })
+
+      return result
+    } catch (error) {
+      throw toFetchApiError(error, {
+        notFoundMessage: `WOL homepage not found for locale '${wtlocale}'`,
+        serviceName: 'WOL'
+      })
+    }
+  },
+
+  fetchReference: defineCachedFunction(
+    async (path: string) => {
+      try {
+        const result = await $fetch<WolRefResult>(path, { ...defaultFetchOptions })
+
+        const item = result.items[0]
+
+        if (!item) {
+          throw apiNotFoundError(`WOL reference not found: '${path}'`)
+        }
+
+        return item
+      } catch (error) {
+        throw toFetchApiError(error, {
+          notFoundMessage: `WOL reference not found: '${path}'`,
+          serviceName: 'WOL'
+        })
+      }
+    },
+    { maxAge: 60 * 60 * 24 * 30, name: 'wolRepository.fetchReference' }
+  ),
+
   /**
    * Fetches the yeartext for a given year.
    * @param wtlocale The language of the yeartext.

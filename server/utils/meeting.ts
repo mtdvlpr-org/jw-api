@@ -24,7 +24,7 @@ const getMeetingPublications = async (date?: { week: number; year: number }) => 
 }
 
 const getMeetingArticles = async (
-  langwritten: JwLangCode,
+  langwritten: JwLangCode = 'E',
   date?: { week: number; year: number }
 ) => {
   const { watchtower, workbook } = await getMeetingPublications(date)
@@ -89,7 +89,7 @@ const getMeetingArticles = async (
 }
 
 const getMeetingSchedule = async (
-  langwritten: JwLangCode,
+  langwritten: JwLangCode = 'E',
   date?: { week: number; year: number }
 ) => {
   const { watchtower, workbook } = await getMeetingPublications(date)

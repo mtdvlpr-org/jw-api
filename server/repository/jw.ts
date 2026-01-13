@@ -4,12 +4,7 @@ const SERVICE_NAME = 'JW.org'
 
 const defaultFetchOptions = {
   baseURL: 'https://jw.org',
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)'
-  },
-  retry: 2,
-  retryDelay: 1000,
-  timeout: 30000
+  headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JW-API/1.0)' }
 } satisfies FetchOptions
 
 /**

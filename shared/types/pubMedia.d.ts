@@ -102,7 +102,7 @@ export interface PublicationFile {
   hasTrack: boolean
   pub: string
   docid: number
-  booknum: number
+  booknum: 0 | BibleBookNr | null
   mimetype: `${string}/${string}`
   edition: string
   editionDescr: string

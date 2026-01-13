@@ -108,10 +108,42 @@ const getWatchtowerArticleContent = async (url: string) => {
   return parseRTF(article)
 }
 
+const getBookNumByName = async (name: string, langwritten: JwLangCode = 'E') => {
+  const lowerName = name.toLowerCase()
+  const bible = await getPublication({ booknum: 0, langwritten, pub: 'nwt' })
+
+  if (bible.files[langwritten]?.DAISY) {
+    const match = bible.files[langwritten].DAISY.find(
+      (file) => file.title.toLowerCase() === lowerName
+    )
+
+    if (match && match.booknum) return match.booknum
+  }
+
+  if (bible.files[langwritten]?.RTF) {
+    const match = bible.files[langwritten].RTF.find(
+      (file) => file.title.toLowerCase() === lowerName
+    )
+
+    if (match && match.booknum) return match.booknum
+  }
+
+  if (bible.files[langwritten]?.BRL) {
+    const match = bible.files[langwritten].BRL.find(
+      (file) => file.title.toLowerCase() === lowerName
+    )
+
+    if (match && match.booknum) return match.booknum
+  }
+
+  return null
+}
+
 /**
  * A service wrapping the publication media repository.
  */
 export const pubMediaService = {
+  getBookNumByName,
   getMeetingWorkbook,
   getMwbJwpub,
   getPublication,

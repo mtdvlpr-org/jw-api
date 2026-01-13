@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 const outputSchema = {
-  subtitles: z.string().describe('The subtitles of the video.'),
-  thumbnail: z.string().describe('The thumbnail of the video.'),
-  title: z.string().describe('The title of the video.')
+  subtitles: z.string().meta({ description: 'The subtitles of the video.' }),
+  thumbnail: z.string().meta({ description: 'The thumbnail of the video.' }),
+  title: z.string().meta({ description: 'The title of the video.' })
 }
 
 type OutputSchema = z.output<z.ZodObject<typeof outputSchema>>

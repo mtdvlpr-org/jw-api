@@ -109,7 +109,7 @@ export const bibleRepository = {
     async (book: BibleBookNr, locale: JwLangSymbol) => {
       try {
         const url = await scrapeBibleDataUrl(locale)
-        const startVerseId = generateVerseId(book, 1, 1)
+        const startVerseId = generateVerseId(book, 0, 0)
         const endVerseId = generateVerseId(book, 999, 999)
         const range: `${number}-${number}` = `${startVerseId}-${endVerseId}`
 
@@ -181,6 +181,7 @@ export const bibleRepository = {
     },
     { maxAge: 60 * 60 * 24 * 30, name: 'bibleRepository.fetchBibleBook' }
   ),
+
   /**
    * Fetches a chapter of the Bible.
    * @param book The book number.
@@ -193,7 +194,7 @@ export const bibleRepository = {
     async (book: BibleBookNr, chapter: number, locale: JwLangSymbol) => {
       try {
         return await fetchBibleRange(
-          { book, chapter, verse: 1 },
+          { book, chapter, verse: 0 },
           { book, chapter, verse: 999 },
           locale
         )

@@ -1,3 +1,32 @@
+export interface WolRefItem {
+  articleClasses: string
+  caption: string
+  categories: string[]
+  /**
+   * The content of the reference in HTML.
+   */
+  content: string
+  did: number
+  englishSymbol: string
+  hideThumbnailImage: boolean
+  lib: string
+  mediaHtml: unknown[]
+  navScopeData: unknown[]
+  preReference: string
+  publicationTitle: string
+  pubType: string
+  reference: string
+  rsconf: string
+  source: string
+  title: string
+  url: string
+}
+
+export interface WolRefResult {
+  items: WolRefItem[]
+  title: string
+}
+
 export interface YeartextDetails {
   articleClasses: string
   /**
