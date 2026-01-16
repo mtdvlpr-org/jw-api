@@ -5,6 +5,7 @@ import type { DbKey } from './shared/types/db'
 import { description, version } from './package.json'
 
 const title = 'JW API'
+const isDev = process.env.NODE_ENV === 'development'
 
 const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }> = {
   catalog: { connector: 'sqlite', options: { name: 'catalog' } }
@@ -21,7 +22,6 @@ export default defineNuxtConfig({
     }
   },
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
   future: { typescriptBundlerResolution: true },
   mcp: { name: title, version },
   modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit', 'nuxt-security'],
@@ -42,7 +42,32 @@ export default defineNuxtConfig({
       temp: { base: './.data/temp', driver: 'fs-lite' }
     }
   },
-  routeRules: { '/api/**': { cors: true }, '/mcp/**': { cors: true } },
-  runtimeConfig: { apiVersion: 'v1', public: { description, title, version } },
-  security: { csrf: false, rateLimiter: { headers: true }, strict: false }
+  runtimeConfig: {
+    apiVersion: 'v1',
+    public: { description, title, version }
+  },
+  security: {
+    corsHandler: { origin: '*' },
+    csrf: false, // TODO: Enable CSRF protection when we have state-changing endpoints
+    headers: {
+      contentSecurityPolicy: {
+        'img-src': isDev ? ["'self'", 'data:'] : undefined, // Nuxt DevTools
+        'style-src-attr': [
+          "'unsafe-hashes'",
+          "'sha256-V1oXad6TSON5lAPSlYyq7P4n6DHYMuK6mVMTl6g4Qnc='" // NuxtLoadingIndicator
+        ],
+        'style-src-elem': isDev
+          ? [
+              "'unsafe-hashes'",
+              "'sha256-OD9WVNQJEovAiR/DJOt93obaRkfsvRKjjDXmxB2VR+w='", // Nuxt DevTools
+              // TODO: Remove when NuxtWelcome is removed
+              "'sha256-xfTtFXgyQRFFrgZl3DoFKJBt5UsgD7QZ2l1JoWk3xCk='", // NuxtWelcome
+              "'sha256-zyQlNcK/TQ7fWXm/87qoWxHXLGBjDfqDj7AkcCt2weM='" // NuxtWelcome
+            ]
+          : undefined
+      }
+    },
+    rateLimiter: { headers: true },
+    strict: true
+  }
 })

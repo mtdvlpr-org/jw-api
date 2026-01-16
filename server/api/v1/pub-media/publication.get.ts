@@ -45,7 +45,23 @@ defineRouteMeta({
             in: 'query',
             name: 'fileformat',
             required: false,
-            schema: { type: 'string' },
+            schema: {
+              enum: [
+                '3GP',
+                'AAC',
+                'BRL',
+                'DAISY',
+                'EPUB',
+                'JWPUB',
+                'M4V',
+                'MP3',
+                'MP4',
+                'PDF',
+                'RTF',
+                'ZIP'
+              ],
+              type: 'string'
+            },
             summary: 'A file format.'
           },
           Issue: {

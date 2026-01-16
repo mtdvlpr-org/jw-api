@@ -78,29 +78,36 @@ export const bibleVerseNrSchema = z.coerce
 /* JW */
 export const jwLanguageSchema = {
   altSpellings: z
-    .array(z.string())
+    .array(z.string().nonempty())
     .meta({ description: 'The alternative spellings of the language.' }),
   direction: z.enum(['ltr', 'rtl']).meta({ description: 'The direction of the language.' }),
   hasWebContent: z.boolean().meta({ description: 'Whether the language has web content.' }),
   isCounted: z.boolean().meta({ description: 'Whether the language is counted.' }),
   isSignLanguage: z.boolean().meta({ description: 'Whether the language is a sign language.' }),
   langcode: jwLangCodeSchema,
-  name: z.string().meta({
-    description: 'The name of the language.',
-    examples: ['English', 'Dutch', 'Spanish']
-  }),
+  name: z
+    .string()
+    .nonempty()
+    .meta({
+      description: 'The name of the language.',
+      examples: ['English', 'Dutch', 'Spanish']
+    }),
   script: jwLangScriptSchema,
   symbol: jwLangSymbolSchema,
-  vernacularName: z.string().meta({
-    description: 'The vernacular name of the language.',
-    examples: ['English', 'Nederlands', 'Español']
-  })
+  vernacularName: z
+    .string()
+    .nonempty()
+    .meta({
+      description: 'The vernacular name of the language.',
+      examples: ['English', 'Nederlands', 'Español']
+    })
 }
 
 /* Mediator */
 
 export const categoryKeySchema = z
   .string() // Allow unknown category keys
+  .nonempty()
   .meta({
     description: 'A category key.',
     examples: [...categoryContainerKeys, ...categoryOnDemandKeys]
@@ -143,7 +150,10 @@ export const pubFetcherSchema = z.object({
       examples: [201705, 202501, 202012]
     }),
   langwritten: jwLangCodeSchema,
-  pub: z.string().meta({ description: 'The publication key.', examples: ['jwb', 'mwb', 'w'] }),
+  pub: z
+    .string()
+    .nonempty()
+    .meta({ description: 'The publication key.', examples: ['jwb', 'mwb', 'w'] }),
   track
 })
 

@@ -13,21 +13,28 @@ const querySchema = z.object({
 
 defineRouteMeta({
   openAPI: {
+    $global: {
+      components: {
+        parameters: {
+          WtLocale: {
+            description: 'A JW language code for internal use.',
+            examples: {
+              1: { summary: 'English', value: 'E' },
+              2: { summary: 'Dutch', value: 'O' },
+              3: { summary: 'Spanish', value: 'S' }
+            },
+            in: 'query',
+            name: 'wtlocale',
+            required: true,
+            schema: { type: 'string' }
+          }
+        }
+      }
+    },
     description: 'Get the yeartext for a given language and year.',
     operationId: 'getYeartext',
     parameters: [
-      {
-        description: 'The language of the yeartext.',
-        examples: {
-          1: { summary: 'English', value: 'E' },
-          2: { summary: 'Dutch', value: 'O' },
-          3: { summary: 'Spanish', value: 'S' }
-        },
-        in: 'query',
-        name: 'wtlocale',
-        required: true,
-        schema: { type: 'string' }
-      },
+      { $ref: '#/components/parameters/WtLocale' },
       {
         description: 'The year of the yeartext.',
         example: 2026,

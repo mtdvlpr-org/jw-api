@@ -24,7 +24,7 @@ importers:
         specifier: ^4.2.2
         version: 4.2.2(@netlify/blobs@10.5.0)(@parcel/watcher@2.5.1)(@types/node@22.19.5)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.2(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.5.1)(optionator@0.9.4)(rollup@4.54.0)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(typescript@5.9.3)(vite@7.3.0(@types/node@22.19.5)(jiti@2.6.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       nuxt-security:
-        specifier: 2.5.0
+        specifier: ^2.5.0
         version: 2.5.0(magicast@0.5.1)(rollup@4.54.0)
       pino:
         specifier: ^10.1.1
@@ -70,7 +70,7 @@ importers:
         specifier: ^0.10.11
         version: 0.10.11
       '@vitest/coverage-v8':
-        specifier: 3.2.4
+        specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.19.5)(happy-dom@20.1.0)(jiti@2.6.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(yaml@2.8.2))
       '@vitest/eslint-plugin':
         specifier: ^1.6.6
