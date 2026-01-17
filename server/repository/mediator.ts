@@ -143,7 +143,7 @@ export const mediatorRepository = {
 
         return data
       } catch (error) {
-        if (error instanceof Error && 'fatal' in error) {
+        if (isApiError(error)) {
           throw error
         }
         throw toFetchApiError(error, {

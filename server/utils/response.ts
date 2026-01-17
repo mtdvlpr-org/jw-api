@@ -1,3 +1,5 @@
+import type { H3Error } from 'h3'
+
 import { FetchError } from 'ofetch'
 
 /**
@@ -105,6 +107,21 @@ const buildErrorData = (details?: ApiErrorDetail[]): ApiErrorData => {
   return data
 }
 
+type ApiError = RequiredFields<H3Error<ApiErrorData>, 'data' | 'statusMessage'>
+
+export const isApiError = (error: unknown): error is ApiError => {
+  return (
+    error instanceof Error &&
+    'statusCode' in error &&
+    'fatal' in error &&
+    'statusMessage' in error &&
+    'data' in error &&
+    typeof error.data === 'object' &&
+    error.data !== null &&
+    'meta' in error.data
+  )
+}
+
 interface ApiErrorOptions {
   cause?: unknown
   details?: ApiErrorDetail[]
@@ -125,14 +142,14 @@ const apiError = (
   statusCode: number,
   statusMessage: string,
   options?: ApiErrorOptions
-) => {
+): ApiError => {
   return createError({
     cause: options?.cause,
     data: buildErrorData(options?.details),
     message,
     statusCode,
     statusMessage
-  })
+  }) as ApiError
 }
 
 /* Convenience error creators */
@@ -179,7 +196,7 @@ interface FetchErrorContext {
  * }
  * ```
  */
-export const toFetchApiError = (error: unknown, context: FetchErrorContext): Error => {
+export const toFetchApiError = (error: unknown, context: FetchErrorContext): ApiError | Error => {
   const { notFoundMessage, serviceName } = context
 
   if (error instanceof FetchError) {

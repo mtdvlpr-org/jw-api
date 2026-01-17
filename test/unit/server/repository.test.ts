@@ -9,6 +9,7 @@ import { pubMediaRepository } from '../../../server/repository/pubMedia'
 import { wolRepository } from '../../../server/repository/wol'
 import { generateVerseId } from '../../../server/utils/general'
 import { generateMediaKey } from '../../../server/utils/media'
+import { isApiError } from '../../../server/utils/response'
 
 // Mock globals for tests since they are auto-imported in Nuxt but not here
 const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
@@ -20,7 +21,7 @@ const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
     return err
   })
   const toFetchApiError = vi.fn((error, opts) => {
-    if (error instanceof Error && 'fatal' in error) return error
+    if (isApiError(error)) return error
     return new Error(opts?.notFoundMessage || 'Error')
   })
 

@@ -35,7 +35,7 @@ const fetchBibleMultimedia = defineCachedFunction(
 
       return rangesData
     } catch (error) {
-      if (error instanceof Error && 'fatal' in error) {
+      if (isApiError(error)) {
         throw error
       }
       throw toFetchApiError(error, {
@@ -82,7 +82,7 @@ const fetchBibleRange = defineCachedFunction(
 
       return rangesData
     } catch (error) {
-      if (error instanceof Error && 'fatal' in error) {
+      if (isApiError(error)) {
         throw error
       }
       throw toFetchApiError(error, {
@@ -170,7 +170,7 @@ export const bibleRepository = {
 
         return { book: bookData, range: mergedRange }
       } catch (error) {
-        if (error instanceof Error && 'fatal' in error) {
+        if (isApiError(error)) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -199,7 +199,7 @@ export const bibleRepository = {
           locale
         )
       } catch (error) {
-        if (error instanceof Error && 'fatal' in error) {
+        if (isApiError(error)) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -223,7 +223,7 @@ export const bibleRepository = {
         const url = await scrapeBibleDataUrl(locale)
         return await $fetch<BibleResultEmpty>(url, { ...defaultFetchOptions })
       } catch (error) {
-        if (error instanceof Error && 'fatal' in error) {
+        if (isApiError(error)) {
           throw error
         }
         throw toFetchApiError(error, {
@@ -266,7 +266,7 @@ export const bibleRepository = {
 
         return verse
       } catch (error) {
-        if (error instanceof Error && 'fatal' in error) {
+        if (isApiError(error)) {
           throw error
         }
         throw toFetchApiError(error, {
