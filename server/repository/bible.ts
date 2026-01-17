@@ -58,9 +58,6 @@ const fetchBibleRange = defineCachedFunction(
     end: { book: BibleBookNr; chapter: number; verse: number },
     locale: JwLangSymbol
   ) => {
-    console.log(
-      `fetchBibleRange: ${generateVerseId(start.book, start.chapter, start.verse)}-${generateVerseId(end.book, end.chapter, end.verse)}`
-    )
     try {
       const url = await scrapeBibleDataUrl(locale)
       const startVerseId = generateVerseId(start.book, start.chapter, start.verse)
@@ -74,8 +71,6 @@ const fetchBibleRange = defineCachedFunction(
       if (!rangesData) {
         throw apiNotFoundError(`Range not found for locale '${locale}'`)
       }
-
-      console.log(`fetched ${rangesData.validRange}`)
 
       return rangesData
     } catch (error) {

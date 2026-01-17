@@ -132,14 +132,15 @@ describe('openapi metadata validation', () => {
 
         const response200 = spec.responses?.['200']
         if (response200) {
-          const jsonContent = response200.content?.['application/json']
+          const jsonContent =
+            'content' in response200 ? response200.content?.['application/json'] : null
           if (!jsonContent) {
             errors.push(`${endpointId}: 200 response missing 'application/json' content`)
           } else if (!jsonContent.schema) {
             errors.push(`${endpointId}: 200 response missing schema`)
           }
 
-          if (!response200.description) {
+          if (!('description' in response200) || !response200.description) {
             errors.push(`${endpointId}: 200 response missing description`)
           }
         }
