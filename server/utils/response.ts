@@ -199,8 +199,8 @@ interface FetchErrorContext {
 export const toFetchApiError = (error: unknown, context: FetchErrorContext): ApiError | Error => {
   const { notFoundMessage, serviceName } = context
 
-  if (error instanceof FetchError) {
-    const cause = { cause: error }
+  if (error instanceof FetchError || isApiError(error)) {
+    const cause = { cause: error.cause ?? error }
     switch (error.statusCode) {
       case 400:
         return apiBadRequestError(

@@ -35,9 +35,6 @@ const fetchBibleMultimedia = defineCachedFunction(
 
       return rangesData
     } catch (error) {
-      if (isApiError(error)) {
-        throw error
-      }
       throw toFetchApiError(error, {
         notFoundMessage: `Book ${book} multimedia not found for locale '${locale}'`,
         serviceName: SERVICE_NAME

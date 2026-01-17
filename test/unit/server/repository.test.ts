@@ -26,6 +26,7 @@ const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
   })
 
   vi.stubGlobal('$fetch', $fetch)
+  vi.stubGlobal('isApiError', isApiError)
   vi.stubGlobal('scrapeBibleDataUrl', scrapeBibleDataUrl)
   vi.stubGlobal('apiNotFoundError', apiNotFoundError)
   vi.stubGlobal('toFetchApiError', toFetchApiError)
