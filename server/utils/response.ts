@@ -213,7 +213,10 @@ export const toFetchApiError = (error: unknown, context: FetchErrorContext): Api
           cause
         )
       case 403:
-        return apiForbiddenError(notFoundMessage, cause)
+        return apiForbiddenError(
+          `Forbidden request to ${serviceName} service: ${error.message}`,
+          cause
+        )
       case 404:
         return apiNotFoundError(notFoundMessage, cause)
       case 500:

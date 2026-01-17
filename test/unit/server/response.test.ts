@@ -1,4 +1,3 @@
-import { createError } from 'nuxt/app'
 import { FetchError } from 'ofetch'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -16,7 +15,19 @@ import {
 
 // Mock globals BEFORE importing anything that uses them
 vi.hoisted(() => {
-  vi.stubGlobal('createError', createError)
+  vi.stubGlobal('createError', (error: unknown) => {
+    const e = new Error(
+      !!error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string'
+        ? error.message
+        : String(error)
+    )
+    Object.assign(e, error)
+    Object.assign(e, { fatal: false })
+    return e
+  })
   vi.stubGlobal('useRuntimeConfig', () => ({ apiVersion: 'v1' }))
   vi.stubGlobal('asyncLocalStorage', {
     getStore: () => ({ requestId: 'test-123', startTime: Date.now() })
@@ -196,7 +207,7 @@ describe('api error utils', () => {
 
       const result = toFetchApiError(fetchError, context)
 
-      expect(result.message).toBe(context.notFoundMessage)
+      expect(result.message).toContain('Forbidden request to TestService')
       expect(isApiError(result)).toBe(true)
     })
 

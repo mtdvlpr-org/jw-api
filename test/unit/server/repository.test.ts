@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { bibleRepository } from '../../../server/repository/bible'
@@ -9,7 +10,7 @@ import { pubMediaRepository } from '../../../server/repository/pubMedia'
 import { wolRepository } from '../../../server/repository/wol'
 import { generateVerseId } from '../../../server/utils/general'
 import { generateMediaKey } from '../../../server/utils/media'
-import { isApiError } from '../../../server/utils/response'
+import { isApiError, toFetchApiError } from '../../../server/utils/response'
 
 // Mock globals for tests since they are auto-imported in Nuxt but not here
 const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
@@ -17,24 +18,30 @@ const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
   const scrapeBibleDataUrl = vi.fn()
   const apiNotFoundError = vi.fn((msg) => {
     const err = new Error(msg)
-    Object.assign(err, { statusCode: 404 })
+    Object.assign(err, {
+      data: { meta: { requestId: 'id' } },
+      fatal: false,
+      statusCode: 404,
+      statusMessage: 'Not Found'
+    })
     return err
   })
-  const toFetchApiError = vi.fn((error, opts) => {
-    if (isApiError(error)) return error
-    return new Error(opts?.notFoundMessage || 'Error')
-  })
-
   vi.stubGlobal('$fetch', $fetch)
-  vi.stubGlobal('isApiError', isApiError)
   vi.stubGlobal('scrapeBibleDataUrl', scrapeBibleDataUrl)
   vi.stubGlobal('apiNotFoundError', apiNotFoundError)
-  vi.stubGlobal('toFetchApiError', toFetchApiError)
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
 
   return { $fetch, apiNotFoundError, scrapeBibleDataUrl }
 })
 
+vi.stubGlobal('isApiError', isApiError)
+vi.stubGlobal('createError', createError)
+vi.stubGlobal('useRuntimeConfig', () => ({
+  apiVersion: 'v1',
+  public: { description: 'Description', title: 'Title', version: '1.0.0' }
+}))
+vi.stubGlobal('asyncLocalStorage', { getStore: () => ({}) })
+vi.stubGlobal('toFetchApiError', toFetchApiError)
 vi.stubGlobal('generateVerseId', generateVerseId)
 vi.stubGlobal('generateMediaKey', generateMediaKey)
 
@@ -595,9 +602,7 @@ describe('repository utils', () => {
       await expect(bibleRepository.fetchBibleChapter(book, chapter, locale)).rejects.toThrow(
         `Chapter ${chapter} of book ${book} not found for locale '${locale}'`
       )
-      expect(apiNotFoundError).toHaveBeenCalledWith(
-        `Chapter ${chapter} of book ${book} not found for locale '${locale}'`
-      )
+      expect(apiNotFoundError).toHaveBeenCalledWith(`Range not found for locale '${locale}'`)
     })
   })
 
