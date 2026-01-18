@@ -5,7 +5,7 @@ import type { DbKey } from './shared/types/db'
 import { description, version } from './package.json'
 
 const title = 'JW API'
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = import.meta.env.NODE_ENV === 'development'
 
 const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }> = {
   catalog: { connector: 'sqlite', options: { name: 'catalog' } }

@@ -7,9 +7,14 @@ import security from 'eslint-plugin-security'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
+  // Plugins
   security.configs.recommended,
   perfectionist.configs['recommended-natural'],
-  { files: ['test/**'], plugins: { vitest }, rules: { ...vitest.configs.recommended.rules } },
+
+  // General rules
+  { rules: { 'no-console': ['error'] } },
+
+  // Vue specific rules
   {
     files: ['**/*.vue'],
     rules: {
@@ -28,6 +33,11 @@ export default withNuxt(
       'vue/prefer-template': ['warn']
     }
   },
+
+  // Test files
+  { files: ['test/**'], plugins: { vitest }, rules: { ...vitest.configs.recommended.rules } },
+
+  // Prettier
   eslintPluginPrettierRecommended,
   { rules: { 'prettier/prettier': ['error', { endOfLine: 'auto' }] } }
 ).overrideRules({
