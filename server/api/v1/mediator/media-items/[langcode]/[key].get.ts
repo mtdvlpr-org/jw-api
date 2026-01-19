@@ -21,80 +21,25 @@ defineRouteMeta({
           }
         },
         schemas: {
+          ImageSizesObject: {
+            properties: {
+              lg: { format: 'uri', type: 'string' },
+              md: { format: 'uri', type: 'string' },
+              sm: { format: 'uri', type: 'string' },
+              xs: { format: 'uri', type: 'string' }
+            },
+            type: 'object'
+          },
           ImagesObject: {
             properties: {
-              cvr: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              lsr: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              lss: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xl: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              pnr: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              sqr: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              sqs: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              wsr: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              },
-              wss: {
-                properties: {
-                  lg: { format: 'uri', type: 'string' },
-                  md: { format: 'uri', type: 'string' },
-                  sm: { format: 'uri', type: 'string' },
-                  xs: { format: 'uri', type: 'string' }
-                },
-                type: 'object'
-              }
+              cvr: { $ref: '#/components/schemas/ImageSizesObject' },
+              lsr: { $ref: '#/components/schemas/ImageSizesObject' },
+              lss: { $ref: '#/components/schemas/ImageSizesObject' },
+              pnr: { $ref: '#/components/schemas/ImageSizesObject' },
+              sqr: { $ref: '#/components/schemas/ImageSizesObject' },
+              sqs: { $ref: '#/components/schemas/ImageSizesObject' },
+              wsr: { $ref: '#/components/schemas/ImageSizesObject' },
+              wss: { $ref: '#/components/schemas/ImageSizesObject' }
             },
             type: 'object'
           },

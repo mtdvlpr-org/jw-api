@@ -27,8 +27,8 @@ defineRouteMeta({
               }
             },
             properties: {
-              watchtower: { nullable: true, type: 'object' },
-              workbook: { nullable: true, type: 'object' }
+              watchtower: { type: ['object', 'null'] },
+              workbook: { type: ['object', 'null'] }
             },
             required: ['watchtower', 'workbook'],
             type: 'object'

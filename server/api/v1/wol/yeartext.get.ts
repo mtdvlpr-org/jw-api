@@ -1,16 +1,5 @@
 import { z } from 'zod'
 
-const currentYear = new Date().getFullYear()
-
-const querySchema = z.object({
-  wtlocale: jwLangCodeSchema,
-  year: yearSchema
-    .min(currentYear - 1)
-    .max(currentYear + 1)
-    .optional()
-    .meta({ description: 'The year of the yeartext.', examples: [currentYear] })
-})
-
 defineRouteMeta({
   openAPI: {
     $global: {
@@ -86,6 +75,17 @@ defineRouteMeta({
 })
 
 export default defineLoggedEventHandler(async (event) => {
+  const currentYear = new Date().getFullYear()
+
+  const querySchema = z.object({
+    wtlocale: jwLangCodeSchema.optional().default('E'),
+    year: yearSchema
+      .min(currentYear - 1)
+      .max(currentYear + 1)
+      .optional()
+      .default(currentYear)
+  })
+
   const { wtlocale, year } = parseQuery(event, querySchema)
 
   const { parsedTitle, year: usedYear } = await wolService.getYeartextDetails(wtlocale, year)

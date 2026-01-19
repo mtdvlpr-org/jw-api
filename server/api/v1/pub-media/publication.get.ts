@@ -32,7 +32,7 @@ defineRouteMeta({
             in: 'query',
             name: 'docid',
             required: false,
-            schema: { minimum: 100000000, type: 'integer' },
+            schema: { type: 'integer' },
             summary: 'A document ID.'
           },
           FileFormat: {
@@ -65,16 +65,16 @@ defineRouteMeta({
             summary: 'A file format.'
           },
           Issue: {
-            description: 'A six-digit issue number in the format YYYYMM.',
+            description: 'A six- or 8-digit issue number in the format YYYYMMDD.',
             examples: {
               1: { summary: 'December 2022', value: 202212 },
-              2: { summary: 'January 2025', value: 202501 },
+              2: { summary: 'January 15th 2025', value: 20250115 },
               3: { summary: 'March 2025', value: 202503 }
             },
             in: 'query',
             name: 'issue',
             required: false,
-            schema: { maximum: 999999, minimum: 100000, type: 'integer' },
+            schema: { type: 'integer' },
             summary: 'An issue number.'
           },
           LangWritten: {
@@ -120,7 +120,7 @@ defineRouteMeta({
         schemas: {
           Publication: {
             properties: {
-              booknum: { nullable: true, type: 'integer' },
+              booknum: { type: ['integer', 'null'] },
               fileformat: { items: { type: 'string' }, type: 'array' },
               files: { additionalProperties: { type: 'object' }, type: 'object' },
               formattedDate: { type: 'string' },

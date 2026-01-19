@@ -46,6 +46,20 @@ defineRouteMeta({
             type: 'object'
           },
           BibleCommentary: {
+            example: {
+              content:
+                "<p id=\"p4\" data-pid=\"4\" class=\"s5\"><strong>Matthew:</strong> The Greek name rendered “Matthew” is probably a shortened form of the Hebrew name rendered “Mattithiah” (<a class='b jsBibleLink' data-bible='nwtsty' data-requested-bible='' data-targetverses='13015018' href='/en/library/bible/study-bible/books/1-chronicles/15/#v13015018' target='_blank'>1Ch 15:18</a>), meaning “Gift of Jehovah.”</p>\r\n<p id=\"p5\" data-pid=\"5\" class=\"s5\"><strong>According to Matthew:</strong> None of the <a class='jsDialogContentLink pub-nwtstg' data-title='Glossary' data-page-id=\"mid1001077366\" href='/en/library/books/bible-glossary/gospel/'>Gospel</a> writers identify themselves as such in their accounts, and titles were evidently not part of the original text. In some <a class='jsDialogContentLink pub-nwtstg' data-title='Glossary' data-page-id=\"mid1001077377\" href='/en/library/books/bible-glossary/manuscripts/'>manuscripts</a> of Matthew’s Gospel, the title appears as <em>Eu·ag·geʹli·on Ka·taʹ Math·thaiʹon</em> (“Good News [or, “Gospel”] According to Matthew”), whereas in others a shorter title, <em>Ka·taʹ Math·thaiʹon</em> (“According to Matthew”), is used. It is not clear exactly when such titles were added or began to be used. Some suggest that it was in the second century C.E., since examples of the longer title have been found in Gospel manuscripts that have been dated to the end of the second century or early third century. According to some scholars, the opening words of Mark’s book (“The beginning of the good news about Jesus Christ, the Son of God”) may have been the reason why the term “gospel” (lit., “good news”) came to be used to describe these accounts. The use of such titles along with the name of the writer may have come about for practical reasons, providing a clear means of identification of the books.</p>\r\n",
+              id: 210610012,
+              label: '<strong>Title</strong>\n',
+              source: '40001000'
+            },
+            properties: {
+              content: { format: 'html', type: ['string', 'null'] },
+              id: { type: 'integer' },
+              label: { format: 'html', type: ['string', 'null'] },
+              source: { type: ['string', 'null'] }
+            },
+            required: ['id', 'source', 'content', 'label'],
             type: 'object'
           },
           BibleCrossReference: {
@@ -108,6 +122,78 @@ defineRouteMeta({
             type: 'object'
           },
           BibleMultimedia: {
+            properties: {
+              caption: { format: 'html', type: ['string', 'null'] },
+              docID: { type: 'string' },
+              id: { type: 'integer' },
+              keyframe: { $ref: '#/components/schemas/BibleMultiMediaResource' },
+              label: { format: 'html', type: 'string' },
+              pictureCredit: { format: 'html', type: ['string', 'null'] },
+              resource: {
+                $ref: '#/components/schemas/BibleMultiMediaResource'
+              },
+              source: { type: 'string' },
+              sourceStandardCitations: {
+                properties: {
+                  abbreviatedCitation: { format: 'html', type: 'string' },
+                  link: { type: 'string' },
+                  standardCitation: { format: 'html', type: 'string' },
+                  vs: { type: 'string' }
+                },
+                required: ['vs', 'standardCitation', 'link', 'abbreviatedCitation'],
+                type: 'object'
+              },
+              thumbnail: {
+                $ref: '#/components/schemas/BibleMultiMediaResource'
+              },
+              type: { enum: ['image', 'video'], type: 'string' }
+            },
+            required: [
+              'docID',
+              'id',
+              'keyframe',
+              'label',
+              'resource',
+              'source',
+              'type',
+              'caption',
+              'pictureCredit',
+              'sourceStandardCitations',
+              'thumbnail'
+            ],
+            type: 'object'
+          },
+          BibleMultiMediaResource: {
+            properties: {
+              sizes: { $ref: '#/components/schemas/ImageSizesObject' },
+              src: {
+                oneOf: [
+                  { format: 'uri', type: 'string' },
+                  {
+                    items: {
+                      oneOf: [
+                        { format: 'uri', type: 'string' },
+                        {
+                          properties: {
+                            pub: { type: 'string' },
+                            style: { type: 'string' },
+                            track: { type: 'string' }
+                          },
+                          required: ['pub', 'style', 'track'],
+                          type: 'object'
+                        }
+                      ],
+                      type: ['string', 'object']
+                    },
+                    minItems: 1,
+                    type: 'array'
+                  }
+                ],
+                type: ['string', 'object']
+              },
+              zoom: { format: 'uri', type: 'string' }
+            },
+            required: ['src'],
             type: 'object'
           },
           BiblePubReference: {

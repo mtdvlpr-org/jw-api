@@ -133,14 +133,14 @@ export interface BibleCommentary {
    * The content of the commentary in HTML.
    * @example '<p id="p4" data-pid="4" class="s5"><strong>Matthew:</strong> The Greek name rendered “Matthew” is probably a shortened form …me of the writer may have come about for practical reasons, providing a clear means of identification of the books.</p>\r\n'
    */
-  content: string
+  content: null | string
   id: number
   /**
    * The label of the commentary.
    * @example '<strong>Title</strong>\n'
    */
   label: null | string
-  source: BibleVerseId
+  source: BibleVerseId | null
 }
 
 export interface BibleCopyrightPage extends BibleAdditionalPage {
@@ -192,7 +192,7 @@ export interface BibleMultimediaItem {
    */
   label: string
   pictureCredit: null | string
-  resource: { src: (string | { pub: string; style: string; track: `${number}` })[] }
+  resource: { src: (string | { pub: string; style: string; track: `${number}` })[] | string }
   source: BibleVerseSource
   sourceStandardCitations: {
     /**

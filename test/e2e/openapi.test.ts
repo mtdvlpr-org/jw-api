@@ -6,6 +6,7 @@ await setup({ server: true })
 type OpenApiSpec = {
   components?: {
     responses?: Record<string, unknown>
+    schemas?: Record<string, unknown>
   }
   paths: Record<
     string,
@@ -14,6 +15,17 @@ type OpenApiSpec = {
       {
         description?: string
         operationId?: string
+        requestBody?:
+          | { $ref: string }
+          | {
+              content?: Record<
+                string,
+                {
+                  schema?: unknown
+                }
+              >
+              description?: string
+            }
         responses?: Record<
           string,
           | { $ref: string }
@@ -229,11 +241,136 @@ describe('openapi metadata validation', () => {
         'Consider using a single primary tag per API section'
       ].join('\n')
 
+      // eslint-disable-next-line no-console
       console.warn(warningMessage)
       // This is just a warning, not a failure
     }
 
     // Just verify we collected tags
     expect(Object.keys(tagsByPath).length).toBeGreaterThan(0)
+  })
+
+  it('should not have type objects without properties defined', async () => {
+    const openApiSpec = await $fetch<OpenApiSpec>('/_docs/openapi.json')
+
+    const errors: string[] = []
+
+    // Recursive function to traverse schemas and find objects without properties
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const checkSchema = (schema: any, path: string) => {
+      if (!schema || typeof schema !== 'object') return
+
+      // Check if this is an object type without properties
+      if (
+        schema.type === 'object' &&
+        !schema.properties &&
+        !schema.additionalProperties &&
+        !schema.allOf &&
+        !schema.oneOf &&
+        !schema.anyOf &&
+        !schema.$ref
+      ) {
+        errors.push(
+          `${path}: object type has no properties, additionalProperties, or composition keywords defined`
+        )
+      }
+
+      // Recursively check nested schemas
+      if (schema.properties) {
+        for (const [propName, propSchema] of Object.entries(schema.properties)) {
+          checkSchema(propSchema, `${path}.properties.${propName}`)
+        }
+      }
+
+      if (schema.items) {
+        checkSchema(schema.items, `${path}.items`)
+      }
+
+      if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
+        checkSchema(schema.additionalProperties, `${path}.additionalProperties`)
+      }
+
+      if (schema.allOf) {
+        schema.allOf.forEach((subSchema: unknown, index: number) => {
+          checkSchema(subSchema, `${path}.allOf[${index}]`)
+        })
+      }
+
+      if (schema.oneOf) {
+        schema.oneOf.forEach((subSchema: unknown, index: number) => {
+          checkSchema(subSchema, `${path}.oneOf[${index}]`)
+        })
+      }
+
+      if (schema.anyOf) {
+        schema.anyOf.forEach((subSchema: unknown, index: number) => {
+          checkSchema(subSchema, `${path}.anyOf[${index}]`)
+        })
+      }
+    }
+
+    // Check schemas in component definitions
+    if (openApiSpec.components) {
+      const components = openApiSpec.components
+      if (components.schemas) {
+        for (const [schemaName, schema] of Object.entries(components.schemas)) {
+          checkSchema(schema, `components.schemas.${schemaName}`)
+        }
+      }
+    }
+
+    // Check schemas in endpoint responses
+    const v1Endpoints = Object.entries(openApiSpec.paths).filter(([path]) =>
+      path.startsWith('/api/v1/')
+    )
+
+    for (const [path, methods] of v1Endpoints) {
+      for (const [method, spec] of Object.entries(methods)) {
+        if (!['delete', 'get', 'patch', 'post', 'put'].includes(method)) {
+          continue
+        }
+
+        const endpointId = `${method.toUpperCase()} ${path}`
+
+        // Check response schemas
+        if (spec.responses) {
+          for (const [statusCode, response] of Object.entries(spec.responses)) {
+            if (response && typeof response === 'object' && 'content' in response) {
+              const content = response.content
+              if (content?.['application/json']?.schema) {
+                checkSchema(
+                  content['application/json'].schema,
+                  `${endpointId}.responses.${statusCode}.content['application/json'].schema`
+                )
+              }
+            }
+          }
+        }
+
+        // Check request body schemas
+        if (spec.requestBody) {
+          const requestBody = spec.requestBody
+          if ('content' in requestBody && requestBody.content?.['application/json']?.schema) {
+            checkSchema(
+              requestBody.content['application/json'].schema,
+              `${endpointId}.requestBody.content['application/json'].schema`
+            )
+          }
+        }
+      }
+    }
+
+    if (errors.length > 0) {
+      const errorMessage = [
+        'OpenAPI schema validation failed - objects without properties:',
+        '',
+        ...errors.map((e) => `  - ${e}`),
+        '',
+        `Total errors: ${errors.length}`
+      ].join('\n')
+
+      // eslint-disable-next-line vitest/no-conditional-expect
+      expect.fail(errorMessage)
+    }
   })
 })

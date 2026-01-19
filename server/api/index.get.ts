@@ -75,6 +75,22 @@ defineRouteMeta({
             },
             description: 'Bad request.'
           },
+          401: {
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' }
+              }
+            },
+            description: 'Unauthorized.'
+          },
+          403: {
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' }
+              }
+            },
+            description: 'Forbidden.'
+          },
           404: {
             content: {
               'application/json': {

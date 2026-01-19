@@ -57,7 +57,7 @@ export const bibleBookNrSchema = z.coerce
   .min(1)
   .max(66)
   .meta({
-    description: 'A bible book number.',
+    description: 'A Bible book number.',
     examples: [1, 40, 66]
   }) as unknown as z.ZodCustom<BibleBookNr>
 
@@ -79,17 +79,18 @@ export const bibleVerseNrSchema = z.coerce
 export const jwLanguageSchema = {
   altSpellings: z
     .array(z.string().nonempty())
-    .meta({ description: 'The alternative spellings of the language.' }),
-  direction: z.enum(['ltr', 'rtl']).meta({ description: 'The direction of the language.' }),
-  hasWebContent: z.boolean().meta({ description: 'Whether the language has web content.' }),
-  isCounted: z.boolean().meta({ description: 'Whether the language is counted.' }),
-  isSignLanguage: z.boolean().meta({ description: 'Whether the language is a sign language.' }),
+    .min(1)
+    .meta({ description: 'The alternative spellings of a language.' }),
+  direction: z.enum(['ltr', 'rtl']).meta({ description: 'The direction of a language.' }),
+  hasWebContent: z.boolean().meta({ description: 'Whether a language has web content.' }),
+  isCounted: z.boolean().meta({ description: 'Whether a language is counted.' }),
+  isSignLanguage: z.boolean().meta({ description: 'Whether a language is a sign language.' }),
   langcode: jwLangCodeSchema,
   name: z
     .string()
     .nonempty()
     .meta({
-      description: 'The name of the language.',
+      description: 'The name of a language.',
       examples: ['English', 'Dutch', 'Spanish']
     }),
   script: jwLangScriptSchema,
@@ -98,7 +99,7 @@ export const jwLanguageSchema = {
     .string()
     .nonempty()
     .meta({
-      description: 'The vernacular name of the language.',
+      description: 'The vernacular name of a language.',
       examples: ['English', 'Nederlands', 'Español']
     })
 }
@@ -136,7 +137,7 @@ const track = z.coerce
   .int()
   .min(0)
   .optional()
-  .meta({ description: 'The track number.', examples: [0, 11, 161] })
+  .meta({ description: 'A track number.', examples: [0, 11, 161] })
 
 export const pubFetcherSchema = z.object({
   fileformat: publicationFileFormatSchema.optional(),
@@ -146,14 +147,14 @@ export const pubFetcherSchema = z.object({
     .positive()
     .optional()
     .meta({
-      description: 'The issue number, usually in format YYYYMM.',
-      examples: [201705, 202501, 202012]
+      description: 'An issue number, usually in format YYYYMM or YYYYMMDD.',
+      examples: [201705, 20250115, 202012]
     }),
   langwritten: jwLangCodeSchema,
   pub: z
     .string()
     .nonempty()
-    .meta({ description: 'The publication key.', examples: ['jwb', 'mwb', 'w'] }),
+    .meta({ description: 'A publication key.', examples: ['jwb', 'mwb', 'w'] }),
   track
 })
 
@@ -162,7 +163,10 @@ export const pubDocFetcherSchema = z.object({
     .number<number | string>()
     .int()
     .positive()
-    .meta({ description: 'The document ID.', examples: [1112024041, 502013189, -702018118] }),
+    .meta({
+      description: 'A document ID, usually a 9 or 10 digit number.',
+      examples: [1112024041, 502013189, 702018118]
+    }),
   fileformat: publicationFileFormatSchema.optional(),
   langwritten: jwLangCodeSchema,
   track
