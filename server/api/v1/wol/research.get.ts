@@ -52,35 +52,65 @@ defineRouteMeta({
       200: {
         content: {
           'application/json': {
-            example: {
-              data: {
-                crossReferences: [],
-                footnotes: [],
-                references: []
-              },
-              meta: {
-                requestId: 'k7f2m9x3q1',
-                responseTime: 42,
-                timestamp: '2026-01-16T12:34:56.789Z',
-                version: 'v1'
-              },
-              success: true
-            },
             schema: {
               properties: {
                 data: {
                   properties: {
-                    crossReferences: {
-                      items: { type: 'object' },
+                    chapterStudyNotes: {
+                      items: { type: 'string' },
                       type: 'array'
                     },
-                    footnotes: {
-                      items: { type: 'object' },
+                    outline: {
+                      items: { type: 'string' },
                       type: 'array'
                     },
-                    references: {
-                      items: { type: 'object' },
-                      type: 'array'
+                    verses: {
+                      additionalProperties: {
+                        properties: {
+                          crossReferences: {
+                            items: { type: 'string' },
+                            type: 'array'
+                          },
+                          footnotes: {
+                            items: { type: 'string' },
+                            type: 'array'
+                          },
+                          publicationIndex: {
+                            properties: {
+                              path: { type: 'string' },
+                              title: { type: 'string' },
+                              url: { format: 'uri', type: 'string' }
+                            },
+                            required: ['title', 'url', 'path'],
+                            type: 'object'
+                          },
+                          researchGuide: {
+                            properties: {
+                              content: { format: 'html', type: 'string' },
+                              path: { type: 'string' },
+                              pubTitle: { type: 'string' },
+                              title: { type: 'string' },
+                              url: { format: 'uri', type: 'string' }
+                            },
+                            required: ['title', 'url', 'path'],
+                            type: 'object'
+                          },
+                          studyNotes: {
+                            items: { type: 'string' },
+                            type: 'array'
+                          }
+                        },
+                        required: [
+                          'footnotes',
+                          'crossReferences',
+                          'studyNotes',
+                          'researchGuide',
+                          'publicationIndex'
+                        ],
+                        type: 'object'
+                      },
+                      required: ['verse', 'outline', 'chapterStudyNotes'],
+                      type: 'object'
                     }
                   },
                   type: 'object'

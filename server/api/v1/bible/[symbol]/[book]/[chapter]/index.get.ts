@@ -126,11 +126,11 @@ defineRouteMeta({
               caption: { format: 'html', type: ['string', 'null'] },
               docID: { type: 'string' },
               id: { type: 'integer' },
-              keyframe: { $ref: '#/components/schemas/BibleMultiMediaResource' },
+              keyframe: { $ref: '#/components/schemas/BibleResource' },
               label: { format: 'html', type: 'string' },
               pictureCredit: { format: 'html', type: ['string', 'null'] },
               resource: {
-                $ref: '#/components/schemas/BibleMultiMediaResource'
+                $ref: '#/components/schemas/BibleResource'
               },
               source: { type: 'string' },
               sourceStandardCitations: {
@@ -144,7 +144,7 @@ defineRouteMeta({
                 type: 'object'
               },
               thumbnail: {
-                $ref: '#/components/schemas/BibleMultiMediaResource'
+                $ref: '#/components/schemas/BibleResource'
               },
               type: { enum: ['image', 'video'], type: 'string' }
             },
@@ -163,40 +163,16 @@ defineRouteMeta({
             ],
             type: 'object'
           },
-          BibleMultiMediaResource: {
-            properties: {
-              sizes: { $ref: '#/components/schemas/ImageSizesObject' },
-              src: {
-                oneOf: [
-                  { format: 'uri', type: 'string' },
-                  {
-                    items: {
-                      oneOf: [
-                        { format: 'uri', type: 'string' },
-                        {
-                          properties: {
-                            pub: { type: 'string' },
-                            style: { type: 'string' },
-                            track: { type: 'string' }
-                          },
-                          required: ['pub', 'style', 'track'],
-                          type: 'object'
-                        }
-                      ],
-                      type: ['string', 'object']
-                    },
-                    minItems: 1,
-                    type: 'array'
-                  }
-                ],
-                type: ['string', 'object']
-              },
-              zoom: { format: 'uri', type: 'string' }
-            },
-            required: ['src'],
-            type: 'object'
-          },
           BiblePubReference: {
+            properties: {
+              content: { format: 'html', type: 'string' },
+              id: { type: 'integer' },
+              source: { type: 'string' },
+              thumbnail: { $ref: '#/components/schemas/BibleResource' },
+              type: { enum: ['video', 'image'], type: 'string' },
+              url: { format: 'uri', type: 'string' }
+            },
+            required: ['content', 'id', 'source', 'type', 'url', 'thumbnail'],
             type: 'object'
           },
           BibleRange: {
@@ -250,7 +226,48 @@ defineRouteMeta({
             ],
             type: 'object'
           },
+          BibleResource: {
+            properties: {
+              sizes: { $ref: '#/components/schemas/ImageSizesObject' },
+              src: {
+                oneOf: [
+                  { format: 'uri', type: 'string' },
+                  {
+                    items: {
+                      oneOf: [
+                        { format: 'uri', type: 'string' },
+                        {
+                          properties: {
+                            pub: { type: 'string' },
+                            style: { type: 'string' },
+                            track: { type: 'string' }
+                          },
+                          required: ['pub', 'style', 'track'],
+                          type: 'object'
+                        }
+                      ],
+                      type: ['string', 'object']
+                    },
+                    minItems: 1,
+                    type: 'array'
+                  }
+                ],
+                type: ['string', 'object']
+              },
+              zoom: { format: 'uri', type: 'string' }
+            },
+            required: ['src'],
+            type: 'object'
+          },
           BibleSuperscription: {
+            properties: {
+              abbreviatedCitation: { format: 'html', type: 'string' },
+              content: { format: 'html', type: 'string' },
+              id: { type: 'integer' },
+              source: { type: 'string' },
+              standardCitation: { format: 'html', type: 'string' }
+            },
+            required: ['abbreviatedCitation', 'content', 'id', 'source', 'standardCitation'],
             type: 'object'
           }
         }

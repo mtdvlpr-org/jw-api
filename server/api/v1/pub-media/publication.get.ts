@@ -122,10 +122,154 @@ defineRouteMeta({
             properties: {
               booknum: { type: ['integer', 'null'] },
               fileformat: { items: { type: 'string' }, type: 'array' },
-              files: { additionalProperties: { type: 'object' }, type: 'object' },
+              files: {
+                additionalProperties: {
+                  additionalProperties: {
+                    items: {
+                      properties: {
+                        bitRate: { type: 'number' },
+                        booknum: { type: 'integer' },
+                        docid: { type: 'integer' },
+                        duration: { type: 'number' },
+                        edition: { type: 'string' },
+                        editionDescr: { type: 'string' },
+                        file: {
+                          properties: {
+                            checksum: { type: 'string' },
+                            modifiedDatetime: { type: 'string' },
+                            stream: { format: 'uri', type: 'string' },
+                            url: { format: 'uri', type: 'string' }
+                          },
+                          required: ['checksum', 'modifiedDatetime', 'url', 'stream'],
+                          type: 'object'
+                        },
+                        filesize: { type: 'integer' },
+                        format: { type: 'string' },
+                        formatDescr: { type: 'string' },
+                        frameHeight: { type: 'integer' },
+                        frameRate: { type: 'number' },
+                        frameWidth: { type: 'integer' },
+                        hasTrack: { type: 'boolean' },
+                        label: { type: 'string' },
+                        markers: {
+                          oneOf: [
+                            { type: 'null' },
+                            {
+                              properties: {
+                                documentId: { type: 'integer' },
+                                hash: { type: 'string' },
+                                introduction: {
+                                  properties: {
+                                    duration: { type: 'string' },
+                                    startTime: { type: 'string' }
+                                  },
+                                  required: ['startTime', 'duration'],
+                                  type: 'object'
+                                },
+                                markers: {
+                                  items: {
+                                    properties: {
+                                      duration: { type: 'string' },
+                                      endTransitionDuration: { type: 'string' },
+                                      label: { type: 'string' },
+                                      mepsParagraphId: { type: 'integer' },
+                                      startTime: { type: 'string' }
+                                    },
+                                    required: [
+                                      'startTime',
+                                      'duration',
+                                      'label',
+                                      'mepsParagraphId',
+                                      'endTransitionDuration'
+                                    ],
+                                    type: 'object'
+                                  },
+                                  type: 'array'
+                                },
+                                mepsLanguageSpoken: { type: 'string' },
+                                mepsLanguageWritten: { type: 'string' },
+                                type: { enum: ['publication'], type: 'string' }
+                              },
+                              required: [
+                                'documentId',
+                                'hash',
+                                'type',
+                                'markers',
+                                'introduction',
+                                'mepsLanguageSpoken',
+                                'mepsLanguageWritten'
+                              ],
+                              type: 'object'
+                            }
+                          ],
+                          type: ['object', 'null']
+                        },
+                        mimetype: { type: 'string' },
+                        pub: { type: 'string' },
+                        specialty: { type: 'string' },
+                        specialtyDescr: { type: 'string' },
+                        subtitled: { type: 'boolean' },
+                        title: { type: 'string' },
+                        track: { type: 'integer' },
+                        trackImage: {
+                          properties: {
+                            checksum: { type: ['null', 'string'] },
+                            modifiedDatetime: { type: 'string' },
+                            url: { format: 'uri', type: 'string' }
+                          },
+                          required: ['url', 'modifiedDatetime', 'checksum'],
+                          type: 'object'
+                        }
+                      },
+                      required: [
+                        'title',
+                        'file',
+                        'filesize',
+                        'trackImage',
+                        'markers',
+                        'label',
+                        'track',
+                        'hasTrack',
+                        'pub',
+                        'docid',
+                        'booknum',
+                        'mimetype',
+                        'edition',
+                        'editionDescr',
+                        'format',
+                        'formatDescr',
+                        'specialty',
+                        'specialtyDescr',
+                        'subtitled',
+                        'frameWidth',
+                        'frameHeight',
+                        'frameRate',
+                        'duration',
+                        'bitRate'
+                      ],
+                      type: 'object'
+                    },
+                    type: 'array'
+                  },
+                  type: 'object'
+                },
+                type: 'object'
+              },
               formattedDate: { type: 'string' },
               issue: { type: 'string' },
-              languages: { additionalProperties: { type: 'object' }, type: 'object' },
+              languages: {
+                additionalProperties: {
+                  properties: {
+                    direction: { enum: ['ltr', 'rtl'], type: 'string' },
+                    locale: { type: 'string' },
+                    name: { type: 'string' },
+                    script: { type: 'string' }
+                  },
+                  required: ['name', 'locale', 'direction', 'script'],
+                  type: 'object'
+                },
+                type: 'object'
+              },
               parentPubName: { type: 'string' },
               pub: { type: 'string' },
               pubImage: {
