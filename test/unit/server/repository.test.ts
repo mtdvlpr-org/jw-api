@@ -21,8 +21,8 @@ const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {
     Object.assign(err, {
       data: { meta: { requestId: 'id' } },
       fatal: false,
-      statusCode: 404,
-      statusMessage: 'Not Found'
+      status: 404,
+      statusText: 'Not Found'
     })
     return err
   })

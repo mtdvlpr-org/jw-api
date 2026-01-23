@@ -64,8 +64,8 @@ For endpoints returning collections:
 
 ```typescript
 {
-  "statusCode": 400,
-  "statusMessage": "Bad Request",
+  "status": 400,
+  "statusText": "Bad Request",
   "message": "Invalid query parameter(s)",
   "data": {
     "meta": {

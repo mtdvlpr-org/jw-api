@@ -334,13 +334,13 @@ describe('openapi metadata validation', () => {
 
         // Check response schemas
         if (spec.responses) {
-          for (const [statusCode, response] of Object.entries(spec.responses)) {
+          for (const [status, response] of Object.entries(spec.responses)) {
             if (response && typeof response === 'object' && 'content' in response) {
               const content = response.content
               if (content?.['application/json']?.schema) {
                 checkSchema(
                   content['application/json'].schema,
-                  `${endpointId}.responses.${statusCode}.content['application/json'].schema`
+                  `${endpointId}.responses.${status}.content['application/json'].schema`
                 )
               }
             }

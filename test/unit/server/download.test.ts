@@ -7,8 +7,8 @@ const { mockFetch } = vi.hoisted(() => {
   vi.stubGlobal('defineCachedFunction', (fn: unknown) => fn)
 
   const mockToFetchApiError = vi.fn((error: unknown, context: { notFoundMessage: string }) => {
-    const err = new Error(context.notFoundMessage) as Error & { statusCode: number }
-    err.statusCode = 404
+    const err = new Error(context.notFoundMessage) as Error & { status: number }
+    err.status = 404
     return err
   })
 

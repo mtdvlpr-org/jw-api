@@ -241,15 +241,15 @@ defineRouteMeta({
               },
               error: { enum: [true], type: 'boolean' },
               message: { description: 'Error message.', type: 'string' },
-              statusCode: { description: 'HTTP status code.', type: 'integer' },
-              statusMessage: { description: 'HTTP status text.', type: 'string' },
+              status: { description: 'HTTP status code.', type: 'integer' },
+              statusText: { description: 'HTTP status text.', type: 'string' },
               url: {
                 description: 'URL of the resource that caused the error.',
                 format: 'uri',
                 type: 'string'
               }
             },
-            required: ['error', 'url', 'statusCode', 'statusMessage', 'message', 'data'],
+            required: ['error', 'url', 'status', 'statusText', 'message', 'data'],
             type: 'object'
           }
         }

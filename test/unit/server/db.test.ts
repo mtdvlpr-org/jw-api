@@ -7,12 +7,12 @@ const logger = { debug: vi.fn() }
 const apiInternalError = vi.fn((msg, opts) => {
   const err = new Error(msg)
   if (opts?.cause) err.cause = opts.cause
-  Object.assign(err, { statusCode: 500 })
+  Object.assign(err, { status: 500 })
   return err
 })
 const apiNotFoundError = vi.fn((msg) => {
   const err = new Error(msg)
-  Object.assign(err, { statusCode: 404 })
+  Object.assign(err, { status: 404 })
   return err
 })
 const sqlMock = vi.fn()

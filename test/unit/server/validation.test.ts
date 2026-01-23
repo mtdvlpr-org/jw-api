@@ -9,8 +9,8 @@ import { parseBody, parseQuery, parseRouteParams } from '../../../server/utils/v
 const { mockApiBadRequestError, mockGetQuery, mockGetRouterParams, mockReadBody } = vi.hoisted(
   () => {
     const mockApiBadRequestError = vi.fn((message: string, options?: { details?: unknown[] }) => {
-      const error = new Error(message) as Error & { details?: unknown[]; statusCode: number }
-      error.statusCode = 400
+      const error = new Error(message) as Error & { details?: unknown[]; status: number }
+      error.status = 400
       error.details = options?.details
       return error
     })

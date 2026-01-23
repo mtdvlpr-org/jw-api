@@ -38,8 +38,8 @@ describe('api error utils', () => {
   describe('apiNotFoundError', () => {
     it('should create a 404 error with correct status', () => {
       const error = apiNotFoundError('Not Found')
-      expect(error.statusCode).toBe(404)
-      expect(error.statusMessage).toBe('Not Found')
+      expect(error.status).toBe(404)
+      expect(error.statusText).toBe('Not Found')
       expect(error.message).toBe('Not Found')
       expect(isApiError(error)).toBe(true)
     })
@@ -61,8 +61,8 @@ describe('api error utils', () => {
   describe('apiBadRequestError', () => {
     it('should create a 400 error', () => {
       const error = apiBadRequestError('Bad Request')
-      expect(error.statusCode).toBe(400)
-      expect(error.statusMessage).toBe('Bad Request')
+      expect(error.status).toBe(400)
+      expect(error.statusText).toBe('Bad Request')
       expect(error.message).toBe('Bad Request')
       expect(isApiError(error)).toBe(true)
     })
@@ -77,8 +77,8 @@ describe('api error utils', () => {
   describe('apiInternalError', () => {
     it('should create a 500 error', () => {
       const error = apiInternalError('Server Error')
-      expect(error.statusCode).toBe(500)
-      expect(error.statusMessage).toBe('Internal Server Error')
+      expect(error.status).toBe(500)
+      expect(error.statusText).toBe('Internal Server Error')
       expect(error.message).toBe('Server Error')
       expect(isApiError(error)).toBe(true)
     })
@@ -87,8 +87,8 @@ describe('api error utils', () => {
   describe('apiUnauthorizedError', () => {
     it('should create a 401 error', () => {
       const error = apiUnauthorizedError('Unauthorized')
-      expect(error.statusCode).toBe(401)
-      expect(error.statusMessage).toBe('Unauthorized')
+      expect(error.status).toBe(401)
+      expect(error.statusText).toBe('Unauthorized')
       expect(error.message).toBe('Unauthorized')
       expect(isApiError(error)).toBe(true)
     })
@@ -97,8 +97,8 @@ describe('api error utils', () => {
   describe('apiForbiddenError', () => {
     it('should create a 403 error', () => {
       const error = apiForbiddenError('Forbidden')
-      expect(error.statusCode).toBe(403)
-      expect(error.statusMessage).toBe('Forbidden')
+      expect(error.status).toBe(403)
+      expect(error.statusText).toBe('Forbidden')
       expect(error.message).toBe('Forbidden')
       expect(isApiError(error)).toBe(true)
     })
@@ -182,18 +182,18 @@ describe('api error utils', () => {
 
     it('should handle 400 errors', () => {
       const fetchError = new FetchError('Bad Request')
-      fetchError.statusCode = 400
+      fetchError.status = 400
 
       const result = toFetchApiError(fetchError, context)
 
       expect(result.message).toContain('Invalid request to TestService')
-      expect('statusCode' in result && result.statusCode).toBe(400)
+      expect('status' in result && result.status).toBe(400)
       expect(isApiError(result)).toBe(true)
     })
 
     it('should handle 401 errors', () => {
       const fetchError = new FetchError('Unauthorized')
-      fetchError.statusCode = 401
+      fetchError.status = 401
 
       const result = toFetchApiError(fetchError, context)
 
@@ -203,7 +203,7 @@ describe('api error utils', () => {
 
     it('should handle 403 errors', () => {
       const fetchError = new FetchError('Forbidden')
-      fetchError.statusCode = 403
+      fetchError.status = 403
 
       const result = toFetchApiError(fetchError, context)
 
@@ -213,7 +213,7 @@ describe('api error utils', () => {
 
     it('should handle 404 errors', () => {
       const fetchError = new FetchError('Not Found')
-      fetchError.statusCode = 404
+      fetchError.status = 404
 
       const result = toFetchApiError(fetchError, context)
 
@@ -223,7 +223,7 @@ describe('api error utils', () => {
 
     it('should handle 500 errors', () => {
       const fetchError = new FetchError('Server Error')
-      fetchError.statusCode = 500
+      fetchError.status = 500
 
       const result = toFetchApiError(fetchError, context)
 
@@ -233,7 +233,7 @@ describe('api error utils', () => {
 
     it('should handle unknown status codes', () => {
       const fetchError = new FetchError('Unknown Error')
-      fetchError.statusCode = 502
+      fetchError.status = 502
 
       const result = toFetchApiError(fetchError, context)
 
@@ -269,8 +269,8 @@ describe('api error utils', () => {
           }
         },
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(validApiError)).toBe(true)
@@ -282,12 +282,12 @@ describe('api error utils', () => {
       expect(isApiError(regularError)).toBe(false)
     })
 
-    it('should return false for Error missing statusCode', () => {
+    it('should return false for Error missing status', () => {
       const error = new Error('Test error')
       Object.assign(error, {
         data: { meta: {} },
         fatal: false,
-        statusMessage: 'Not Found'
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
@@ -297,19 +297,19 @@ describe('api error utils', () => {
       const error = new Error('Test error')
       Object.assign(error, {
         data: { meta: {} },
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
     })
 
-    it('should return false for Error missing statusMessage', () => {
+    it('should return false for Error missing statusText', () => {
       const error = new Error('Test error')
       Object.assign(error, {
         data: { meta: {} },
         fatal: false,
-        statusCode: 404
+        status: 404
       })
 
       expect(isApiError(error)).toBe(false)
@@ -319,8 +319,8 @@ describe('api error utils', () => {
       const error = new Error('Test error')
       Object.assign(error, {
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
@@ -331,8 +331,8 @@ describe('api error utils', () => {
       Object.assign(error, {
         data: 'string',
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
@@ -343,8 +343,8 @@ describe('api error utils', () => {
       Object.assign(error, {
         data: null,
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
@@ -355,8 +355,8 @@ describe('api error utils', () => {
       Object.assign(error, {
         data: {},
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       })
 
       expect(isApiError(error)).toBe(false)
@@ -366,8 +366,8 @@ describe('api error utils', () => {
       const notAnError = {
         data: { meta: {} },
         fatal: false,
-        statusCode: 404,
-        statusMessage: 'Not Found'
+        status: 404,
+        statusText: 'Not Found'
       }
 
       expect(isApiError(notAnError)).toBe(false)
@@ -400,8 +400,8 @@ describe('api error utils', () => {
           }
         },
         fatal: false,
-        statusCode: 400,
-        statusMessage: 'Bad Request'
+        status: 400,
+        statusText: 'Bad Request'
       })
 
       expect(isApiError(validApiError)).toBe(true)

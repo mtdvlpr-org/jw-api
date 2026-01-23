@@ -107,14 +107,17 @@ const buildErrorData = (details?: ApiErrorDetail[]): ApiErrorData => {
   return data
 }
 
-type ApiError = RequiredFields<H3Error<ApiErrorData>, 'data' | 'statusMessage'>
+type ApiError = RequiredFields<H3Error<ApiErrorData>, 'data'> & {
+  status: string
+  statusText: string
+}
 
 export const isApiError = (error: unknown): error is ApiError => {
   return (
     error instanceof Error &&
-    'statusCode' in error &&
+    'status' in error &&
     'fatal' in error &&
-    'statusMessage' in error &&
+    'statusText' in error &&
     'data' in error &&
     typeof error.data === 'object' &&
     error.data !== null &&
@@ -133,22 +136,22 @@ interface ApiErrorOptions {
  * The data property contains meta information for request tracing.
  *
  * @param message - Human-readable error message
- * @param statusCode - HTTP status code
- * @param statusMessage - HTTP status text
+ * @param status - HTTP status code
+ * @param statusText - HTTP status text
  * @param options - Optional error details and cause
  */
 const apiError = (
   message: string,
-  statusCode: number,
-  statusMessage: string,
+  status: number,
+  statusText: string,
   options?: ApiErrorOptions
 ): ApiError => {
   return createError({
     cause: options?.cause,
     data: buildErrorData(options?.details),
     message,
-    statusCode,
-    statusMessage
+    status,
+    statusText
   }) as ApiError
 }
 
@@ -201,7 +204,7 @@ export const toFetchApiError = (error: unknown, context: FetchErrorContext): Api
 
   if (error instanceof FetchError || isApiError(error)) {
     const cause = { cause: error.cause ?? error }
-    switch (error.statusCode) {
+    switch (error.status) {
       case 400:
         return apiBadRequestError(
           `Invalid request to ${serviceName} service: ${error.message}`,
