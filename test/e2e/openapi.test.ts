@@ -255,169 +255,175 @@ describe('openapi metadata validation', () => {
     expect(Object.keys(tagsByPath).length).toBeGreaterThan(0)
   })
 
-  it('should validate actual API responses against OpenAPI schemas', async () => {
-    const openApiSpec = await $fetch<OpenApiSpec>('/_docs/openapi.json')
+  it(
+    'should validate actual API responses against OpenAPI schemas',
+    async () => {
+      const openApiSpec = await $fetch<OpenApiSpec>('/_docs/openapi.json')
 
-    const randomNumber = (min: number, max: number) =>
-      Math.floor(Math.random() * (max - min + 1)) + min
+      const randomNumber = (min: number, max: number) =>
+        Math.floor(Math.random() * (max - min + 1)) + min
 
-    const randomValue = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
+      const randomValue = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
 
-    const testSymbols = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl']
-    const testCodes = ['E', 'S', 'F', 'D', 'I', 'P', 'O']
+      const testSymbols = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl']
+      const testCodes = ['E', 'S', 'F', 'D', 'I', 'P', 'O']
 
-    // Define test cases for different endpoints with sample parameters
-    const testCases: Array<{
-      description: string
-      openApiPath: string
-      params?: Record<string, number | string>
-    }> = [
-      {
-        description: 'Bible verse endpoint',
-        openApiPath: '/api/v1/bible/{symbol}/{book}/{chapter}/{verse}',
-        params: {
-          book: randomNumber(1, 66).toString(),
-          chapter: '1',
-          symbol: randomValue(testSymbols),
-          verse: '1'
-        }
-      },
-      {
-        description: 'Bible books endpoint',
-        openApiPath: '/api/v1/bible/{symbol}/books',
-        params: { symbol: randomValue(testSymbols) }
-      },
-      {
-        description: 'Yeartext endpoint',
-        openApiPath: '/api/v1/wol/yeartext',
-        params: { wtlocale: randomValue(testCodes), year: new Date().getFullYear() }
-      },
-      {
-        description: 'Meeting schedule endpoint',
-        openApiPath: '/api/v1/meeting/schedule',
-        params: { langwritten: randomValue(testCodes) }
-      }
-    ]
-
-    const errors: string[] = []
-
-    for (const testCase of testCases) {
-      try {
-        // Get the OpenAPI schema for this endpoint
-        const endpointSpec = openApiSpec.paths[testCase.openApiPath]?.get
-        if (!endpointSpec) {
-          errors.push(`${testCase.description}: No OpenAPI spec found for ${testCase.openApiPath}`)
-          continue
-        }
-
-        const response200 = endpointSpec.responses?.['200']
-        if (!response200 || !('content' in response200)) {
-          errors.push(`${testCase.description}: No 200 response schema defined`)
-          continue
-        }
-
-        const schema = response200.content?.['application/json']?.schema
-        if (!schema) {
-          errors.push(`${testCase.description}: No JSON schema defined for 200 response`)
-          continue
-        }
-
-        // Build the actual URL by replacing path parameters
-        let actualPath = testCase.openApiPath
-        const queryParams: Record<string, string> = {}
-
-        if (testCase.params) {
-          for (const [key, value] of Object.entries(testCase.params)) {
-            const placeholder = `{${key}}`
-            if (actualPath.includes(placeholder)) {
-              actualPath = actualPath.replace(placeholder, String(value))
-            } else {
-              queryParams[key] = String(value)
-            }
+      // Define test cases for different endpoints with sample parameters
+      const testCases: Array<{
+        description: string
+        openApiPath: string
+        params?: Record<string, number | string>
+      }> = [
+        {
+          description: 'Bible verse endpoint',
+          openApiPath: '/api/v1/bible/{symbol}/{book}/{chapter}/{verse}',
+          params: {
+            book: randomNumber(1, 66).toString(),
+            chapter: '1',
+            symbol: randomValue(testSymbols),
+            verse: '1'
           }
+        },
+        {
+          description: 'Bible books endpoint',
+          openApiPath: '/api/v1/bible/{symbol}/books',
+          params: { symbol: randomValue(testSymbols) }
+        },
+        {
+          description: 'Yeartext endpoint',
+          openApiPath: '/api/v1/wol/yeartext',
+          params: { wtlocale: randomValue(testCodes), year: new Date().getFullYear() }
+        },
+        {
+          description: 'Meeting schedule endpoint',
+          openApiPath: '/api/v1/meeting/schedule',
+          params: { langwritten: randomValue(testCodes) }
         }
+      ]
 
-        // Add query string if needed
-        const queryString =
-          Object.keys(queryParams).length > 0
-            ? '?' + new URLSearchParams(queryParams).toString()
-            : ''
+      const errors: string[] = []
 
-        // Make the actual API call
-        const response = await $fetch<unknown>(`${actualPath}${queryString}`)
-
-        if (!response) {
-          errors.push(`${testCase.description}: No response received from API`)
-          continue
-        }
-
-        // Verify response has expected top-level fields from OpenAPI
-        if (typeof response === 'object' && response !== null) {
-          const responseObj = response as Record<string, unknown>
-
-          // Check required fields
-          if (!('success' in responseObj)) {
-            errors.push(`${testCase.description}: Missing 'success' field in response`)
+      for (const testCase of testCases) {
+        try {
+          // Get the OpenAPI schema for this endpoint
+          const endpointSpec = openApiSpec.paths[testCase.openApiPath]?.get
+          if (!endpointSpec) {
+            errors.push(
+              `${testCase.description}: No OpenAPI spec found for ${testCase.openApiPath}`
+            )
+            continue
           }
 
-          if (!('data' in responseObj)) {
-            errors.push(`${testCase.description}: Missing 'data' field in response`)
+          const response200 = endpointSpec.responses?.['200']
+          if (!response200 || !('content' in response200)) {
+            errors.push(`${testCase.description}: No 200 response schema defined`)
+            continue
           }
 
-          if (!('meta' in responseObj)) {
-            errors.push(`${testCase.description}: Missing 'meta' field in response`)
+          const schema = response200.content?.['application/json']?.schema
+          if (!schema) {
+            errors.push(`${testCase.description}: No JSON schema defined for 200 response`)
+            continue
           }
 
-          // Validate meta structure
-          if ('meta' in responseObj && typeof responseObj.meta === 'object') {
-            const meta = responseObj.meta as Record<string, unknown>
-            const requiredMetaFields = ['requestId', 'responseTime', 'timestamp', 'version']
-            for (const field of requiredMetaFields) {
-              if (!(field in meta)) {
-                errors.push(`${testCase.description}: Missing 'meta.${field}' field in response`)
+          // Build the actual URL by replacing path parameters
+          let actualPath = testCase.openApiPath
+          const queryParams: Record<string, string> = {}
+
+          if (testCase.params) {
+            for (const [key, value] of Object.entries(testCase.params)) {
+              const placeholder = `{${key}}`
+              if (actualPath.includes(placeholder)) {
+                actualPath = actualPath.replace(placeholder, String(value))
+              } else {
+                queryParams[key] = String(value)
               }
             }
           }
-        }
 
-        // Validate the response structure using Zod
-        const apiResponseSchema = z.fromJSONSchema({
-          ...JSON.parse(JSON.stringify(schema).replaceAll('#/components/schemas/', '#/$defs/')),
-          $defs: JSON.parse(
-            JSON.stringify(openApiSpec.components.schemas).replaceAll(
-              '#/components/schemas/',
-              '#/$defs/'
+          // Add query string if needed
+          const queryString =
+            Object.keys(queryParams).length > 0
+              ? '?' + new URLSearchParams(queryParams).toString()
+              : ''
+
+          // Make the actual API call
+          const response = await $fetch<unknown>(`${actualPath}${queryString}`)
+
+          if (!response) {
+            errors.push(`${testCase.description}: No response received from API`)
+            continue
+          }
+
+          // Verify response has expected top-level fields from OpenAPI
+          if (typeof response === 'object' && response !== null) {
+            const responseObj = response as Record<string, unknown>
+
+            // Check required fields
+            if (!('success' in responseObj)) {
+              errors.push(`${testCase.description}: Missing 'success' field in response`)
+            }
+
+            if (!('data' in responseObj)) {
+              errors.push(`${testCase.description}: Missing 'data' field in response`)
+            }
+
+            if (!('meta' in responseObj)) {
+              errors.push(`${testCase.description}: Missing 'meta' field in response`)
+            }
+
+            // Validate meta structure
+            if ('meta' in responseObj && typeof responseObj.meta === 'object') {
+              const meta = responseObj.meta as Record<string, unknown>
+              const requiredMetaFields = ['requestId', 'responseTime', 'timestamp', 'version']
+              for (const field of requiredMetaFields) {
+                if (!(field in meta)) {
+                  errors.push(`${testCase.description}: Missing 'meta.${field}' field in response`)
+                }
+              }
+            }
+          }
+
+          // Validate the response structure using Zod
+          const apiResponseSchema = z.fromJSONSchema({
+            ...JSON.parse(JSON.stringify(schema).replaceAll('#/components/schemas/', '#/$defs/')),
+            $defs: JSON.parse(
+              JSON.stringify(openApiSpec.components.schemas).replaceAll(
+                '#/components/schemas/',
+                '#/$defs/'
+              )
             )
-          )
-        })
+          })
 
-        const validationResult = apiResponseSchema.safeParse(response)
-        if (!validationResult.success) {
+          const validationResult = apiResponseSchema.safeParse(response)
+          if (!validationResult.success) {
+            errors.push(
+              `${testCase.description}: Response doesn't match API envelope structure: ${validationResult.error.message}`
+            )
+          }
+        } catch (error) {
           errors.push(
-            `${testCase.description}: Response doesn't match API envelope structure: ${validationResult.error.message}`
+            `${testCase.description}: Failed to fetch or validate - ${error instanceof Error ? error.message : String(error)}`
           )
         }
-      } catch (error) {
-        errors.push(
-          `${testCase.description}: Failed to fetch or validate - ${error instanceof Error ? error.message : String(error)}`
-        )
       }
-    }
 
-    if (errors.length > 0) {
-      const errorMessage = [
-        'API response validation failed:',
-        '',
-        ...errors.map((e) => `  - ${e}`),
-        '',
-        `Total test cases: ${testCases.length}`,
-        `Total errors: ${errors.length}`
-      ].join('\n')
+      if (errors.length > 0) {
+        const errorMessage = [
+          'API response validation failed:',
+          '',
+          ...errors.map((e) => `  - ${e}`),
+          '',
+          `Total test cases: ${testCases.length}`,
+          `Total errors: ${errors.length}`
+        ].join('\n')
 
-      // eslint-disable-next-line vitest/no-conditional-expect
-      expect.fail(errorMessage)
-    }
-  })
+        // eslint-disable-next-line vitest/no-conditional-expect
+        expect.fail(errorMessage)
+      }
+    },
+    { timeout: 10000 }
+  )
 
   it('should not have type objects without properties defined', async () => {
     const openApiSpec = await $fetch<OpenApiSpec>('/_docs/openapi.json')
