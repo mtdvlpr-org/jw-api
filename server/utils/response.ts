@@ -1,4 +1,4 @@
-import type { H3Error } from 'h3'
+import type { NuxtError } from 'nuxt/app'
 
 import { FetchError } from 'ofetch'
 
@@ -107,10 +107,7 @@ const buildErrorData = (details?: ApiErrorDetail[]): ApiErrorData => {
   return data
 }
 
-type ApiError = RequiredFields<H3Error<ApiErrorData>, 'data'> & {
-  status: string
-  statusText: string
-}
+type ApiError = RequiredFields<NuxtError<ApiErrorData>, 'data' | 'status' | 'statusText'>
 
 export const isApiError = (error: unknown): error is ApiError => {
   return (
