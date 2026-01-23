@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'node:url'
-
 import type { DbKey } from './shared/types/db'
 
 import { description, version } from './package.json'
@@ -13,7 +11,6 @@ const database: Record<DbKey, { connector: 'sqlite'; options: { name: DbKey } }>
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  alias: { '#server': fileURLToPath(new URL('./server', import.meta.url)) },
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
@@ -24,7 +21,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   future: { typescriptBundlerResolution: true },
   mcp: { name: title, version },
-  modules: ['@nuxt/eslint', '@nuxt/test-utils', '@nuxtjs/mcp-toolkit', 'nuxt-security'],
+  modules: ['@nuxt/eslint', '@nuxt/test-utils/module', '@nuxtjs/mcp-toolkit', 'nuxt-security'],
   nitro: {
     database,
     experimental: { database: true, openAPI: true },

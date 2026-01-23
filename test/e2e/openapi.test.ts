@@ -1,7 +1,8 @@
 import { $fetch, setup } from '@nuxt/test-utils/e2e'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
-await setup({ server: true })
+await setup({ rootDir: fileURLToPath(new URL('../../', import.meta.url)) })
 
 type OpenApiSpec = {
   components?: {

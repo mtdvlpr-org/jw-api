@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import fsPromises from 'node:fs/promises'
+import { ReadableStream } from 'node:stream/web'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { catalogRepository } from '../../../server/repository/catalog'
@@ -45,7 +46,7 @@ describe('catalog utils', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false)
       const mockStorage = { getItem: vi.fn(), setItem: vi.fn() }
       useStorage.mockReturnValue(mockStorage)
-      const mockStream = {}
+      const mockStream = new ReadableStream()
       vi.mocked(catalogRepository.fetchCatalog).mockResolvedValue(mockStream)
 
       await catalogService.getCatalog()
