@@ -122,16 +122,16 @@ const getMeetingSchedule = async (
       : null
   ])
 
-  const monday = formatDate(getMondayOfWeek(date), 'YYYY/MM/DD')
+  const monday = formatDate(getMondayOfWeek(date), 'YYYY-MM-DD')
 
   return {
     watchtower:
       wtSchedule.status === 'fulfilled' && wtSchedule.value
-        ? wtSchedule.value.find((s) => s.w_study_date === monday)
+        ? (wtSchedule.value.find((s) => s.w_study_date === monday) ?? null)
         : null,
     workbook:
       mwbSchedule.status === 'fulfilled' && mwbSchedule.value
-        ? mwbSchedule.value.find((s) => s.mwb_week_date === monday)
+        ? (mwbSchedule.value.find((s) => s.mwb_week_date === monday) ?? null)
         : null
   }
 }

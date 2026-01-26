@@ -1,3 +1,8 @@
+import type { JwLangCode } from '../types/lang.types'
+import type { PublicationFileFormat } from '../types/media.types'
+import type { MediaItem, MediaItemFile, MediaKey } from '../types/mediator'
+import type { PublicationDocFetcher, PublicationFetcher } from '../types/pubMedia'
+
 /**
  * The regular expression to match a media key.
  * @example 'docid-123456_1_VIDEO'

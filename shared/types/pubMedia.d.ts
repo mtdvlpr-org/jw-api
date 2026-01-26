@@ -12,7 +12,7 @@ export interface Publication {
    * The formatted date of the publication in HTML.
    * @example 'November&nbsp;2022'
    */
-  formattedDate: string
+  formattedDate: HTML
   fileformat: PublicationFileFormat[]
   track: null | number
   specialty: string

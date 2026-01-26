@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { MediaItemFile } from '../../../shared/types/mediator'
 import type { PublicationFetcher } from '../../../shared/types/pubMedia'
 
+import { imageSizes, imageTypes } from '../../../shared/types/media.types'
 import {
   extractMediaKey,
   extractResolution,
@@ -11,8 +12,7 @@ import {
   generateMediaKey,
   isMediaKey,
   parseMediaKey
-} from '../../../server/utils/media'
-import { imageSizes, imageTypes } from '../../../shared/types/media.types'
+} from '../../../shared/utils/media'
 
 vi.stubGlobal('imageTypes', imageTypes)
 vi.stubGlobal('imageSizes', imageSizes)

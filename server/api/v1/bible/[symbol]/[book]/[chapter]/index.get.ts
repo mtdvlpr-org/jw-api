@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const routeSchema = z.object({
+const routeSchema = z.strictObject({
   book: bibleBookNrSchema,
   chapter: bibleChapterNrSchema,
   symbol: jwLangSymbolSchema

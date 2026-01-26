@@ -13,7 +13,7 @@ export default defineMcpPrompt({
         description: 'The preferred language of the transcript. English, Dutch, Spanish, etc.'
       })
       .optional(),
-    url: z.url().meta({
+    url: z.httpUrl().meta({
       description:
         'A JW Video URL. Examples: https://www.jw.org/finder?srcid=share&wtlocale=E&lank=pub-imv_4_VIDEO or https://www.jw.org/en/library/videos/#en/mediaitems/FeaturedLibraryVideos/pub-imv_4_VIDEO'
     })

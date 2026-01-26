@@ -5,7 +5,7 @@ export interface WolRefItem {
   /**
    * The content of the reference in HTML.
    */
-  content: string
+  content: HTML
   did: number
   englishSymbol: string
   hideThumbnailImage: boolean

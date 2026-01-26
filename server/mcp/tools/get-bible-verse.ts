@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+const outputSchema = bibleVerseSchema.shape
+
+type Output = z.output<typeof bibleVerseSchema>
+
 export default defineMcpTool({
   annotations: {
     destructiveHint: false,
@@ -18,7 +22,7 @@ export default defineMcpTool({
         verse: verseNumber
       })
 
-      return mcpService.toolResult(verse.parsedContent)
+      return mcpService.toolResult<Output>(verse.parsedContent, verse.result)
     } catch (e) {
       return mcpService.toolError(e)
     }
@@ -36,5 +40,6 @@ export default defineMcpTool({
       .optional()
       .default('en'),
     verseNumber: bibleVerseNrSchema
-  }
+  },
+  outputSchema
 })

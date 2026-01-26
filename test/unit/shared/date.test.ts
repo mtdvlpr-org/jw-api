@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { formatDate, getMondayOfWeek, getWeekOfYear, parseDate } from '../../../server/utils/date'
-import { pad } from '../../../server/utils/general'
+import { formatDate, getMondayOfWeek, getWeekOfYear, parseDate } from '../../../shared/utils/date'
+import { pad } from '../../../shared/utils/general'
 
 // Stub globals
 vi.stubGlobal('pad', pad)

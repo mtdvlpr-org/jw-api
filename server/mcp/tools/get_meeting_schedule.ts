@@ -1,5 +1,12 @@
 import { z } from 'zod'
 
+const outputSchema = {
+  watchtower: watchtowerScheduleSchema.nullable(),
+  workbook: workbookScheduleSchema.nullable()
+}
+
+type Output = z.output<z.ZodObject<typeof outputSchema>>
+
 export default defineMcpTool({
   annotations: {
     destructiveHint: false,
@@ -15,7 +22,7 @@ export default defineMcpTool({
       week && year ? { week, year } : undefined
     )
 
-    return mcpService.toolResult(JSON.stringify(result, null, 2))
+    return mcpService.toolResult<Output>(JSON.stringify(result, null, 2), result)
   },
   inputSchema: {
     langcode: z
@@ -28,5 +35,6 @@ export default defineMcpTool({
       .optional(),
     week: weekSchema,
     year: yearSchema
-  }
+  },
+  outputSchema
 })

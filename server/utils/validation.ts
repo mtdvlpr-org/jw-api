@@ -37,8 +37,8 @@ export const parseQuery = <T extends z.ZodType>(event: H3Event, schema: T): z.in
  *
  * @example
  * ```ts
- * const paramsSchema = z.object({ id: z.coerce.number() })
- * const { id } = parseRouteParams(event, paramsSchema)
+ * const routeSchema = z.strictObject({ id: z.coerce.number() })
+ * const { id } = parseRouteParams(event, routeSchema)
  * ```
  */
 export const parseRouteParams = <T extends z.ZodType>(event: H3Event, schema: T): z.infer<T> => {

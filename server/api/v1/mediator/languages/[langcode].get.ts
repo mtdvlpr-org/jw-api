@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const routeSchema = z.object({ langcode: jwLangCodeSchema })
+const routeSchema = z.strictObject({ langcode: jwLangCodeSchema })
 
 defineRouteMeta({
   openAPI: {

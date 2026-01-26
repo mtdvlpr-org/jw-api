@@ -1,3 +1,6 @@
+import type { BibleBookNr, BibleRangeId, BibleVerseId } from '../types/bible'
+import type { JwLangCode, JwLangSymbol } from '../types/lang.types'
+
 /**
  * Pads a value with a character.
  * @param value The value to pad.
@@ -101,11 +104,11 @@ export const getWorkbookIssue = (date?: { month: number; year: number }): `${num
   const { month, year } = date
 
   if (year < 2016) {
-    throw apiBadRequestError('Workbooks are not available before 2016')
+    throw new Error('Workbooks are not available before 2016')
   }
 
   if (month < 1 || month > 12) {
-    throw apiBadRequestError('Month must be between 1 and 12')
+    throw new Error('Month must be between 1 and 12')
   }
 
   // Workbooks before 2021 are published every month.
@@ -129,11 +132,11 @@ export const getStudyWatchtowerIssue = (date?: { month: number; year: number }):
   const { month, year } = date
 
   if (year < 2008) {
-    throw apiBadRequestError('Study Watchtower is not available before 2008')
+    throw new Error('Study Watchtower is not available before 2008')
   }
 
   if (month < 1 || month > 12) {
-    throw apiBadRequestError('Month must be between 1 and 12')
+    throw new Error('Month must be between 1 and 12')
   }
 
   // Study watchtowers before 2016 are published on the 15th of the month.
@@ -161,7 +164,7 @@ export const langCodeToMepsId = (lang: JwLangCode): number => {
  */
 export const parseBibleVerseId = (verseId: BibleVerseId) => {
   if (!/^[1-6]\d{6,7}$/.test(verseId)) {
-    throw apiBadRequestError(`Invalid Bible verse ID: '${verseId}'`)
+    throw new Error(`Invalid Bible verse ID: '${verseId}'`)
   }
 
   const startIndex = verseId.length === 7 ? 1 : 2
@@ -179,7 +182,7 @@ export const parseBibleVerseId = (verseId: BibleVerseId) => {
  */
 export const parseBibleRangeId = (rangeId: BibleRangeId) => {
   if (!/^[1-6]\d{6,7}-[1-6]\d{6,7}$/.test(rangeId)) {
-    throw apiBadRequestError(`Invalid Bible range ID: '${rangeId}'`)
+    throw new Error(`Invalid Bible range ID: '${rangeId}'`)
   }
 
   const [startVerseId, endVerseId] = rangeId.split('-') as [BibleVerseId, BibleVerseId]

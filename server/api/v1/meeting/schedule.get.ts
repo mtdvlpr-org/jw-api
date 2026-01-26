@@ -16,19 +16,78 @@ defineRouteMeta({
       components: {
         schemas: {
           MeetingSchedule: {
-            example: {
+            properties: {
               watchtower: {
-                w_study_date: '2025/01/01',
-                w_study_title: 'Study Article 1'
+                properties: {
+                  w_study_concluding_song: { maximum: 500, minimum: 1, type: 'integer' },
+                  w_study_date: { format: 'date', type: 'string' },
+                  w_study_date_locale: { type: 'string' },
+                  w_study_opening_song: { maximum: 500, minimum: 1, type: 'integer' },
+                  w_study_title: { type: 'string' }
+                },
+                required: [
+                  'w_study_date',
+                  'w_study_date_locale',
+                  'w_study_title',
+                  'w_study_opening_song',
+                  'w_study_concluding_song'
+                ],
+                type: ['object', 'null']
               },
               workbook: {
-                mwb_week_date: '2025/01/01',
-                mwb_weekly_bible_reading: 'Genesis 1-3'
+                properties: {
+                  mwb_ayf_count: { maximum: 4, minimum: 1, type: 'integer' },
+                  mwb_ayf_part1: { type: 'string' },
+                  mwb_ayf_part1_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_ayf_part1_title: { type: 'string' },
+                  mwb_ayf_part2: { type: 'string' },
+                  mwb_ayf_part2_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_ayf_part2_title: { type: 'string' },
+                  mwb_ayf_part3: { type: 'string' },
+                  mwb_ayf_part3_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_ayf_part3_title: { type: 'string' },
+                  mwb_ayf_part4: { type: 'string' },
+                  mwb_ayf_part4_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_ayf_part4_title: { type: 'string' },
+                  mwb_lc_cbs: { type: 'string' },
+                  mwb_lc_cbs_title: { type: 'string' },
+                  mwb_lc_count: { maximum: 2, minimum: 1, type: 'integer' },
+                  mwb_lc_part1: { type: 'string' },
+                  mwb_lc_part1_content: { type: 'string' },
+                  mwb_lc_part1_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_lc_part1_title: { type: 'string' },
+                  mwb_lc_part2: { type: 'string' },
+                  mwb_lc_part2_content: { type: 'string' },
+                  mwb_lc_part2_time: { maximum: 15, minimum: 1, type: 'integer' },
+                  mwb_lc_part2_title: { type: 'string' },
+                  mwb_song_conclude: { maximum: 500, minimum: 1, type: 'integer' },
+                  mwb_song_first: { maximum: 500, minimum: 1, type: 'integer' },
+                  mwb_song_middle: { maximum: 500, minimum: 1, type: 'integer' },
+                  mwb_week_date: { format: 'date', type: 'string' },
+                  mwb_week_date_locale: { type: 'string' },
+                  mwb_weekly_bible_reading: { type: 'string' }
+                },
+                required: [
+                  'mwb_week_date',
+                  'mwb_week_date_locale',
+                  'mwb_song_first',
+                  'mwb_song_middle',
+                  'mwb_song_conclude',
+                  'mwb_ayf_count',
+                  'mwb_ayf_part1',
+                  'mwb_ayf_part1_time',
+                  'mwb_ayf_part1_title',
+                  'mwb_lc_cbs',
+                  'mwb_lc_cbs_title',
+                  'mwb_lc_count',
+                  'mwb_lc_part1',
+                  'mwb_lc_part1_content',
+                  'mwb_lc_part1_time',
+                  'mwb_lc_part1_title',
+                  'mwb_weekly_bible_reading'
+                ],
+                type: ['object', 'null']
               }
-            },
-            properties: {
-              watchtower: { type: ['object', 'null'] },
-              workbook: { type: ['object', 'null'] }
             },
             required: ['watchtower', 'workbook'],
             type: 'object'

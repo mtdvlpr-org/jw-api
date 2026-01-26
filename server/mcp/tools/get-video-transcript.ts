@@ -6,7 +6,7 @@ const outputSchema = {
   title: z.string().meta({ description: 'The title of the video.' })
 }
 
-type OutputSchema = z.output<z.ZodObject<typeof outputSchema>>
+type Output = z.output<z.ZodObject<typeof outputSchema>>
 
 export default defineMcpTool({
   annotations: {
@@ -26,7 +26,7 @@ export default defineMcpTool({
       langwritten: langcode || langwritten || 'E'
     })
 
-    return mcpService.toolResult<OutputSchema>(result.subtitles, {
+    return mcpService.toolResult<Output>(result.subtitles, {
       subtitles: result.subtitles,
       thumbnail: findBestImage(result.video.images ?? {}) ?? '',
       title: result.video.title
@@ -41,7 +41,7 @@ export default defineMcpTool({
         examples: ['E', 'O', 'S']
       })
       .optional(),
-    url: z.url().meta({
+    url: z.httpUrl().meta({
       description:
         'A JW Video URL. Examples: https://www.jw.org/finder?srcid=share&wtlocale=E&lank=pub-imv_4_VIDEO or https://www.jw.org/en/library/videos/#en/mediaitems/FeaturedLibraryVideos/pub-imv_4_VIDEO',
       examples: [

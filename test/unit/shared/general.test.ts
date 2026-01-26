@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
+import { jwLangCodes, jwLangSymbols, mepsLanguageIds } from '../../../shared/types/lang.types'
 import {
   extractLangCode,
   formatIssue,
@@ -12,8 +13,7 @@ import {
   pad,
   parseBibleRangeId,
   parseBibleVerseId
-} from '../../../server/utils/general'
-import { jwLangCodes, jwLangSymbols, mepsLanguageIds } from '../../../shared/types/lang.types'
+} from '../../../shared/utils/general'
 
 vi.stubGlobal('jwLangCodes', jwLangCodes)
 vi.stubGlobal('jwLangSymbols', jwLangSymbols)

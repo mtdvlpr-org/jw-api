@@ -1,3 +1,11 @@
+import type { z } from 'zod'
+
+const outputSchema = {
+  books: bibleBooksSchema
+}
+
+type Output = z.output<z.ZodObject<typeof outputSchema>>
+
 export default defineMcpTool({
   annotations: {
     destructiveHint: false,
@@ -10,7 +18,7 @@ export default defineMcpTool({
   handler: async ({ symbol }) => {
     try {
       const books = await bibleService.getBooks(symbol)
-      return mcpService.toolResult(JSON.stringify(books, null, 2))
+      return mcpService.toolResult<Output>(JSON.stringify(books, null, 2), { books })
     } catch (e) {
       return mcpService.toolError(e)
     }
@@ -24,5 +32,6 @@ export default defineMcpTool({
       })
       .optional()
       .default('en')
-  }
+  },
+  outputSchema
 })

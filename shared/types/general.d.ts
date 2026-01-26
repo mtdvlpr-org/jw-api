@@ -1,3 +1,7 @@
+import type { $brand } from 'zod'
+
+export type HTML = $brand<'HTML'> & string
+
 export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}

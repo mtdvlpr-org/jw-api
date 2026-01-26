@@ -48,20 +48,33 @@ export default defineNuxtConfig({
     csrf: false, // TODO: Enable CSRF protection when we have state-changing endpoints
     headers: {
       contentSecurityPolicy: {
+        'frame-src': isDev ? ["'self'", 'data:'] : undefined, // Nuxt DevTools
         'img-src': isDev ? ["'self'", 'data:'] : undefined, // Nuxt DevTools
-        'style-src-attr': [
-          "'unsafe-hashes'",
-          "'sha256-V1oXad6TSON5lAPSlYyq7P4n6DHYMuK6mVMTl6g4Qnc='" // NuxtLoadingIndicator
-        ],
-        'style-src-elem': isDev
+        'script-src-attr': isDev
           ? [
               "'unsafe-hashes'",
-              "'sha256-OD9WVNQJEovAiR/DJOt93obaRkfsvRKjjDXmxB2VR+w='", // Nuxt DevTools
-              // TODO: Remove when NuxtWelcome is removed
-              "'sha256-xfTtFXgyQRFFrgZl3DoFKJBt5UsgD7QZ2l1JoWk3xCk='", // NuxtWelcome
-              "'sha256-zyQlNcK/TQ7fWXm/87qoWxHXLGBjDfqDj7AkcCt2weM='" // NuxtWelcome
+              "'sha256-7TqQJF3K4wrZpxSqn+IJ/s3Y705jL5IIk8Ga5HVJD1s='" // NuxtErrorPage
             ]
-          : undefined
+          : undefined,
+        'script-src-elem': isDev ? ["'self'", "'unsafe-inline'"] : undefined,
+        'style-src-attr': isDev
+          ? ["'self'", "'unsafe-inline'"]
+          : [
+              "'unsafe-hashes'",
+              "'sha256-V1oXad6TSON5lAPSlYyq7P4n6DHYMuK6mVMTl6g4Qnc='" // NuxtLoadingIndicator
+            ],
+        'style-src-elem': isDev
+          ? [
+              "'self'",
+              "'unsafe-inline'"
+              // "'unsafe-hashes'",
+              // "'sha256-OD9WVNQJEovAiR/DJOt93obaRkfsvRKjjDXmxB2VR+w='", // Nuxt DevTools
+              // TODO: Remove when NuxtWelcome is removed
+              // "'sha256-xfTtFXgyQRFFrgZl3DoFKJBt5UsgD7QZ2l1JoWk3xCk='", // NuxtWelcome
+              // "'sha256-zyQlNcK/TQ7fWXm/87qoWxHXLGBjDfqDj7AkcCt2weM='", // NuxtWelcome
+            ]
+          : undefined,
+        'worker-src': isDev ? ["'self'", 'blob:'] : undefined // Nuxt DevTools
       }
     },
     rateLimiter: { headers: true },

@@ -8,9 +8,9 @@ import { jwRepository } from '../../../server/repository/jw'
 import { mediatorRepository } from '../../../server/repository/mediator'
 import { pubMediaRepository } from '../../../server/repository/pubMedia'
 import { wolRepository } from '../../../server/repository/wol'
-import { generateVerseId } from '../../../server/utils/general'
-import { generateMediaKey } from '../../../server/utils/media'
 import { isApiError, toFetchApiError } from '../../../server/utils/response'
+import { generateVerseId } from '../../../shared/utils/general'
+import { generateMediaKey } from '../../../shared/utils/media'
 
 // Mock globals for tests since they are auto-imported in Nuxt but not here
 const { $fetch, apiNotFoundError, scrapeBibleDataUrl } = vi.hoisted(() => {

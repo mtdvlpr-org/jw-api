@@ -38,7 +38,7 @@ export interface BibleBook {
   images: {
     altText: string
     caption: null | string
-    sizes: Partial<Record<ImageSize, string>>
+    sizes: Record<ImageSize, string>
     type: ImageType
   }[]
 }
@@ -121,7 +121,7 @@ export interface BibleChapterOutline {
    * The content of the chapter outline in HTML.
    * @example '<ul><li class="L1">\n\n<p id="p3" data-pid="3">Creation of heavens and earth <span class="altsize">(</span><a class=' jsBibl… target='_blank'><span class="altsize">24-31</span></a><span class="altsize">)</span></p>\n\n\n\n\n\n\n</li></ul></li></ul>'
    */
-  content: string
+  content: HTML
   id: number
   source: BibleRangeId
   title: string
@@ -133,13 +133,13 @@ export interface BibleCommentary {
    * The content of the commentary in HTML.
    * @example '<p id="p4" data-pid="4" class="s5"><strong>Matthew:</strong> The Greek name rendered “Matthew” is probably a shortened form …me of the writer may have come about for practical reasons, providing a clear means of identification of the books.</p>\r\n'
    */
-  content: null | string
+  content: HTML | null
   id: number
   /**
    * The label of the commentary.
    * @example '<strong>Title</strong>\n'
    */
-  label: null | string
+  label: HTML | null
   source: BibleVerseId | null
 }
 
@@ -155,13 +155,13 @@ export interface BibleCrossReference {
      * The abbreviated citation of the cross reference in HTML.
      * @example 'Ps&nbsp;102:25'
      */
-    abbreviatedCitation: string
+    abbreviatedCitation: HTML
     category: { id: `${number}`; label: string }
     /**
      * The standard citation of the cross reference in HTML.
      * @example 'Psalm&nbsp;102:25'
      */
-    standardCitation: string
+    standardCitation: HTML
     vs: BibleRangeId | BibleVerseId
   }[]
 }
@@ -172,7 +172,7 @@ export interface BibleFootnote {
    * The content of the footnote in HTML.
    * @example '<span class="">Or “God’s spirit.”</span>'
    */
-  content: string
+  content: HTML
   id: number
   source: BibleVerseId
 }
@@ -182,7 +182,7 @@ export interface BibleMultimediaItem {
    * The caption of the multimedia item in HTML.
    * @example '<p>Caption</p>\r\n'
    */
-  caption: null | string
+  caption: HTML | null
   docID: `${number}`
   id: number
   keyframe: null | { sizes: Record<ImageSize, string>; src: string; zoom: string }
@@ -190,22 +190,30 @@ export interface BibleMultimediaItem {
    * The label of the multimedia item in HTML.
    * @example 'Gospel of Matthew—Some Major Events\n'
    */
-  label: string
+  label: HTML
   pictureCredit: null | string
-  resource: { src: (string | { pub: string; style: string; track: `${number}` })[] | string }
+  resource: {
+    src:
+      | (
+          | string
+          | { docid: `${number}`; style: string; track: `${number}` }
+          | { pub: string; style: string; track: `${number}` }
+        )[]
+      | string
+  }
   source: BibleVerseSource
   sourceStandardCitations: {
     /**
      * The abbreviated citation of the standard citation in HTML.
      * @example 'Ge&nbsp;1:1'
      */
-    abbreviatedCitation: string
+    abbreviatedCitation: HTML
     link: string
     /**
      * The standard citation of the standard citation in HTML.
      * @example 'Genesis&nbsp;1:1'
      */
-    standardCitation: string
+    standardCitation: HTML
     vs: BibleVerseId
   }[]
   thumbnail: { sizes: Record<ImageSize, string>; src: string; zoom: string }
@@ -217,7 +225,7 @@ export interface BiblePubReference {
    * The content of the pub reference in HTML.
    * @example '<p id="p1" data-pid="1">Content</p>\r\n'
    */
-  content: string
+  content: HTML
   id: number
   source: BibleRangeSource
   thumbnail: { sizes: Record<ImageSize, string>; src: string; zoom: string }
@@ -231,7 +239,7 @@ export interface BibleRange {
    * The citation of the range in HTML.
    * @example 'Genesis&nbsp;1:1-31'
    */
-  citation: string
+  citation: HTML
   citationVerseRange: BibleRangeString
   commentaries: BibleCommentary[]
   crossReferences: BibleCrossReference[]
@@ -246,7 +254,7 @@ export interface BibleRange {
 }
 
 /**
- * The string representation of a verse range in BBCCCVVV-BBCCCVVV format.
+ * The string representation of a verse range in BCCCVVV-BCCCVVV format.
  * @example '1001001-1001005' // Genesis 1:1-5
  * @example '19025012-19025015' // Psalms 25:12-15
  * @example '40001001-40013005' // Matthew 1:1-13:5
@@ -318,12 +326,12 @@ export interface BibleSuperscription {
    * The abbreviated citation of the superscription in HTML.
    * @example 'Ps&nbsp;23:superscription'
    */
-  abbreviatedCitation: string
+  abbreviatedCitation: HTML
   /**
    * The content of the superscription in HTML.
    * @example '<span class="style-w">A melody of David.</span>\r\n<span class="parabreak"></span>'
    */
-  content: string
+  content: HTML
   id: number
   source: BibleVerseId
   /**
@@ -338,25 +346,25 @@ export interface BibleVerse {
    * The abbreviated citation of the verse in HTML.
    * @example 'Ge&nbsp;1:1'
    */
-  abbreviatedCitation: string
+  abbreviatedCitation: HTML
   bookNumber: BibleBookNr
   chapterNumber: number
   /**
    * The content of the verse in HTML.
    * @example '<span class="style-b"><span class="chapterNum"><a href='/en/library/bible/study-bible/books/json/data/01001000-01001999#v100… the beginning God created the heavens and the earth.<xref id="210572864"></xref></span>\r\n<span class="parabreak"></span'
    */
-  content: string
+  content: HTML
   /**
    * The standard citation of the verse in HTML.
    * @example 'Genesis&nbsp;1:1'
    */
-  standardCitation: string
+  standardCitation: HTML
   verseNumber: number
   vsID: BibleVerseId
 }
 
 /**
- * The ID of a verse in BBCCCVVV format.
+ * The ID of a verse in BCCCVVV format.
  * @example '1001001' // Genesis 1:1
  * @example '19025012' // Psalms 25:12
  * @example '40013005' // Matthew 13:5

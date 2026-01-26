@@ -3,9 +3,9 @@ import { jwRepository } from '#server/repository/jw'
 import { mediatorRepository } from '#server/repository/mediator'
 import { pubMediaRepository } from '#server/repository/pubMedia'
 import { wolRepository } from '#server/repository/wol'
-import { generateVerseId } from '#server/utils/general'
-import { generateMediaKey } from '#server/utils/media'
 import { scrapeBibleDataUrl } from '#server/utils/scraper'
+import { generateVerseId } from '#shared/utils/general'
+import { generateMediaKey } from '#shared/utils/media'
 import { describe, expect, it, vi } from 'vitest'
 
 // Stub globals that might be missing in test environment
