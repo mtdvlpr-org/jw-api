@@ -33,7 +33,7 @@
     "jszip": "^3.10.1",
     "meeting-schedules-parser": "^4.4.0",
     "node-html-parser": "^7.1.0",
-    "nuxt": "^4.4.2",
+    "nuxt": "^4.4.4",
     "nuxt-security": "^2.5.1",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
