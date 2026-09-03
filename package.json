@@ -46,7 +46,7 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@nuxt/eslint": "^1.15.2",
-    "@nuxt/test-utils": "^3.23.0",
+    "@nuxt/test-utils": "^4.2.0",
     "@types/eslint-plugin-security": "^3.0.1",
     "@types/node": "^22.19.17",
     "@types/sql.js": "^1.4.11",
